@@ -1,6 +1,6 @@
 # Lento: A Modern Distraction Blocker
 
-Lento is a modern distraction blocker for Windows and macOS, built with Python. There are a lot of similar products out there, but I built Lento because I couldn't find an alternative with all of the features I wanted.
+Lento is a modern distraction blocker for Windows and macOS, built with Python. There are a lot of similar products out there, but we built Lento because we couldn't find an alternative with all of the features we wanted.
 
 ## Features
 - Multiple, easily swappable sessions, each with their own blocklists
