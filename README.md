@@ -22,4 +22,4 @@ If you want to build from source:
 [TODO: Build from source instructions]
 
 ## Contributing
-I'm currently not accepting any PRs or outside commits to this repo, but feel free to open issues with any feedback you might have!
+We're currently not accepting any PRs or outside commits to this repo, but feel free to open issues with any feedback you might have!
