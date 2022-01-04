@@ -1,0 +1,172 @@
+@startuml
+skinparam componentStyle uml2
+skinparam linetype ortho
+skinparam ArrowFontStyle normal
+
+skinparam component {
+    FontColor          black
+    FontColor<<monitor>> white
+    AttributeFontColor black
+    FontSize           17
+    AttributeFontSize  15
+    AttributeFontname  Droid Sans Mono
+    BackgroundColor<<gui>> #f0dbb0
+    BackgroundColor<<common>> #88a2bc
+    BackgroundColor<<utils>> #d99477
+    BackgroundColor<<daemon>> #efb680
+    BackgroundColor<<monitor>> #4f6a8f
+    BorderColor        black
+    ArrowColor         #222266
+}
+
+
+[GUI] <<gui>>
+
+[check_for_block] <<utils>>
+[cheater_popup] <<utils>>
+[soft_block_popup] <<utils>>
+[show_popup] <<utils>>
+
+[cheater_popup] --> [show_popup]
+[soft_block_popup] --> [show_popup]
+
+component InitSequence {
+    [init] <<common>>
+    [check_for_config] <<common>>
+    [create_config] <<common>>
+    [activate_tutorial] <<common>>
+
+    [init] .down.> [check_for_config]
+    [check_for_config] .down.> [create_config]
+    [create_config] .down.> [activate_tutorial]
+}
+
+
+component CardsManagement {
+    [manage_card] <<common>>
+    [read_cards] <<common>>
+    [create_card] <<common>>
+    [delete_card] <<common>>
+    [update_card] <<common>>
+
+    [manage_card] --> [check_for_block]
+    [manage_card] .down.> [create_card]
+    [manage_card] .down.> [read_cards]
+    [manage_card] .down.> [update_card]
+    [manage_card] .down.> [delete_card]
+}
+
+component BlockManagement {
+    [manage_block] <<common>>
+
+    component StartBlock {
+        [start_block] <<common>>
+        [activate_hosts_block] <<common>>
+        [activate_pf_block] <<common>>
+        [activate_windows_firewall_block] <<common>>
+        [generate_daemon_plist] <<common>>
+        [start_macos_daemon] <<common>>
+        [start_windows_daemon] <<common>>
+        [activate_block_in_config] <<common>>
+
+        [manage_block] .down.> [start_block]
+
+        [start_block] --> [check_for_block]
+        [start_block] .down.> [activate_hosts_block]
+
+        [activate_hosts_block] .down.> [activate_pf_block]
+        [activate_hosts_block] .down.> [activate_windows_firewall_block]
+
+        [activate_pf_block] .down.> [generate_daemon_plist]
+        [activate_windows_firewall_block] .down.> [start_windows_daemon]
+
+        [generate_daemon_plist] .down.> [start_macos_daemon]
+        [start_macos_daemon] .down.> [activate_block_in_config]
+        [start_windows_daemon] .down.> [activate_block_in_config]
+    }
+
+    component EndBlock {
+        [end_block] <<common>>
+        [deactivate_monitor_process_macos] <<common>>
+        [deactivate_monitor_process_windows] <<common>>
+        [deactivate_hosts_block] <<common>>
+        [deactivate_pf_block] <<common>>
+        [deactivate_windows_firewall_block] <<common>>
+        [stop_macos_daemon] <<common>>
+        [stop_windows_daemon] <<common>>
+        [deactivate_block_in_config] <<common>>
+
+        [manage_block] .down.> [end_block]
+
+        [end_block] --> [check_for_block]
+        [end_block] .down.> [deactivate_monitor_process_macos]
+        [end_block] .down.> [deactivate_monitor_process_windows]
+        [deactivate_monitor_process_macos] .down.> [stop_macos_daemon]
+        [deactivate_monitor_process_windows] .down.> [stop_windows_daemon]
+
+        [stop_macos_daemon] .down.> [deactivate_pf_block]
+        [stop_windows_daemon] .down.> [deactivate_windows_firewall_block]
+
+        [deactivate_pf_block] .down.> [deactivate_hosts_block]
+        [deactivate_windows_firewall_block] .down.> [deactivate_hosts_block]
+
+        [deactivate_hosts_block] .down.> [deactivate_block_in_config]
+    }
+}
+
+
+component IntegrityFix {
+    [integrity_fix] <<common>>
+
+    [integrity_fix] .down.> [init]
+    [integrity_fix] --> [cheater_popup]
+    [integrity_fix] .down.> [end_block]
+    [integrity_fix] .down.> [start_block]
+}
+
+
+component MonitorProcess {
+    [monitor_main] <<monitor>>
+    [daemon_watcher] <<monitor>>
+    [restore_daemon] <<monitor>>
+
+    [monitor_main] .down.> [daemon_watcher]
+    [daemon_watcher] .down.> [restore_daemon]
+}
+
+
+component DaemonProcess {
+    [daemon_main] <<daemon>>
+    [activate_monitor_process_macos] <<daemon>>
+    [activate_monitor_process_windows] <<daemon>>
+    [activate_file_watchers] <<daemon>>
+    [activate_countdown] <<daemon>>
+    [activate_notifications] <<daemon>>
+    [activate_app_blocker] <<daemon>>
+    [activate_website_softblock_watcher] <<daemon>>
+    [allow_softblocked_site] <<daemon>>
+
+    [daemon_main] .down.> [activate_monitor_process_macos]
+    [daemon_main] .down.> [activate_monitor_process_windows]
+    [activate_monitor_process_macos] --> [monitor_main]
+    [activate_monitor_process_windows] --> [monitor_main]
+
+    [activate_monitor_process_macos] .down.> [activate_file_watchers]
+    [activate_monitor_process_windows] .down.> [activate_file_watchers]
+    [activate_file_watchers] --> [integrity_fix]
+    [activate_file_watchers] --> [cheater_popup]
+
+    [activate_file_watchers] .down.> [activate_countdown]
+    [activate_countdown] --> [end_block]
+
+    [activate_countdown] .down.> [activate_notifications]
+    [activate_notifications] .down.> [activate_app_blocker]
+    [activate_app_blocker] --> [soft_block_popup]
+
+    [activate_app_blocker] .down.> [activate_website_softblock_watcher]
+    [activate_website_softblock_watcher] --> [soft_block_popup]
+    [activate_website_softblock_watcher] .down.> [allow_softblocked_site]
+}
+
+
+@enduml
