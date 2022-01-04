@@ -30,7 +30,7 @@ skinparam component {
 [cheater_popup] --> [show_popup]
 [soft_block_popup] --> [show_popup]
 
-component init-sequence-feature {
+component InitSequence {
     [init] <<common>>
     [check_for_config] <<common>>
     [create_config] <<common>>
@@ -42,7 +42,7 @@ component init-sequence-feature {
 }
 
 
-component cards-management-feature {
+component CardsManagement {
     [manage_card] <<common>>
     [read_cards] <<common>>
     [create_card] <<common>>
@@ -56,10 +56,10 @@ component cards-management-feature {
     [manage_card] .down.> [delete_card]
 }
 
-component block-management-feature {
+component BlockManagement {
     [manage_block] <<common>>
 
-    component start-block-feature {
+    component StartBlock {
         [start_block] <<common>>
         [activate_hosts_block] <<common>>
         [activate_pf_block] <<common>>
@@ -85,8 +85,10 @@ component block-management-feature {
         [start_windows_daemon] .down.> [activate_block_in_config]
     }
 
-    component block-ending-feature {
+    component EndBlock {
         [end_block] <<common>>
+        [deactivate_monitor_process_macos] <<common>>
+        [deactivate_monitor_process_windows] <<common>>
         [deactivate_hosts_block] <<common>>
         [deactivate_pf_block] <<common>>
         [deactivate_windows_firewall_block] <<common>>
@@ -97,21 +99,23 @@ component block-management-feature {
         [manage_block] .down.> [end_block]
 
         [end_block] --> [check_for_block]
-        [end_block] .down.> [deactivate_hosts_block]
+        [end_block] .down.> [deactivate_monitor_process_macos]
+        [end_block] .down.> [deactivate_monitor_process_windows]
+        [deactivate_monitor_process_macos] .down.> [stop_macos_daemon]
+        [deactivate_monitor_process_windows] .down.> [stop_windows_daemon]
 
-        [deactivate_hosts_block] .down.> [deactivate_pf_block]
-        [deactivate_hosts_block] .down.> [deactivate_windows_firewall_block]
+        [stop_macos_daemon] .down.> [deactivate_pf_block]
+        [stop_windows_daemon] .down.> [deactivate_windows_firewall_block]
 
-        [deactivate_pf_block] .down.> [stop_macos_daemon]
-        [deactivate_windows_firewall_block] .down.> [stop_windows_daemon]
+        [deactivate_pf_block] .down.> [deactivate_hosts_block]
+        [deactivate_windows_firewall_block] .down.> [deactivate_hosts_block]
 
-        [stop_macos_daemon] .down.> [deactivate_block_in_config]
-        [stop_windows_daemon] .down.> [deactivate_block_in_config]
+        [deactivate_hosts_block] .down.> [deactivate_block_in_config]
     }
 }
 
 
-component integrity-fix-feature {
+component IntegrityFix {
     [integrity_fix] <<common>>
 
     [integrity_fix] .down.> [init]
@@ -121,7 +125,7 @@ component integrity-fix-feature {
 }
 
 
-component monitor-process {
+component MonitorProcess {
     [monitor_main] <<monitor>>
     [daemon_watcher] <<monitor>>
     [restore_daemon] <<monitor>>
@@ -131,8 +135,10 @@ component monitor-process {
 }
 
 
-component daemon-feature {
+component DaemonProcess {
     [daemon_main] <<daemon>>
+    [activate_monitor_process_macos] <<daemon>>
+    [activate_monitor_process_windows] <<daemon>>
     [activate_file_watchers] <<daemon>>
     [activate_countdown] <<daemon>>
     [activate_notifications] <<daemon>>
@@ -140,8 +146,13 @@ component daemon-feature {
     [activate_website_softblock_watcher] <<daemon>>
     [allow_softblocked_site] <<daemon>>
 
-    [daemon_main] --> [monitor_main]
-    [daemon_main] .down.> [activate_file_watchers]
+    [daemon_main] .down.> [activate_monitor_process_macos]
+    [daemon_main] .down.> [activate_monitor_process_windows]
+    [activate_monitor_process_macos] --> [monitor_main]
+    [activate_monitor_process_windows] --> [monitor_main]
+
+    [activate_monitor_process_macos] .down.> [activate_file_watchers]
+    [activate_monitor_process_windows] .down.> [activate_file_watchers]
     [activate_file_watchers] --> [integrity_fix]
     [activate_file_watchers] --> [cheater_popup]
 
