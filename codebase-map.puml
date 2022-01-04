@@ -5,6 +5,7 @@ skinparam ArrowFontStyle normal
 
 skinparam component {
     FontColor          black
+    FontColor<<monitor>> white
     AttributeFontColor black
     FontSize           17
     AttributeFontSize  15
@@ -13,45 +14,27 @@ skinparam component {
     BackgroundColor<<common>> #88a2bc
     BackgroundColor<<utils>> #d99477
     BackgroundColor<<daemon>> #efb680
+    BackgroundColor<<monitor>> #4f6a8f
     BorderColor        black
     ArrowColor         #222266
 }
 
 
 [GUI] <<gui>>
-[CLI] <<common>>
-[DAEMON] <<daemon>>
-[MONITOR_PROCESS]
-[UTILS] <<utils>>
-
-[GUI] - [CLI]
 
 [check_for_block] <<utils>>
 [cheater_popup] <<utils>>
 [soft_block_popup] <<utils>>
-[consume_config] <<utils>>
+[show_popup] <<utils>>
 
-
-[UTILS] .down.> [check_for_block]
-[UTILS] .down.> [cheater_popup]
-[UTILS] .down.> [soft_block_popup]
-[UTILS] .down.> [consume_config]
-[UTILS] .down.> [integrity_fix]
-
-
-together {
-    [show_popup] <<common>>
-}
-
-[CLI] .down.> [show_popup]
+[cheater_popup] --> [show_popup]
+[soft_block_popup] --> [show_popup]
 
 component init-sequence-feature {
     [init] <<common>>
     [check_for_config] <<common>>
     [create_config] <<common>>
     [activate_tutorial] <<common>>
-
-    [CLI] .down.> [init]
 
     [init] .down.> [check_for_config]
     [check_for_config] .down.> [create_config]
@@ -66,8 +49,6 @@ component cards-management-feature {
     [delete_card] <<common>>
     [update_card] <<common>>
 
-    [CLI] .down.> [manage_card]
-
     [manage_card] --> [check_for_block]
     [manage_card] .down.> [create_card]
     [manage_card] .down.> [read_cards]
@@ -77,8 +58,6 @@ component cards-management-feature {
 
 component block-management-feature {
     [manage_block] <<common>>
-
-    [CLI] .down.> [manage_block]
 
     component start-block-feature {
         [start_block] <<common>>
@@ -131,6 +110,7 @@ component block-management-feature {
     }
 }
 
+
 component integrity-fix-feature {
     [integrity_fix] <<common>>
 
@@ -141,29 +121,41 @@ component integrity-fix-feature {
 }
 
 
-[DAEMON] .up.> [MONITOR_PROCESS]
-[DAEMON] --> [consume_config]
+component monitor-process {
+    [monitor_main] <<monitor>>
+    [daemon_watcher] <<monitor>>
+    [restore_daemon] <<monitor>>
 
-[activate_file_watchers] <<daemon>>
-[activate_countdown] <<daemon>>
-[activate_app_blocker] <<daemon>>
+    [monitor_main] .down.> [daemon_watcher]
+    [daemon_watcher] .down.> [restore_daemon]
+}
 
-[DAEMON] .down.> [activate_file_watchers]
-[activate_file_watchers] .down.> [integrity_fix]
 
-[activate_file_watchers] .down.> [activate_countdown]
-[activate_countdown] .down.> [end_block]
+component daemon-feature {
+    [daemon_main] <<daemon>>
+    [activate_file_watchers] <<daemon>>
+    [activate_countdown] <<daemon>>
+    [activate_notifications] <<daemon>>
+    [activate_app_blocker] <<daemon>>
+    [activate_website_softblock_watcher] <<daemon>>
+    [allow_softblocked_site] <<daemon>>
 
-[activate_file_watchers] .down.> [activate_app_blocker]
-[activate_app_blocker] .up.> [soft_block_popup]
+    [daemon_main] --> [monitor_main]
+    [daemon_main] .down.> [activate_file_watchers]
+    [activate_file_watchers] --> [integrity_fix]
+    [activate_file_watchers] --> [cheater_popup]
 
-[activate_file_watchers] .down.> [activate_website_softblock]
-[activate_website_softblock] .down.> [activate_hosts_softblock]
-[activate_hosts_softblock] .up.> [soft_block_popup]
-[activate_website_softblock] .down.> [deactivate_hosts_softblock]
+    [activate_file_watchers] .down.> [activate_countdown]
+    [activate_countdown] --> [end_block]
 
-[MONITOR_PROCESS] .up.> [consume_config]
-[MONITOR_PROCESS] .down.> [daemon_watcher]
-[daemon_watcher] .down.> [restore_daemon]
+    [activate_countdown] .down.> [activate_notifications]
+    [activate_notifications] .down.> [activate_app_blocker]
+    [activate_app_blocker] --> [soft_block_popup]
+
+    [activate_app_blocker] .down.> [activate_website_softblock_watcher]
+    [activate_website_softblock_watcher] --> [soft_block_popup]
+    [activate_website_softblock_watcher] .down.> [allow_softblocked_site]
+}
+
 
 @enduml
