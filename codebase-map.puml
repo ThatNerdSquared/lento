@@ -1,5 +1,7 @@
 @startuml
 skinparam componentStyle uml2
+skinparam linetype ortho
+skinparam ArrowFontStyle normal
 
 skinparam component {
     FontColor          black
@@ -7,96 +9,147 @@ skinparam component {
     FontSize           17
     AttributeFontSize  15
     AttributeFontname  Droid Sans Mono
-    BackgroundColor    #6A9EFF
+    BackgroundColor<<gui>> #f0dbb0
+    BackgroundColor<<common>> #88a2bc
+    BackgroundColor<<utils>> #d99477
+    BackgroundColor<<daemon>> #efb680
     BorderColor        black
     ArrowColor         #222266
 }
 
-[GUI]
-[CLI]
-[DAEMON]
+
+[GUI] <<gui>>
+[CLI] <<common>>
+[DAEMON] <<daemon>>
 [MONITOR_PROCESS]
-[HELPERS]
+[UTILS] <<utils>>
 
 [GUI] - [CLI]
 
-[HELPERS] .down.> [encrypt_data]
-[HELPERS] .down.> [decrypt_data]
-[HELPERS] .down.> [check_for_block]
-[HELPERS] .down.> [cheater_popup]
-[HELPERS] .down.> [soft_block_popup]
-[HELPERS] .down.> [consume_config]
-[HELPERS] .down.> [end_block]
-[HELPERS] .down.> [integrity_fix]
-
-[check_for_block] .up.> [decrypt_data]
+[check_for_block] <<utils>>
+[cheater_popup] <<utils>>
+[soft_block_popup] <<utils>>
+[consume_config] <<utils>>
 
 
-[end_block] .up.> [check_for_block]
-[end_block] .up.> [deactivate_hosts_block]
-[end_block] .down.> [deactivate_pf_block]
-[end_block] .down.> [deactivate_windows_firewall_block]
-[deactivate_pf_block] .down.> [stop_macos_daemon]
-[deactivate_windows_firewall_block] .down.> [stop_windows_daemon]
-[stop_macos_daemon] .down.> [deactivate_block_in_config]
-[stop_windows_daemon] .down.> [deactivate_block_in_config]
-[deactivate_block_in_config] .up.> [encrypt_data]
+[UTILS] .down.> [check_for_block]
+[UTILS] .down.> [cheater_popup]
+[UTILS] .down.> [soft_block_popup]
+[UTILS] .down.> [consume_config]
+[UTILS] .down.> [integrity_fix]
 
 
+together {
+    [show_popup] <<common>>
+}
 
-[CLI] .down.> [init]
-[CLI] .down.> [manage_blocklist]
-[CLI] .down.> [manage_block]
-[CLI] .down.> [integrity_fix]
 [CLI] .down.> [show_popup]
 
-[init] .down.> [check_for_config]
-[check_for_config] .down.> [create_config]
-[create_config] .down.> [activate_tutorial]
+component init-sequence-feature {
+    [init] <<common>>
+    [check_for_config] <<common>>
+    [create_config] <<common>>
+    [activate_tutorial] <<common>>
+
+    [CLI] .down.> [init]
+
+    [init] .down.> [check_for_config]
+    [check_for_config] .down.> [create_config]
+    [create_config] .down.> [activate_tutorial]
+}
 
 
-[manage_blocklist] .up.> [check_for_block]
-[manage_blocklist] .down.> [get_blocklists]
-[manage_blocklist] .down.> [add_blocklist]
-[manage_blocklist] .down.> [remove_blocklist]
-[manage_blocklist] .down.> [edit_blocklist]
+component cards-management-feature {
+    [manage_card] <<common>>
+    [read_cards] <<common>>
+    [create_card] <<common>>
+    [delete_card] <<common>>
+    [update_card] <<common>>
 
-[get_blocklists] .up.> [decrypt_data]
-[add_blocklist] .up.> [encrypt_data]
-[edit_blocklist] .up.> [encrypt_data]
+    [CLI] .down.> [manage_card]
 
+    [manage_card] --> [check_for_block]
+    [manage_card] .down.> [create_card]
+    [manage_card] .down.> [read_cards]
+    [manage_card] .down.> [update_card]
+    [manage_card] .down.> [delete_card]
+}
 
-[manage_block] .up.> [check_for_block]
-[manage_block] .down.> [start_block]
-[manage_block] .down.> [end_block]
+component block-management-feature {
+    [manage_block] <<common>>
 
-[start_block] .up.> [decrypt_data]
-[start_block] .down.> [activate_hosts_block]
-[start_block] .down.> [activate_pf_block]
-[start_block] .down.> [activate_windows_firewall_block]
+    [CLI] .down.> [manage_block]
 
-[activate_pf_block] .down.> [generate_daemon_plist]
-[activate_windows_firewall_block] .down.> [start_windows_daemon]
+    component start-block-feature {
+        [start_block] <<common>>
+        [activate_hosts_block] <<common>>
+        [activate_pf_block] <<common>>
+        [activate_windows_firewall_block] <<common>>
+        [generate_daemon_plist] <<common>>
+        [start_macos_daemon] <<common>>
+        [start_windows_daemon] <<common>>
+        [activate_block_in_config] <<common>>
 
-[generate_daemon_plist] .down.> [start_macos_daemon]
-[start_macos_daemon] .down.> [activate_block_in_config]
-[start_windows_daemon] .down.> [activate_block_in_config]
+        [manage_block] .down.> [start_block]
 
-[activate_block_in_config] .up.> [encrypt_data]
+        [start_block] --> [check_for_block]
+        [start_block] .down.> [activate_hosts_block]
 
+        [activate_hosts_block] .down.> [activate_pf_block]
+        [activate_hosts_block] .down.> [activate_windows_firewall_block]
 
-[integrity_fix] .down.> [init]
-[integrity_fix] .up.> [cheater_popup]
-[integrity_fix] .down.> [end_block]
-[integrity_fix] .down.> [start_block]
+        [activate_pf_block] .down.> [generate_daemon_plist]
+        [activate_windows_firewall_block] .down.> [start_windows_daemon]
 
+        [generate_daemon_plist] .down.> [start_macos_daemon]
+        [start_macos_daemon] .down.> [activate_block_in_config]
+        [start_windows_daemon] .down.> [activate_block_in_config]
+    }
+
+    component block-ending-feature {
+        [end_block] <<common>>
+        [deactivate_hosts_block] <<common>>
+        [deactivate_pf_block] <<common>>
+        [deactivate_windows_firewall_block] <<common>>
+        [stop_macos_daemon] <<common>>
+        [stop_windows_daemon] <<common>>
+        [deactivate_block_in_config] <<common>>
+
+        [manage_block] .down.> [end_block]
+
+        [end_block] --> [check_for_block]
+        [end_block] .down.> [deactivate_hosts_block]
+
+        [deactivate_hosts_block] .down.> [deactivate_pf_block]
+        [deactivate_hosts_block] .down.> [deactivate_windows_firewall_block]
+
+        [deactivate_pf_block] .down.> [stop_macos_daemon]
+        [deactivate_windows_firewall_block] .down.> [stop_windows_daemon]
+
+        [stop_macos_daemon] .down.> [deactivate_block_in_config]
+        [stop_windows_daemon] .down.> [deactivate_block_in_config]
+    }
+}
+
+component integrity-fix-feature {
+    [integrity_fix] <<common>>
+
+    [integrity_fix] .down.> [init]
+    [integrity_fix] --> [cheater_popup]
+    [integrity_fix] .down.> [end_block]
+    [integrity_fix] .down.> [start_block]
+}
 
 
 [DAEMON] .up.> [MONITOR_PROCESS]
-[DAEMON] .up.> [consume_config]
+[DAEMON] --> [consume_config]
+
+[activate_file_watchers] <<daemon>>
+[activate_countdown] <<daemon>>
+[activate_app_blocker] <<daemon>>
+
 [DAEMON] .down.> [activate_file_watchers]
 [activate_file_watchers] .down.> [integrity_fix]
-[activate_file_watchers] .up.> [decrypt_data]
 
 [activate_file_watchers] .down.> [activate_countdown]
 [activate_countdown] .down.> [end_block]
