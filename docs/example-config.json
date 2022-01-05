@@ -5,6 +5,7 @@
             "id": "0025bc7c-1d1b-4bca-84d7-9bb59f204e2d",
             "name": "Code Wrangling",
             "emoji": "💻",
+            "time": 5400,
             "hard_blocked_sites": [
                 "twitter.com",
                 "talk.macpowerusers.com"
@@ -25,19 +26,16 @@
                     "type": "text",
                     "minutes_between_repeats": "15",
                     "content": "Get back to work!",
-                    "is_notif_sound_active": false
+                    "audio_paths": {
+                        "reminder": "~/Desktop/reminder.mp3",
+                        "Frog": "/System/Library/Sounds/Frog.aiff"
+                    }
                 },
                 "eafcf1d0-49b8-4f43-8fcb-9600c12ecc6f": {
                     "type": "popup",
                     "minutes_between_repeats": "20",
                     "content": "Stop getting distracted!",
-                    "is_notif_sound_active": true
-                },
-                "80bf12c3-d3b2-49d1-b08f-4653e6bfe633": {
-                    "type": "audio",
-                    "minutes_between_repeats": "20",
-                    "content": "~/Desktop/reminder.mp3",
-                    "is_notif_sound_active": false
+                    "audio_paths": { }
                 }
             }
         }

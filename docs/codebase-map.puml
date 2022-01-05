@@ -47,12 +47,16 @@ component CardsManagement {
     [read_cards] <<common>>
     [create_card] <<common>>
     [delete_card] <<common>>
-    [update_card] <<common>>
+    [update_metadata] <<common>>
+    [update_blocklists] <<common>>
+    [update_notifications] <<common>>
 
     [manage_card] --> [check_for_block]
     [manage_card] .down.> [create_card]
     [manage_card] .down.> [read_cards]
-    [manage_card] .down.> [update_card]
+    [manage_card] .down.> [update_metadata]
+    [manage_card] .down.> [update_blocklists]
+    [manage_card] .down.> [update_notifications]
     [manage_card] .down.> [delete_card]
 }
 
