@@ -26,19 +26,20 @@ skinparam component {
 [cheater_popup] <<utils>>
 [soft_block_popup] <<utils>>
 [show_popup] <<utils>>
+[transitions] <<utils>>
 
 [cheater_popup] --> [show_popup]
 [soft_block_popup] --> [show_popup]
 
 component InitSequence {
     [init] <<common>>
-    [check_for_config] <<common>>
-    [create_config] <<common>>
+    [check_for_settings] <<common>>
+    [create_settings] <<common>>
     [activate_tutorial] <<common>>
 
-    [init] .down.> [check_for_config]
-    [check_for_config] .down.> [create_config]
-    [create_config] .down.> [activate_tutorial]
+    [init] .down.> [check_for_settings]
+    [check_for_settings] .down.> [create_settings]
+    [create_settings] .down.> [activate_tutorial]
 }
 
 
@@ -58,6 +59,8 @@ component CardsManagement {
     [manage_card] .down.> [update_blocklists]
     [manage_card] .down.> [update_notifications]
     [manage_card] .down.> [delete_card]
+
+    [delete_card] --> [show_popup]
 }
 
 component BlockManagement {
@@ -71,7 +74,7 @@ component BlockManagement {
         [generate_daemon_plist] <<common>>
         [start_macos_daemon] <<common>>
         [start_windows_daemon] <<common>>
-        [activate_block_in_config] <<common>>
+        [activate_block_in_settings] <<common>>
 
         [manage_block] .down.> [start_block]
 
@@ -85,8 +88,8 @@ component BlockManagement {
         [activate_windows_firewall_block] .down.> [start_windows_daemon]
 
         [generate_daemon_plist] .down.> [start_macos_daemon]
-        [start_macos_daemon] .down.> [activate_block_in_config]
-        [start_windows_daemon] .down.> [activate_block_in_config]
+        [start_macos_daemon] .down.> [activate_block_in_settings]
+        [start_windows_daemon] .down.> [activate_block_in_settings]
     }
 
     component EndBlock {
@@ -98,7 +101,7 @@ component BlockManagement {
         [deactivate_windows_firewall_block] <<common>>
         [stop_macos_daemon] <<common>>
         [stop_windows_daemon] <<common>>
-        [deactivate_block_in_config] <<common>>
+        [deactivate_block_in_settings] <<common>>
 
         [manage_block] .down.> [end_block]
 
@@ -114,7 +117,7 @@ component BlockManagement {
         [deactivate_pf_block] .down.> [deactivate_hosts_block]
         [deactivate_windows_firewall_block] .down.> [deactivate_hosts_block]
 
-        [deactivate_hosts_block] .down.> [deactivate_block_in_config]
+        [deactivate_hosts_block] .down.> [deactivate_block_in_settings]
     }
 }
 
@@ -172,5 +175,36 @@ component DaemonProcess {
     [activate_website_softblock_watcher] .down.> [allow_softblocked_site]
 }
 
+
+component Deck {
+    [splash_screen] <<gui>> 
+    [deck] <<gui>>
+    [card_gallery] <<gui>>
+    [toolbar] <<gui>>
+    [settings_pane] <<gui>>
+    [notifications_editor] <<gui>>
+    [empty_deck_card] <<gui>>
+
+    [GUI] .down.> [splash_screen]
+    [splash_screen] --> [transitions]
+    [splash_screen] .down.> [deck]
+    [deck] .down.> [card_gallery]
+    [deck] .down.> [toolbar]
+    [deck] .down.> [empty_deck_card]
+
+    [empty_deck_card] .down.> [create_card]
+
+    [card_gallery] .down.> [read_cards]
+    [card_gallery] --> [show_popup]
+    [card_gallery] .down.> [update_blocklists]
+    [card_gallery] .down.> [update_metadata]
+
+    [card_gallery] .down.> [notifications_editor]
+    [notifications_editor] .down.> [update_notifications]
+
+    [toolbar] .down.> [create_card]
+    [toolbar] .down.> [delete_card]
+    [toolbar] .down.> [settings_pane]
+}
 
 @enduml
