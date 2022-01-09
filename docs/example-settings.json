@@ -1,0 +1,63 @@
+{
+    "is_block_running": true,
+    "cards": {
+        "Code Wrangling": {
+            "id": "0025bc7c-1d1b-4bca-84d7-9bb59f204e2d",
+            "name": "Code Wrangling",
+            "emoji": "💻",
+            "time": 5400,
+            "hard_blocked_sites": {
+                "twitter.com":  false,
+                "talk.macpowerusers.com": true,
+            },
+            "soft_blocked_sites": {
+                "youtube.com": true
+            },
+            "hard_blocked_apps": {
+                "GRIS": true,
+                "Into the Breach": true
+            },
+            "soft_blocked_apps": {
+                "NetNewsWire": true,
+                "calibre": false
+            },
+            "notifications": {
+                "a019868e-f43f-478f-8dcc-ba78c35525c4": {
+                    "type": "banner",
+                    "blocked_visit_triggers": [
+                        "youtube.com",
+                        "twitter.com"
+                    ],
+                    "associated_goals": [
+                        "Debug USACO problem"
+                    ],
+                    "time_interval_trigger": none,
+                    "text": "Get back to %g!",
+                    "audio_paths": {
+                        "reminder": "~/Desktop/reminder.mp3",
+                        "Frog": "/System/Library/Sounds/Frog.aiff"
+                    }
+                },
+                "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
+                    "type": "popup",
+                    "blocked_visit_triggers": [ ],
+                    "associated_goals": [
+                        "Create pet AI"
+                    ],
+                    "time_interval_trigger": 900000,
+                    "text": "Work on %g",
+                    "audio_paths": {
+                        "Bloop": "/System/Library/Sounds/Bloop.aiff"
+                    }
+                }
+            },
+            "goals": [
+                "Debug pet AI",
+                "Solve USACO problem"
+            ]
+        }
+    },
+    "application_settings": {
+        "theme": "automatic"
+    }
+}
