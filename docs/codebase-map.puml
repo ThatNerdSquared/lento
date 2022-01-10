@@ -51,6 +51,7 @@ component CardsManagement {
     [update_metadata] <<common>>
     [update_blocklists] <<common>>
     [update_notifications] <<common>>
+    [update_goals] <<common>>
 
     [manage_card] --> [check_for_block]
     [manage_card] .down.> [create_card]
@@ -58,6 +59,7 @@ component CardsManagement {
     [manage_card] .down.> [update_metadata]
     [manage_card] .down.> [update_blocklists]
     [manage_card] .down.> [update_notifications]
+    [manage_card] .down.> [update_goals]
     [manage_card] .down.> [delete_card]
 
     [delete_card] --> [show_popup]
@@ -181,9 +183,8 @@ component Deck {
     [deck] <<gui>>
     [card_gallery] <<gui>>
     [toolbar] <<gui>>
-    [settings_pane] <<gui>>
-    [notifications_editor] <<gui>>
     [empty_deck_card] <<gui>>
+    [settings_pane] <<gui>>
 
     [GUI] .down.> [splash_screen]
     [splash_screen] --> [transitions]
@@ -195,16 +196,36 @@ component Deck {
     [empty_deck_card] .down.> [create_card]
 
     [card_gallery] .down.> [read_cards]
-    [card_gallery] --> [show_popup]
-    [card_gallery] .down.> [update_blocklists]
-    [card_gallery] .down.> [update_metadata]
-
-    [card_gallery] .down.> [notifications_editor]
-    [notifications_editor] .down.> [update_notifications]
 
     [toolbar] .down.> [create_card]
     [toolbar] .down.> [delete_card]
+    [delete_card] --> [show_popup]
     [toolbar] .down.> [settings_pane]
+}
+
+component Card {
+    [card] <<gui>>
+    [title] <<gui>>
+    [time_box] <<gui>>
+    [toggle] <<gui>>
+    [notifications_editor] <<gui>>
+    [linked_items_editor] <<gui>>
+
+    [card_gallery] .down.> [card]
+
+    [card] .down.> [title]
+    [card] .down.> [time_box]
+    [card] .down.> [toggle]
+
+    [title] .down.> [update_metadata]
+    [time_box] .down.> [update_metadata]
+    [toggle] .down.> [update_blocklists]
+    [toggle] --> [transitions]
+    [toggle] .down.> [notifications_editor]
+    [toggle] .down.> [update_goals]
+
+    [notifications_editor] .down.> [linked_items_editor]
+    [notifications_editor] .down.> [update_notifications]
 }
 
 @enduml
