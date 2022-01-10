@@ -31,7 +31,7 @@
                     "associated_goals": [
                         "Debug USACO problem"
                     ],
-                    "time_interval_trigger": none,
+                    "time_interval_trigger": null,
                     "text": "Get back to %g!",
                     "audio_paths": {
                         "reminder": "~/Desktop/reminder.mp3",
