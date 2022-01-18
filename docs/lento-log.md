@@ -95,3 +95,23 @@ Rough notes from the meeting:
 It's now a lot clearer. Major sections (GUI, common backend, daemon, etc) are delineated by colour, and the functions for different features are grouped together through rectangular dividers. This will be useful as we move into scheduling/dividing work and actual implementation. I've also merged in Charlie's ideas from our earlier conversation, fully merging our two projects.
 
 In addition, I've moved this log and other existing Lento documentation into the shared repo so that Charlie has full access to read/edit/add/comment.
+
+## 2022-01-09
+`Nathan:` Took some time to read over the saved articles that we added to our Raindrop.io collection, just to make sure I was familiar with all the concepts that we were going to need. Based on my experiences with past software development projects, I think it'll be beneficial to create a small app that prototypes some of the concepts that we're going to use in Lento.
+
+## 2022-01-10
+`Nathan`: Started on an app called [Peregrine](https://github.com/ThatNerdSquared/peregrine). The ideas and philosophy behind Peregrine is mostly unrelated to Lento, and I've been wanting to build it for a long time. However, I've noticed that a lot of the basic implementation is actually quite similar in terms of what the code needs to do and how the app is structured. So, I've decided to build a basic version of Peregrine as a prototype for Lento.
+
+So far, work on Peregrine has been massively productive. Not only have I managed to build a beta version of Peregrine, I've also been able to see how concepts for Lento will fit together in a real-life software scenario. I've already gotten comfortable with PySide for laying out graphical interfaces and have a good mental model of how the GUI and backend fit together. I've also been able to get some hands-on practice with some general Python tools such as pytest.
+
+It's worth talking about some initial obstacles I had to troubleshoot with this prototype. First, I ended up having to diverge from my original plan of what tool to use for linting. Initially, I planned to use pylint to enforce a consistent style across our code. However, it kept showing cryptic, unsolvable errors related to something within the PySide package. After poking around online for a while I discovered that the problem was caused by pylint and PySide6 not having full support for each other. I decided to solve this problem by replacing pylint with flake8. This was a fairly easy fix.
+
+I also had to overcome an issue with the scrolling log entry interface. The log interface had to be able to scroll in reverse chronological order, as well as wrap text. I couldn't figure out how to to do this for a while. Eventually, after consulting some online documentation and experimenting with different methods, I managed to settle on a solution using a specific combination of QScrollView() and layouts.
+
+## 2022-01-16
+Over the last few days, I've been fixing up some smaller issues with Peregrine. I'm coming to a close with my work on it as a prototype for Lento. Soon, I'll port some parts of Peregrine over to Lento and then stop work on Peregrine until after Lento v1.
+
+The last interesting problem I've encountered with Peregrine involves packaging the Python code into OS-specific app packages. We're using PyInstaller to do this with both Peregrine and Lento. The problem is that PyInstaller requires a certain setup for each OS. For example, the command you need to run to use PyInstaller on macOS differs slightly with the command you need to use on Windows. I spent an hour or two working out the nuances of these setups with Charlie, switching between macOS and Windows to rapidly iterate on my ideas. After a bit of experimenting, I managed to work out the correct configuration for each platform. This was a great experience as I can directly port the PyInstaller setup from Peregrine to Lento, completely avoiding these problems next time.
+
+## 2022-01-18
+Updated some of the docs for Lento to note down all of the things I've learned from the Peregrine prototype.
