@@ -75,7 +75,10 @@
 - Python (stdlib not included)
     - PySide/QT (GUI)
     - PyObjC (monitoring for app launches, macOS)
-    - PyInstaller (packaging + binaries)
+    - Watchdog (file watching)
+    - PyInstaller (turning Python project packaging + binaries)
+    - PyTest (unit testing)
+    - flake8 (linting)
 - System
     - pf firewall (blocking IPs, macOS)
     - Windows Firewall via Powershell (blocking IPs, Windows)
