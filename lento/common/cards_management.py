@@ -26,3 +26,10 @@ def create_card():
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)
+
+
+def read_cards():
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        settings = json.load(settings_json)
+    return settings['cards']
