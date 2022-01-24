@@ -38,3 +38,16 @@ def test_read_cards_returns_correct_data(monkeypatch, tmp_path):
     assert expected_result == cards
 
 
+def test_delete_card_works_correctly(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["filled_config"], settings_json)
+
+    CardsManagement.delete_card("Llama Taming")
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        new_settings = json.load(settings_json)
+
+    expected_result = helpers.data["bare_config"]
+    assert expected_result == new_settings
