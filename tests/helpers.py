@@ -13,7 +13,7 @@ data = {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
                 "name": "Untitled Card",
                 "emoji": "😃",
-                "time": "0",
+                "time": 0,
                 "hard_blocked_sites": {},
                 "soft_blocked_sites": {},
                 "hard_blocked_apps": {},
@@ -33,7 +33,7 @@ data = {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
                 "name": "Untitled Card",
                 "emoji": "😃",
-                "time": "0",
+                "time": 0,
                 "hard_blocked_sites": {},
                 "soft_blocked_sites": {},
                 "hard_blocked_apps": {},
@@ -45,7 +45,7 @@ data = {
                 "id": "e68d8993-ee30-4e3f-941b-43c074e2759c",
                 "name": "Llama Taming",
                 "emoji": "🦙",
-                "time": "5,400",
+                "time": 5400,
                 "hard_blocked_sites": {
                     "twitter.com": True
                 },
@@ -73,6 +73,26 @@ data = {
                     }
                 },
                 "goals": ["Obtain llama"]
+            }
+        },
+        "application_settings": {
+            "theme": "automatic"
+        }
+    },
+    "updated_bare_config": {
+        "is_block_running": False,
+        "cards": {
+            "World Domination": {
+                "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
+                "name": "World Domination",
+                "emoji": "😃",
+                "time": 0,
+                "hard_blocked_sites": {},
+                "soft_blocked_sites": {},
+                "hard_blocked_apps": {},
+                "soft_blocked_apps": {},
+                "notifications": {},
+                "goals": []
             }
         },
         "application_settings": {
