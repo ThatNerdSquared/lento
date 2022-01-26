@@ -109,9 +109,17 @@ It's worth talking about some initial obstacles I had to troubleshoot with this 
 I also had to overcome an issue with the scrolling log entry interface. The log interface had to be able to scroll in reverse chronological order, as well as wrap text. I couldn't figure out how to to do this for a while. Eventually, after consulting some online documentation and experimenting with different methods, I managed to settle on a solution using a specific combination of QScrollView() and layouts.
 
 ## 2022-01-16
-Over the last few days, I've been fixing up some smaller issues with Peregrine. I'm coming to a close with my work on it as a prototype for Lento. Soon, I'll port some parts of Peregrine over to Lento and then stop work on Peregrine until after Lento v1.
+`Nathan:` Over the last few days, I've been fixing up some smaller issues with Peregrine. I'm coming to a close with my work on it as a prototype for Lento. Soon, I'll port some parts of Peregrine over to Lento and then stop work on Peregrine until after Lento v1.
 
 The last interesting problem I've encountered with Peregrine involves packaging the Python code into OS-specific app packages. We're using PyInstaller to do this with both Peregrine and Lento. The problem is that PyInstaller requires a certain setup for each OS. For example, the command you need to run to use PyInstaller on macOS differs slightly with the command you need to use on Windows. I spent an hour or two working out the nuances of these setups with Charlie, switching between macOS and Windows to rapidly iterate on my ideas. After a bit of experimenting, I managed to work out the correct configuration for each platform. This was a great experience as I can directly port the PyInstaller setup from Peregrine to Lento, completely avoiding these problems next time.
 
 ## 2022-01-18
-Updated some of the docs for Lento to note down all of the things I've learned from the Peregrine prototype.
+`Nathan:` Updated some of the docs for Lento to note down all of the things I've learned from the Peregrine prototype.
+
+## 2022-01-23
+`Nathan:` Started on the CardsManagement part of the backend. Hoping to write clean code with 100% test coverage. CardsManagement is easier to test and think about than the other parts of the backend so I'm starting with it as a sort of warm-up.
+
+`Charlie:` Started on GUI — Currently learning GUI design with PySide and Qt, wiped computer and set up coding environments again. Currently planning each part of GUI code, scoping out functions needed + requirements + linking w/backend. Experimenting with colours, widget design, page layout, and animations in PySide — mapping out more interfaces as I go.
+
+## 2022-01-25
+We ran through a bunch of [CodeWars](https://www.codewars.com) problems today. While not directly related to Lento, they sharpened our skills with Python, which will make development faster/easier. This is especially important for me (Nathan), as I'm coming from JS/TS and am still getting used to/learning Python.

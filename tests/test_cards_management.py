@@ -126,5 +126,32 @@ def test_update_metdata_denies_incorrect_card_name_or_field(
             "World Domination"
         )
 
-# test_update_metadata_denies_restricted_field_change
-# test_update_metadata_validates_time_as_number
+
+def test_update_metadata_denies_restricted_field_change(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config"], settings_json)
+
+    with pytest.raises(Exception):
+        CardsManagement.update_metadata(
+            "Untitled Card",
+            "id",
+            "5d15e4f7-e08e-4f91-9713-fa46f13a9761"
+        )
+
+
+def test_update_metadata_validates_time_as_number(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config"], settings_json)
+
+    with pytest.raises(ValueError):
+        CardsManagement.update_metadata(
+            "Untitled Card",
+            "time",
+            "Eternal Reign of the Llama Lords"
+        )

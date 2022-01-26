@@ -51,6 +51,11 @@ def update_metadata(card_to_modify, field_to_modify, new_value):
 
     if settings["cards"][card_to_modify][field_to_modify] is None:
         raise Exception("Card field is nonexistent!")
+    elif field_to_modify not in ["name", "emoji", "time"]:
+        raise Exception("Card field is restricted!")
+    elif field_to_modify == "time":
+        new_value = float(new_value)
+
     settings["cards"][card_to_modify][field_to_modify] = new_value
     if field_to_modify == "name":
         new_cards = {
