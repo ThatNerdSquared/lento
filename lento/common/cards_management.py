@@ -1,6 +1,7 @@
 import json
 import os
 import uuid
+from lento.utils import is_url
 
 
 def create_card():
@@ -64,5 +65,26 @@ def update_metadata(card_to_modify, field_to_modify, new_value):
         }
         settings["cards"] = new_cards
 
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(settings, settings_json)
+
+
+def update_site_blocklists(card_to_modify, list_to_modify, new_value):
+    """Update either the `hard_blocked_sites` or `soft_blocked_sites` lists."""
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        settings = json.load(settings_json)
+
+    if settings["cards"][card_to_modify][list_to_modify] is None:
+        raise Exception("List is nonexistent!")
+    elif list_to_modify not in [
+                "hard_blocked_sites",
+                "soft_blocked_sites"
+            ]:
+        raise Exception("Card field is restricted!")
+    elif is_url(new_value) is False:
+        raise Exception("URL not valid!")
+
+    settings["cards"][card_to_modify][list_to_modify][new_value] = True
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)

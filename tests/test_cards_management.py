@@ -155,3 +155,83 @@ def test_update_metadata_validates_time_as_number(monkeypatch, tmp_path):
             "time",
             "Eternal Reign of the Llama Lords"
         )
+
+
+def test_update_site_blocklists_correctly_adds_data(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config"], settings_json)
+
+    CardsManagement.update_site_blocklists(
+        "Untitled Card",
+        "hard_blocked_sites",
+        "https://youtube.com"
+    )
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        new_settings = json.load(settings_json)
+
+    cards_dict = new_settings["cards"]["Untitled Card"]
+
+    assert "https://youtube.com" in cards_dict["hard_blocked_sites"]
+    assert cards_dict["hard_blocked_sites"]["https://youtube.com"] is True
+
+
+def test_update_site_blocklists_denies_malformed_data(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config"], settings_json)
+
+    with pytest.raises(Exception, match="URL not valid!"):
+        CardsManagement.update_site_blocklists(
+            "Untitled Card",
+            "hard_blocked_sites",
+            "llama"
+        )
+
+
+def test_update_site_blocklists_denies_incorrect_card_or_list_name(
+            monkeypatch,
+            tmp_path
+        ):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config"], settings_json)
+
+    with pytest.raises(KeyError):
+        CardsManagement.update_site_blocklists(
+            "Untitled Card",
+            "hard_blocked_NIGHTS",
+            "https://youtube.com"
+        )
+
+    with pytest.raises(KeyError):
+        CardsManagement.update_site_blocklists(
+            "Llama Taming",
+            "hard_blocked_sites",
+            "https://youtube.com"
+        )
+
+
+def test_update_site_blocklists_denies_restricted_field_change(
+            monkeypatch,
+            tmp_path
+        ):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config"], settings_json)
+
+    with pytest.raises(Exception, match="Card field is restricted!"):
+        CardsManagement.update_site_blocklists(
+            "Untitled Card",
+            "hard_blocked_apps",
+            "org.zotero.zotero"
+        )
+
