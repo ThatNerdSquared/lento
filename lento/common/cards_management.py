@@ -1,5 +1,7 @@
 import json
 import os
+import platform
+import subprocess
 import uuid
 from lento.utils import is_url
 
@@ -86,5 +88,28 @@ def update_site_blocklists(card_to_modify, list_to_modify, new_value):
         raise Exception("URL not valid!")
 
     settings["cards"][card_to_modify][list_to_modify][new_value] = True
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(settings, settings_json)
+
+
+def update_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        settings = json.load(settings_json)
+
+    card = settings["cards"][card_to_modify]
+
+    for app in apps_to_add:
+        current_os = platform.system()
+        if current_os == "Darwin":
+            bundle_id = subprocess.check_output([
+                "mdls",
+                "-name",
+                "kMDItemCFBundleIdentifier",
+                "-r",
+                app
+            ])
+            card[list_to_modify][bundle_id.decode("utf-8")] = True
+
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)

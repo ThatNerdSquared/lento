@@ -100,3 +100,13 @@ data = {
         }
     }
 }
+
+
+def fake_bundle_id(args):
+    app = args[-1]
+    cases = {
+        "/Applications/GRIS.app": b"unity.nomada studio.GRIS",
+        "/Applications/Scrivener.app": b"com.literatureandlatte.scrivener3",
+        "/Applications/NetNewsWire.app": b"com.ranchero.NetNewsWire-Evergreen"
+    }
+    return cases[app]

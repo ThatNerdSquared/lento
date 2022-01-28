@@ -1,7 +1,9 @@
 import copy
 import json
 import os
+import platform
 import pytest
+import subprocess
 import uuid
 import lento.common.cards_management as CardsManagement
 from tests import helpers
@@ -157,7 +159,7 @@ def test_update_metadata_validates_time_as_number(monkeypatch, tmp_path):
         )
 
 
-def test_update_site_blocklists_correctly_adds_data(monkeypatch, tmp_path):
+def test_update_site_blocklists_adds_data(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
 
@@ -235,3 +237,34 @@ def test_update_site_blocklists_denies_restricted_field_change(
             "org.zotero.zotero"
         )
 
+
+def test_update_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    monkeypatch.setattr(platform, "system", lambda: "Darwin")
+    monkeypatch.setattr(subprocess, "check_output", helpers.fake_bundle_id)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config"], settings_json)
+
+    CardsManagement.update_app_blocklists(
+        "Untitled Card",
+        "hard_blocked_apps",
+        [
+            "/Applications/GRIS.app",
+            "/Applications/Scrivener.app",
+            "/Applications/NetNewsWire.app"
+        ]
+    )
+
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        new_settings = json.load(settings_json)
+
+    list = new_settings["cards"]["Untitled Card"]["hard_blocked_apps"]
+
+    assert "unity.nomada studio.GRIS" in list
+    assert "com.literatureandlatte.scrivener3" in list
+    assert "com.ranchero.NetNewsWire-Evergreen" in list
+    assert list["unity.nomada studio.GRIS"] is True
+    assert list["com.literatureandlatte.scrivener3"] is True
+    assert list["com.ranchero.NetNewsWire-Evergreen"] is True

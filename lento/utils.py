@@ -1,4 +1,5 @@
 import os
+import platform
 import sys
 from urllib.parse import urlparse
 
@@ -27,3 +28,18 @@ def is_url(url):
         return False
 
     return True
+
+
+def get_apps():
+    current_os = platform.system()
+    apps = []
+    if current_os == "Windows":
+        print("todo")
+    elif current_os == "Darwin":
+        print("todo_darwing")
+    else:
+        raise Exception(
+            "Something went wrong and the OS name could not be found."
+        )
+
+    return(apps)
