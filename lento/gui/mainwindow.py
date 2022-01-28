@@ -1,5 +1,5 @@
 from PySide6.QtCore import QSize
-from PySide6.QtWidgets import QApplication, QLabel, QMainWindow, QVBoxLayout, QWidget  # noqa: E501
+from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QPushButton, QVBoxLayout, QWidget  # noqa: E501
 
 
 class MainWindow(QMainWindow):
@@ -15,12 +15,25 @@ class MainWindow(QMainWindow):
 
         layout = QVBoxLayout()
         text = QLabel("Hello World!")
+        button = QPushButton("Summon Llama")
+        button.setEnabled(True)
+        button.clicked.connect(self.add_item)
 
         layout.addWidget(text)
+        layout.addWidget(button)
         widget = QWidget()
         widget.setLayout(layout)
 
         self.setCentralWidget(widget)
+
+    def add_item(self):
+        dialog = QFileDialog()
+        dialog.setFileMode(QFileDialog.ExistingFiles)
+        dialog.setDirectory("/Applications/")
+        dialog.setNameFilter(("Applications (*.app)"))
+        if dialog.exec():
+            fileNames = dialog.selectedFiles()
+            print(fileNames)
 
 
 def main():
