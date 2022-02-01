@@ -62,6 +62,13 @@ elif f == "update_metadata":
 elif f == "update_site_blocklist":
     r = cards_management.update_site_blocklists(param, param2, param3)
     result_options["output"] = cards_management.read_cards()
+elif f == "add_to_app_blocklists":
+    r = cards_management.add_to_app_blocklists(
+        param,
+        param2,
+        param3.split(",")
+    )
+    result_options["output"] = cards_management.read_cards()
 elif f == "get_apps":
     r = utils.get_apps()
 else:

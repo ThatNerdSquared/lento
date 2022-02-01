@@ -14,12 +14,28 @@
                 "youtube.com": true
             },
             "hard_blocked_apps": {
-                "GRIS": true,
-                "Into the Breach": true
+                "GRIS": {
+                    "enabled": true,
+                    "bundle_id": "unity.nomada studio.GRIS",
+                    "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"
+                },
+                "Into the Breach": {
+                    "enabled": true,
+                    "bundle_id": "subset.Into-the-Breach",
+                    "app_icon_path": "~/Library/Application Support/Lento/Into the Breach.jpg"
+                }
             },
             "soft_blocked_apps": {
-                "NetNewsWire": true,
-                "calibre": false
+                "NetNewsWire": {
+                    "enabled": true,
+                    "bundle_id": "com.ranchero.NetNewsWire-Evergreen"
+                    "app_icon_path": "~/Library/Application Support/Lento/NetNewsWire.jpg"
+                },
+                "calibre": {
+                    "enabled": false,
+                    "bundle_id": "net.kovidgoyal.calibre"
+                    "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg"
+                }
             },
             "notifications": {
                 "a019868e-f43f-478f-8dcc-ba78c35525c4": {

@@ -1,9 +1,11 @@
 import json
 import os
 import platform
+import plistlib
 import subprocess
 import uuid
 from lento.utils import is_url
+from PIL import Image
 
 
 def create_card():
@@ -92,7 +94,7 @@ def update_site_blocklists(card_to_modify, list_to_modify, new_value):
         json.dump(settings, settings_json)
 
 
-def update_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
+def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
     with open(path, "r", encoding="UTF-8") as settings_json:
         settings = json.load(settings_json)
@@ -102,14 +104,36 @@ def update_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
     for app in apps_to_add:
         current_os = platform.system()
         if current_os == "Darwin":
+            app_name = app[app.rindex("/")+1:].replace(".app", "")
+
             bundle_id = subprocess.check_output([
                 "mdls",
                 "-name",
                 "kMDItemCFBundleIdentifier",
                 "-r",
                 app
-            ])
-            card[list_to_modify][bundle_id.decode("utf-8")] = True
+            ]).decode("utf-8")
+
+            with open(app + "/Contents/Info.plist", "rb") as fp:
+                app_plist = plistlib.load(fp)
+            icon_name = app_plist["CFBundleIconFile"]
+            if icon_name[-5:] != ".icns":
+                icon_name = app_plist["CFBundleIconFile"] + ".icns"
+            original_icon_path = app + "/Contents/Resources/" + icon_name
+            im = Image.open(original_icon_path)
+            rgb_im = im.convert("RGB")
+
+            path_to_save_at = os.path.join(
+                    os.path.expanduser("~"),
+                    "Library/Application Support/Lento/" + app_name + ".jpg"
+                )
+            rgb_im.save(path_to_save_at)
+
+            card[list_to_modify][app_name] = {
+                "enabled": True,
+                "bundle_id": bundle_id,
+                "app_icon_path": path_to_save_at
+            }
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)

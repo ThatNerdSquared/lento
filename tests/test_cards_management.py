@@ -240,6 +240,9 @@ def test_update_site_blocklists_denies_restricted_field_change(
 
 def test_update_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    application_data_path = os.path.join(tmp_path,  "Library/Application Support/Lento")
+    os.makedirs(application_data_path)
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     monkeypatch.setattr(platform, "system", lambda: "Darwin")
     monkeypatch.setattr(subprocess, "check_output", helpers.fake_bundle_id)
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
@@ -247,7 +250,7 @@ def test_update_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(helpers.data["bare_config"], settings_json)
 
-    CardsManagement.update_app_blocklists(
+    CardsManagement.add_to_app_blocklists(
         "Untitled Card",
         "hard_blocked_apps",
         [
@@ -260,11 +263,24 @@ def test_update_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     with open(path, "r", encoding="UTF-8") as settings_json:
         new_settings = json.load(settings_json)
 
-    list = new_settings["cards"]["Untitled Card"]["hard_blocked_apps"]
+    hardblocked_list = new_settings["cards"]["Untitled Card"]["hard_blocked_apps"]
 
-    assert "unity.nomada studio.GRIS" in list
-    assert "com.literatureandlatte.scrivener3" in list
-    assert "com.ranchero.NetNewsWire-Evergreen" in list
-    assert list["unity.nomada studio.GRIS"] is True
-    assert list["com.literatureandlatte.scrivener3"] is True
-    assert list["com.ranchero.NetNewsWire-Evergreen"] is True
+    assert "GRIS" in hardblocked_list
+    assert "Scrivener" in hardblocked_list
+    assert "NetNewsWire" in hardblocked_list
+
+    assert hardblocked_list["GRIS"] == {
+        "enabled": True,
+        "bundle_id": "unity.nomada studio.GRIS",
+        "app_icon_path": os.path.join(os.path.expanduser("~"),  "Library/Application Support/Lento/GRIS.jpg")
+    }
+    assert hardblocked_list["Scrivener"] == {
+        "enabled": True,
+        "bundle_id": "com.literatureandlatte.scrivener3",
+        "app_icon_path": os.path.join(os.path.expanduser("~"),  "Library/Application Support/Lento/Scrivener.jpg")
+    }
+    assert hardblocked_list["NetNewsWire"] == {
+        "enabled": True,
+        "bundle_id": "com.ranchero.NetNewsWire-Evergreen",
+        "app_icon_path": os.path.join(os.path.expanduser("~"),  "Library/Application Support/Lento/NetNewsWire.jpg")
+    }
