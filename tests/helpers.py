@@ -98,6 +98,80 @@ data = {
         "application_settings": {
             "theme": "automatic"
         }
+    },
+    "bare_config_with_apps": {
+        "is_block_running": False,
+        "cards": {
+            "Untitled Card": {
+                "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
+                "name": "Untitled Card",
+                "emoji": "😃",
+                "time": 0,
+                "hard_blocked_sites": {},
+                "soft_blocked_sites": {},
+                "hard_blocked_apps": {
+                    "calibre": {
+                        "enabled": False,
+                        "bundle_id": "net.kovidgoyal.calibre",
+                        "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg"  # noqa: E501
+                    },
+                    "GRIS": {
+                        "enabled": True,
+                        "bundle_id": "unity.nomada studio.GRIS",
+                        "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"  # noqa: E501
+                    }
+                },
+                "soft_blocked_apps": {},
+                "notifications": {},
+                "goals": []
+            }
+        },
+        "application_settings": {
+            "theme": "automatic"
+        }
+    },
+    "bare_config_reordered_apps": {
+        "is_block_running": False,
+        "cards": {
+            "Untitled Card": {
+                "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
+                "name": "Untitled Card",
+                "emoji": "😃",
+                "time": 0,
+                "hard_blocked_sites": {},
+                "soft_blocked_sites": {},
+                "hard_blocked_apps": {
+                    "GRIS": {
+                        "enabled": True,
+                        "bundle_id": "unity.nomada studio.GRIS",
+                        "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"  # noqa: E501
+                    },
+                    "calibre": {
+                        "enabled": False,
+                        "bundle_id": "net.kovidgoyal.calibre",
+                        "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg"  # noqa: E501
+                    }
+                },
+                "soft_blocked_apps": {},
+                "notifications": {},
+                "goals": []
+            }
+        },
+        "application_settings": {
+            "theme": "automatic"
+        }
+    },
+    "new_blocklist": {
+        "GRIS": {
+            "enabled": True,
+            "bundle_id": "unity.nomada studio.GRIS",
+            "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"
+        },
+        "calibre": {
+            "enabled": False,
+            "bundle_id": "net.kovidgoyal.calibre",
+            "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg"
+        }
     }
 }
 

@@ -35,8 +35,12 @@ def get_apps():
     apps = []
     if current_os == "Windows":
         print("todo")
+        # Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion, Publisher, InstallDate
+        # Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion, Publisher, InstallDate
+        # Get-ChildItem os.path.join(os.path.expanduser("~") + "Program Files/WindowsApps/")
+
     elif current_os == "Darwin":
-        print("todo_darwing")
+        raise Exception("This function does not currently support macOS.")
     else:
         raise Exception(
             "Something went wrong and the OS name could not be found."

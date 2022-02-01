@@ -4,7 +4,7 @@ PYTHON := python3
 
 lint:
 	@echo "Linting..."
-	@${PYTHON} -m flake8 lento
+	@${PYTHON} -m flake8 lento tests
 	@echo "Done!"
 
 test:

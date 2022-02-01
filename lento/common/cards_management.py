@@ -137,3 +137,20 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)
+
+
+def update_app_blocklists(card_to_modify, list_to_modify, new_list_structure):
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        settings = json.load(settings_json)
+
+    if list_to_modify not in [
+                "hard_blocked_apps",
+                "soft_blocked_apps"
+            ]:
+        raise Exception("Card field is restricted!")
+
+    settings["cards"][card_to_modify][list_to_modify] == new_list_structure
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(settings, settings_json)

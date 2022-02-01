@@ -8,7 +8,7 @@
             "time": 5400,
             "hard_blocked_sites": {
                 "twitter.com":  false,
-                "talk.macpowerusers.com": true,
+                "talk.macpowerusers.com": true
             },
             "soft_blocked_sites": {
                 "youtube.com": true
@@ -28,12 +28,12 @@
             "soft_blocked_apps": {
                 "NetNewsWire": {
                     "enabled": true,
-                    "bundle_id": "com.ranchero.NetNewsWire-Evergreen"
+                    "bundle_id": "com.ranchero.NetNewsWire-Evergreen",
                     "app_icon_path": "~/Library/Application Support/Lento/NetNewsWire.jpg"
                 },
                 "calibre": {
                     "enabled": false,
-                    "bundle_id": "net.kovidgoyal.calibre"
+                    "bundle_id": "net.kovidgoyal.calibre",
                     "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg"
                 }
             },
