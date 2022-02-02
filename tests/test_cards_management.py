@@ -368,6 +368,7 @@ def test_add_notification_works_correctly(monkeypatch, tmp_path):
         ["Debug USACO problem"],
         None,
         "Get back to %g!",
+        "Keep focused!",
         {
             "reminder": "~/Desktop/reminder.mp3",
             "Frog": "/System/Library/Sounds/Frog.aiff"
@@ -406,6 +407,7 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
             ["Debug USACO problem"],
             None,
             "Get back to %g!",
+            "Keep focused!",
             {
                 "reminder": "~/Desktop/reminder.mp3",
                 "Frog": "/System/Library/Sounds/Frog.aiff"
@@ -419,6 +421,7 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
             ["Debug USACO problem"],
             None,
             "Get back to %g!",
+            "Keep focused!",
             {
                 "reminder": "~/Desktop/reminder.mp3",
                 "Frog": "/System/Library/Sounds/Frog.aiff"
@@ -435,6 +438,7 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
             ["Debug USACO problem"],
             None,
             "Get back to %g!",
+            "Keep focused!",
             {
                 "reminder": "~/Desktop/reminder.mp3",
                 "Frog": "/System/Library/Sounds/Frog.aiff"
@@ -451,6 +455,7 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
             ["Debug USACO problem"],
             None,
             "Get back to %g!",
+            "Keep focused!",
             {
                 "reminder": "~/Desktop/reminder.mp3",
                 "Frog": "/System/Library/Sounds/Frog.aiff"
@@ -464,6 +469,7 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
             "Debug USACO problem",
             None,
             "Get back to %g!",
+            "Keep focused!",
             {
                 "reminder": "~/Desktop/reminder.mp3",
                 "Frog": "/System/Library/Sounds/Frog.aiff"
@@ -480,6 +486,7 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
             ["Amass gigantic fleet of llamas"],
             None,
             "Get back to %g!",
+            "Keep focused!",
             {
                 "reminder": "~/Desktop/reminder.mp3",
                 "Frog": "/System/Library/Sounds/Frog.aiff"
@@ -496,6 +503,7 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
             ["Debug USACO problem"],
             "Llama",
             "Get back to %g!",
+            "Keep focused!",
             {
                 "reminder": "~/Desktop/reminder.mp3",
                 "Frog": "/System/Library/Sounds/Frog.aiff"
@@ -503,7 +511,7 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
         )
     with pytest.raises(
                 Exception,
-                match="Notification text is not a string!"
+                match="Notification title is not a string!"
             ):
         CardsManagement.add_notification(
             "Untitled Card",
@@ -511,6 +519,24 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
             ["youtube.com", "twitter.com"],
             ["Debug USACO problem"],
             None,
+            42,
+            "Keep focused!",
+            {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        )
+    with pytest.raises(
+                Exception,
+                match="Notification body is not a string!"
+            ):
+        CardsManagement.add_notification(
+            "Untitled Card",
+            "banner",
+            ["youtube.com", "twitter.com"],
+            ["Debug USACO problem"],
+            None,
+            "Get back to %g!",
             42,
             {
                 "reminder": "~/Desktop/reminder.mp3",

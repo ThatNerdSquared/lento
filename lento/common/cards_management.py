@@ -162,7 +162,8 @@ def add_notification(
             blocked_visit_triggers,
             associated_goals,
             time_interval_trigger,
-            text,
+            title,
+            body,
             audio_paths
         ):
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
@@ -189,15 +190,18 @@ def add_notification(
             raise Exception("Associated goals not found in goal list!")
     if not isinstance(time_interval_trigger, int) and time_interval_trigger is not None:  # noqa: E501
         raise Exception("Timer interval trigger is not an integer or None!")
-    elif not isinstance(text, str) and text is not None:
-        raise Exception("Notification text is not a string!")
+    elif not isinstance(title, str) and title is not None:
+        raise Exception("Notification title is not a string!")
+    elif not isinstance(body, str) and body is not None:
+        raise Exception("Notification body is not a string!")
 
     new_notif = {
         "type": type,
         "blocked_visit_triggers": blocked_visit_triggers,
         "associated_goals": associated_goals,
         "time_interval_trigger": time_interval_trigger,
-        "text": text,
+        "title": title,
+        "body": body,
         "audio_paths": audio_paths
     }
 

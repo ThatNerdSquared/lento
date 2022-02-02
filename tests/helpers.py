@@ -66,7 +66,8 @@ data = {
                             "Obtain llama"
                         ],
                         "time_interval_trigger": 900000,
-                        "text": "Work on %g",
+                        "title": "Get back to %g!",
+                        "body": "Keep focused!",
                         "audio_paths": {
                             "Bloop": "/System/Library/Sounds/Bloop.aiff"
                         }
@@ -196,7 +197,8 @@ data = {
                             "Debug USACO problem"
                         ],
                         "time_interval_trigger": None,
-                        "text": "Get back to %g!",
+                        "title": "Get back to %g!",
+                        "body": "Keep focused!",
                         "audio_paths": {
                             "reminder": "~/Desktop/reminder.mp3",
                             "Frog": "/System/Library/Sounds/Frog.aiff"
