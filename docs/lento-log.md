@@ -122,4 +122,20 @@ The last interesting problem I've encountered with Peregrine involves packaging 
 `Charlie:` Started on GUI — Currently learning GUI design with PySide and Qt, wiped computer and set up coding environments again. Currently planning each part of GUI code, scoping out functions needed + requirements + linking w/backend. Experimenting with colours, widget design, page layout, and animations in PySide — mapping out more interfaces as I go.
 
 ## 2022-01-25
-We ran through a bunch of [CodeWars](https://www.codewars.com) problems today. While not directly related to Lento, they sharpened our skills with Python, which will make development faster/easier. This is especially important for me (Nathan), as I'm coming from JS/TS and am still getting used to/learning Python.
+We ran through a bunch of [CodeWars](https://www.codewars.com) problems today. While not directly related to Lento, they sharpened our skills with Python, which will make development faster/easier. This is especially important for Nathan, as he's coming from JS/TS and still getting used to/learning Python.
+
+## 2022-01-28
+`Nathan:` I've been putting some serious work into `CardsManagement` over the last few days. One of the issues I've encountered so far is URL validation. Initially, I wanted to add a check to make sure that when a user adds a URL to a blocklist, a website actually exists at that URL. I also wanted to check to make sure the URL had valid formatting.
+
+However, this turned out to be a lot harder than I originally anticipated. After some research (reading over the original W3C URL spec along with some articles), it turns out that there are so many formats for valid URLs that it's basically impossible to define what a "correct" or "incorrect" URL looks like based on the text alone. Experimenting with different methods also showed that pinging the server at the URL to check for a website also presented issues; we had to consider cases where the user would be offline, where the website would be down, other firewall/router restrictions, etc. Ultimately, we decided to forgo URL validation. While that isn't as clean of a solution as I'd hoped for, it doesn't have any large impact on Lento's UX.
+
+I've also faced some problems with the app blocklists, as they require different methods on macOS and Windows. Right now, I'm not sure how to extract and store all the information we'll need for the blocklists (app name, icon, bundle ID if on macOS, enabled/disabled) on either platform. I'll be investigating this more as I try to finish up the `CardsManagement` section in the next week.
+
+## 2022-02-01
+`Nathan:` I've successfully solved the app blocklists issues on macOS! After some thinking and drawing a few diagrams, I've managed to find methods for extracting each bit of required info:
+- **app name**: parse from the file path by finding what's directly in front of the ".app" string
+- **app icon**: the file name for this is defined in an Info.plist file found inside every app package. After browsing the internet for a while, I've discovered that you can parse these .plist files as Python dictionaries *directly from the Python standard library*! Using the built-in `plistlib` library, I was able to find the file name f the app icon, and then convert it to a .jpg using the `pillow` library. We've decided on storing these in an application support folder, which on macOS is `~/Library/Application Support/Lento/`.
+- **bundle ID**: some research (searching StackOverflow) revealed that there was a command to get the bundle ID from a `.app` file, so I'm running this and then capturing the output.
+- **enabled/disabled**: default to enabled, this matches with the user expectations.
+
+I'm currently still working on how to do this on Windows. While I'm thinking about that, I'm also working on some of the last parts of `CardsManagement`, namely notification and goal management.

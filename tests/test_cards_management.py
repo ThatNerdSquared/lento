@@ -343,3 +343,177 @@ def test_update_app_blocklists_rejects_incorrect(monkeypatch, tmp_path):
             "hard_blocked_sites",
             helpers.data["new_blocklist"]
         )
+
+
+def test_add_notification_works_correctly(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    monkeypatch.setattr(
+        uuid.UUID,
+        "hex",
+        "a019868e-f43f-478f-8dcc-ba78c35525c4"
+    )
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    data = copy.deepcopy(helpers.data["bare_config"])
+    data["cards"]["Untitled Card"]["hard_blocked_sites"]["youtube.com"] = True
+    data["cards"]["Untitled Card"]["hard_blocked_sites"]["twitter.com"] = True
+    data["cards"]["Untitled Card"]["goals"].append("Debug USACO problem")
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(data, settings_json)
+
+    CardsManagement.add_notification(
+        "Untitled Card",
+        "banner",
+        ["youtube.com", "twitter.com"],
+        ["Debug USACO problem"],
+        None,
+        "Get back to %g!",
+        {
+            "reminder": "~/Desktop/reminder.mp3",
+            "Frog": "/System/Library/Sounds/Frog.aiff"
+        }
+    )
+
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        new_settings = json.load(settings_json)
+
+    new_notifs = new_settings["cards"]["Untitled Card"]["notifications"]
+    correct_cards = helpers.data["bare_config_with_notif"]["cards"]
+    assert new_notifs == correct_cards["Untitled Card"]["notifications"]
+
+
+def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    monkeypatch.setattr(
+        uuid.UUID,
+        "hex",
+        "a019868e-f43f-478f-8dcc-ba78c35525c4"
+    )
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    data = copy.deepcopy(helpers.data["bare_config"])
+    data["cards"]["Untitled Card"]["hard_blocked_sites"]["youtube.com"] = True
+    data["cards"]["Untitled Card"]["hard_blocked_sites"]["twitter.com"] = True
+    data["cards"]["Untitled Card"]["goals"].append("Debug USACO problem")
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(data, settings_json)
+
+    with pytest.raises(KeyError):
+        CardsManagement.add_notification(
+            "Llama",
+            "banner",
+            ["youtube.com", "twitter.com"],
+            ["Debug USACO problem"],
+            None,
+            "Get back to %g!",
+            {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        )
+    with pytest.raises(Exception, match="Notification type not valid!"):
+        CardsManagement.add_notification(
+            "Untitled Card",
+            "llama_army",
+            ["youtube.com", "twitter.com"],
+            ["Debug USACO problem"],
+            None,
+            "Get back to %g!",
+            {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        )
+    with pytest.raises(
+                Exception,
+                match="Blocked visit triggers is not a list!"
+            ):
+        CardsManagement.add_notification(
+            "Untitled Card",
+            "banner",
+            "youtube.com",
+            ["Debug USACO problem"],
+            None,
+            "Get back to %g!",
+            {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        )
+    with pytest.raises(
+                Exception,
+                match="Blocked visit triggers 'thesephist.com' not found in blocklists!"  # noqa: E501
+            ):
+        CardsManagement.add_notification(
+            "Untitled Card",
+            "banner",
+            ["thesephist.com"],
+            ["Debug USACO problem"],
+            None,
+            "Get back to %g!",
+            {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        )
+    with pytest.raises(Exception, match="Associated goals is not a list!"):
+        CardsManagement.add_notification(
+            "Untitled Card",
+            "banner",
+            ["youtube.com", "twitter.com"],
+            "Debug USACO problem",
+            None,
+            "Get back to %g!",
+            {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        )
+    with pytest.raises(
+                Exception,
+                match="Associated goals not found in goal list!"
+            ):
+        CardsManagement.add_notification(
+            "Untitled Card",
+            "banner",
+            ["youtube.com", "twitter.com"],
+            ["Amass gigantic fleet of llamas"],
+            None,
+            "Get back to %g!",
+            {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        )
+    with pytest.raises(
+                Exception,
+                match="Timer interval trigger is not an integer or None!"
+            ):
+        CardsManagement.add_notification(
+            "Untitled Card",
+            "banner",
+            ["youtube.com", "twitter.com"],
+            ["Debug USACO problem"],
+            "Llama",
+            "Get back to %g!",
+            {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        )
+    with pytest.raises(
+                Exception,
+                match="Notification text is not a string!"
+            ):
+        CardsManagement.add_notification(
+            "Untitled Card",
+            "banner",
+            ["youtube.com", "twitter.com"],
+            ["Debug USACO problem"],
+            None,
+            42,
+            {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        )

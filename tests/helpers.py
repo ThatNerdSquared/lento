@@ -172,7 +172,44 @@ data = {
             "bundle_id": "net.kovidgoyal.calibre",
             "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg"
         }
-    }
+    },
+    "bare_config_with_notif": {
+        "is_block_running": False,
+        "cards": {
+            "Untitled Card": {
+                "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
+                "name": "Untitled Card",
+                "emoji": "😃",
+                "time": 0,
+                "hard_blocked_sites": {},
+                "soft_blocked_sites": {},
+                "hard_blocked_apps": {},
+                "soft_blocked_apps": {},
+                "notifications": {
+                    "a019868e-f43f-478f-8dcc-ba78c35525c4": {
+                        "type": "banner",
+                        "blocked_visit_triggers": [
+                            "youtube.com",
+                            "twitter.com"
+                        ],
+                        "associated_goals": [
+                            "Debug USACO problem"
+                        ],
+                        "time_interval_trigger": None,
+                        "text": "Get back to %g!",
+                        "audio_paths": {
+                            "reminder": "~/Desktop/reminder.mp3",
+                            "Frog": "/System/Library/Sounds/Frog.aiff"
+                        }
+                    }
+                },
+                "goals": []
+            }
+        },
+        "application_settings": {
+            "theme": "automatic"
+        }
+    },
 }
 
 

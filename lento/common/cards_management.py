@@ -154,3 +154,55 @@ def update_app_blocklists(card_to_modify, list_to_modify, new_list_structure):
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)
+
+
+def add_notification(
+            card_to_modify,
+            type,
+            blocked_visit_triggers,
+            associated_goals,
+            time_interval_trigger,
+            text,
+            audio_paths
+        ):
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        settings = json.load(settings_json)
+
+    if type not in ["banner", "popup", "audio"]:
+        raise Exception("Notification type not valid!")
+    elif not isinstance(blocked_visit_triggers, list):
+        raise Exception("Blocked visit triggers is not a list!")
+    for item in blocked_visit_triggers:
+        list_checks = (
+            item in settings["cards"][card_to_modify]["hard_blocked_sites"],
+            item in settings["cards"][card_to_modify]["soft_blocked_sites"],
+            item in settings["cards"][card_to_modify]["hard_blocked_apps"],
+            item in settings["cards"][card_to_modify]["soft_blocked_apps"],
+        )
+        if True not in list_checks:
+            raise Exception(f"Blocked visit triggers '{item}' not found in blocklists!")  # noqa: E501
+    if not isinstance(associated_goals, list):
+        raise Exception("Associated goals is not a list!")
+    for item in associated_goals:
+        if item not in settings["cards"][card_to_modify]["goals"]:
+            raise Exception("Associated goals not found in goal list!")
+    if not isinstance(time_interval_trigger, int) and time_interval_trigger is not None:  # noqa: E501
+        raise Exception("Timer interval trigger is not an integer or None!")
+    elif not isinstance(text, str) and text is not None:
+        raise Exception("Notification text is not a string!")
+
+    new_notif = {
+        "type": type,
+        "blocked_visit_triggers": blocked_visit_triggers,
+        "associated_goals": associated_goals,
+        "time_interval_trigger": time_interval_trigger,
+        "text": text,
+        "audio_paths": audio_paths
+    }
+
+    card = settings["cards"][card_to_modify]
+    card["notifications"][str(uuid.uuid4().hex)] = new_notif
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(settings, settings_json)
