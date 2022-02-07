@@ -157,6 +157,8 @@ def update_app_blocklists(card_to_modify, list_to_modify, new_list_structure):
 
 
 def add_notification(
+            name,
+            enabled,
             card_to_modify,
             type,
             blocked_visit_triggers,
@@ -170,7 +172,11 @@ def add_notification(
     with open(path, "r", encoding="UTF-8") as settings_json:
         settings = json.load(settings_json)
 
-    if type not in ["banner", "popup", "audio"]:
+    if not isinstance(name, str):
+        raise Exception("Name must be a string!")
+    elif not isinstance(enabled, bool):
+        raise Exception("Enabled must be a boolean!")
+    elif type not in ["banner", "popup", "audio"]:
         raise Exception("Notification type not valid!")
     elif not isinstance(blocked_visit_triggers, list):
         raise Exception("Blocked visit triggers is not a list!")
@@ -196,6 +202,8 @@ def add_notification(
         raise Exception("Notification body is not a string!")
 
     new_notif = {
+        "name": name,
+        "enabled": enabled,
         "type": type,
         "blocked_visit_triggers": blocked_visit_triggers,
         "associated_goals": associated_goals,

@@ -362,6 +362,8 @@ def test_add_notification_works_correctly(monkeypatch, tmp_path):
         json.dump(data, settings_json)
 
     CardsManagement.add_notification(
+        "Test Notif 1",
+        True,
         "Untitled Card",
         "banner",
         ["youtube.com", "twitter.com"],
@@ -399,8 +401,42 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(data, settings_json)
 
+    with pytest.raises(Exception, match="Name must be a string!"):
+        CardsManagement.add_notification(
+            42,
+            True,
+            "Untitled Card",
+            "banner",
+            ["youtube.com", "twitter.com"],
+            ["Debug USACO problem"],
+            None,
+            "Get back to %g!",
+            "Keep focused!",
+            {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        )
+    with pytest.raises(Exception, match="Enabled must be a boolean!"):
+        CardsManagement.add_notification(
+            "Test Notif 1",
+            "Llama",
+            "Untitled Card",
+            "banner",
+            ["youtube.com", "twitter.com"],
+            ["Debug USACO problem"],
+            None,
+            "Get back to %g!",
+            "Keep focused!",
+            {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        )
     with pytest.raises(KeyError):
         CardsManagement.add_notification(
+            "Test Notif 1",
+            True,
             "Llama",
             "banner",
             ["youtube.com", "twitter.com"],
@@ -415,6 +451,8 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
         )
     with pytest.raises(Exception, match="Notification type not valid!"):
         CardsManagement.add_notification(
+            "Test Notif 1",
+            True,
             "Untitled Card",
             "llama_army",
             ["youtube.com", "twitter.com"],
@@ -432,6 +470,8 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
                 match="Blocked visit triggers is not a list!"
             ):
         CardsManagement.add_notification(
+            "Test Notif 1",
+            True,
             "Untitled Card",
             "banner",
             "youtube.com",
@@ -449,6 +489,8 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
                 match="Blocked visit triggers 'thesephist.com' not found in blocklists!"  # noqa: E501
             ):
         CardsManagement.add_notification(
+            "Test Notif 1",
+            True,
             "Untitled Card",
             "banner",
             ["thesephist.com"],
@@ -463,6 +505,8 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
         )
     with pytest.raises(Exception, match="Associated goals is not a list!"):
         CardsManagement.add_notification(
+            "Test Notif 1",
+            True,
             "Untitled Card",
             "banner",
             ["youtube.com", "twitter.com"],
@@ -480,6 +524,8 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
                 match="Associated goals not found in goal list!"
             ):
         CardsManagement.add_notification(
+            "Test Notif 1",
+            True,
             "Untitled Card",
             "banner",
             ["youtube.com", "twitter.com"],
@@ -497,6 +543,8 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
                 match="Timer interval trigger is not an integer or None!"
             ):
         CardsManagement.add_notification(
+            "Test Notif 1",
+            True,
             "Untitled Card",
             "banner",
             ["youtube.com", "twitter.com"],
@@ -514,6 +562,8 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
                 match="Notification title is not a string!"
             ):
         CardsManagement.add_notification(
+            "Test Notif 1",
+            True,
             "Untitled Card",
             "banner",
             ["youtube.com", "twitter.com"],
@@ -531,6 +581,8 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
                 match="Notification body is not a string!"
             ):
         CardsManagement.add_notification(
+            "Test Notif 1",
+            True,
             "Untitled Card",
             "banner",
             ["youtube.com", "twitter.com"],

@@ -60,6 +60,8 @@ data = {
                 },
                 "notifications": {
                     "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
+                        "name": "Test Notif 1",
+                        "enabled": True,
                         "type": "popup",
                         "blocked_visit_triggers": [],
                         "associated_goals": [
@@ -188,6 +190,8 @@ data = {
                 "soft_blocked_apps": {},
                 "notifications": {
                     "a019868e-f43f-478f-8dcc-ba78c35525c4": {
+                        "name": "Test Notif 1",
+                        "enabled": True,
                         "type": "banner",
                         "blocked_visit_triggers": [
                             "youtube.com",
