@@ -297,6 +297,56 @@ def test_update_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     }
 
 
+def test_update_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    monkeypatch.setattr(platform, "system", lambda: "Windows")
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config"], settings_json)
+
+    CardsManagement.add_to_app_blocklists(
+        "Untitled Card",
+        "hard_blocked_apps",
+        [
+            "Notepad",
+            "Vivaldi",
+            "Raindrop.io"
+        ]
+    )
+
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        new_settings = json.load(settings_json)
+
+    hb_list = new_settings["cards"]["Untitled Card"]["hard_blocked_apps"]
+
+    assert "Notepad" in hb_list
+    assert "Vivaldi" in hb_list
+    assert "Raindrop.io" in hb_list
+
+    assert hb_list["Notepad"] == {
+        "enabled": True,
+        "app_icon_path": os.path.join(
+            os.path.expanduser("~"),
+            "Library/Application Support/Lento/GRIS.jpg"
+        )
+    }
+    assert hb_list["Vivaldi"] == {
+        "enabled": True,
+        "app_icon_path": os.path.join(
+            os.path.expanduser("~"),
+            "Library/Application Support/Lento/Scrivener.jpg"
+        )
+    }
+    assert hb_list["Raindrop.io"] == {
+        "enabled": True,
+        "app_icon_path": os.path.join(
+            os.path.expanduser("~"),
+            "Library/Application Support/Lento/NetNewsWire.jpg"
+        )
+    }
+
+
 def test_update_app_blocklists_works_correctly(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")

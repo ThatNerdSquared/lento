@@ -1,5 +1,7 @@
+import json
 import os
 import platform
+import subprocess
 import sys
 from urllib.parse import urlparse
 
@@ -34,8 +36,10 @@ def get_apps():
     current_os = platform.system()
     apps = []
     if current_os == "Windows":
-        print("todo")
-
+        raw_data = subprocess.getoutput("Get-StartApps | convertto-json")
+        app_data = json.loads(raw_data)
+        for app in app_data:
+            apps[app['Name']] = app['AppID']
     elif current_os == "Darwin":
         raise Exception("This function does not currently support macOS.")
     else:

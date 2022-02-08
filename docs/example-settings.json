@@ -19,9 +19,8 @@
                     "bundle_id": "unity.nomada studio.GRIS",
                     "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"
                 },
-                "Into the Breach": {
+                "Notepad": {
                     "enabled": true,
-                    "bundle_id": "subset.Into-the-Breach",
                     "app_icon_path": "~/Library/Application Support/Lento/Into the Breach.jpg"
                 }
             },
@@ -31,9 +30,8 @@
                     "bundle_id": "com.ranchero.NetNewsWire-Evergreen",
                     "app_icon_path": "~/Library/Application Support/Lento/NetNewsWire.jpg"
                 },
-                "calibre": {
+                "Raindrop.io": {
                     "enabled": false,
-                    "bundle_id": "net.kovidgoyal.calibre",
                     "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg"
                 }
             },

@@ -4,6 +4,7 @@ import platform
 import plistlib
 import subprocess
 import uuid
+from lento import utils
 from lento.utils import is_url
 from PIL import Image
 
@@ -134,6 +135,11 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
                 "bundle_id": bundle_id,
                 "app_icon_path": path_to_save_at
             }
+        elif current_os == "Windows":
+            e = utils.get_apps()
+            print(e)
+        else:
+            raise Exception("OS name invalid or not found!")
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)
