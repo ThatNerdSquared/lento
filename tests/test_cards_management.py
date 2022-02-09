@@ -335,6 +335,34 @@ def test_update_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     }
 
 
+def test_update_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    monkeypatch.setattr(platform, "system", lambda: "Windows")
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config"], settings_json)
+
+    CardsManagement.add_to_app_blocklists(
+        "Untitled Card",
+        "hard_blocked_apps",
+        [
+            "Notepad",
+            "AutoHotKey",
+            "Discord"
+        ]
+    )
+
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        new_settings = json.load(settings_json)
+
+    hb_list = new_settings["cards"]["Untitled Card"]["hard_blocked_apps"]
+
+    assert "Notepad" in hb_list
+    assert "AutoHotKey" in hb_list
+    assert "Discord" in hb_list
+
+
 def test_update_app_blocklists_works_correctly(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")

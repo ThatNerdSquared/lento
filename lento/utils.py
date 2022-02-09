@@ -34,10 +34,10 @@ def is_url(url):
 
 def get_apps():
     current_os = platform.system()
-    apps = []
+    apps = {}
     if current_os == "Windows":
-        raw_data = subprocess.getoutput("Get-StartApps | convertto-json")
-        app_data = json.loads(raw_data)
+        command = "powershell \"Get-StartApps | convertto-json\""
+        app_data = json.loads(subprocess.getoutput(command))
         for app in app_data:
             apps[app['Name']] = app['AppID']
     elif current_os == "Darwin":

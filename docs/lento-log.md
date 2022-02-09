@@ -139,3 +139,10 @@ I've also faced some problems with the app blocklists, as they require different
 - **enabled/disabled**: default to enabled, this matches with the user expectations.
 
 I'm currently still working on how to do this on Windows. While I'm thinking about that, I'm also working on some of the last parts of `CardsManagement`, namely notification and goal management.
+
+## 2022-02-08
+`Nathan:` Figured out how to extract app icons on Windows! To understand why this is so hard, it's useful to know that there are 2 types of Windows apps: regular .exes, and Windows Store apps. I didn't understand the distinction between these at first, which led to some problems later on.
+
+I first followed an article giving instructions for how to extract icons from a file using Powershell. This worked on regular .exes. However, I didn't have a filepath to run these commands on for Windows Store apps. After some digging around, I discovered that Windows Store Apps are stored in a folder called `C:\Users\[current_username]\WindowsApps`. Using an administrator-level Powershell window, I navigated through this folder and managed to open up the data folders for some of these apps in File Explorer. Immediately, I noticed that there was a file called `AppxManifest.xml`. Usually manifest files provide metadata, so I opened up one of them in VSCode. A bit of browsing revealed that the path to the app icon files was defined in the `AppxManifest`! I ran a search to see if there was a way to programmatically pull attributes from the `AppxManifest` using Powershell. Sure enough, there was some solid documentation for a command called `Get-AppxManifest`. I tweaked the examples a bit and managed to get it working!
+
+I've documented the exact steps and commands needed to do this on my todo list to implement tomorrow. Hopefully the build will go smoothly now that I have a clear idea of how to extract the app icons.
