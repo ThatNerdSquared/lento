@@ -119,14 +119,26 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
             if app[:14] == "/Applications/":
                 app = os.path.join(
                     Config.MACOS_APPLICATION_FOLDER,
-                    app_name + ".app",
+                    app_name + ".app"
                 )
-            with open(app + "/Contents/Info.plist", "rb") as fp:
+                plist_path = os.path.join(
+                    app,
+                    "Contents",
+                    "Info.plist"
+                )
+            else:
+                plist_path = os.path.join(app, "Contents", "Info.plist")
+            with open(plist_path, "rb") as fp:
                 app_plist = plistlib.load(fp)
             icon_name = app_plist["CFBundleIconFile"]
             if icon_name[-5:] != ".icns":
                 icon_name = app_plist["CFBundleIconFile"] + ".icns"
-            original_icon_path = app + "/Contents/Resources/" + icon_name
+            original_icon_path = os.path.join(
+                app,
+                "Contents",
+                "Resources",
+                icon_name
+            )
             im = Image.open(original_icon_path)
             rgb_im = im.convert("RGB")
 

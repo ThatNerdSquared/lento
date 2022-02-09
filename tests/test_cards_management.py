@@ -6,7 +6,9 @@ import pytest
 import subprocess
 import uuid
 import lento.common.cards_management as CardsManagement
+from lento.config import Config
 from tests import helpers
+from PIL import Image
 
 
 def test_create_card_uses_correct_data(monkeypatch, tmp_path):
@@ -240,11 +242,47 @@ def test_update_site_blocklists_denies_restricted_field_change(
 
 def test_update_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    application_data_path = os.path.join(
-        tmp_path,
-        "Library/Application Support/Lento"
-    )
-    os.makedirs(application_data_path)
+    folders = {
+        "application_support": os.path.join(
+            "Library",
+            "Application Support",
+            "Lento"
+        ),
+        "apps_folder": "Applications",
+        "gris_folders": os.path.join("Applications", "GRIS.app", "Contents"),
+        "scrivener_folder": os.path.join(
+            "Applications",
+            "Scrivener.app",
+            "Contents"
+        ),
+        "nnw_folder": os.path.join(
+            "Applications",
+            "NetNewsWire.app",
+            "Contents"
+        )
+    }
+    for f in folders.keys():
+        os.makedirs(os.path.join(tmp_path, folders[f]))
+
+    for file in ["GRIS", "Scrivener", "NetNewsWire"]:
+        path = os.path.join(
+            tmp_path,
+            "Applications",
+            file + ".app",
+            "Contents",
+            "Info.plist"
+        )
+        plist_file = open(path, "w", encoding="UTF-8")
+        plist_file.write(helpers.data[file])
+        plist_file.close()
+
+    if platform.system() == "Windows":
+        monkeypatch.setattr(
+            Config,
+            "MACOS_APPLICATION_FOLDER",
+            os.path.join(tmp_path, folders["apps_folder"])
+        )
+    monkeypatch.setattr(Image, "open", lambda x: helpers.fake_image)
     monkeypatch.setattr(platform, "system", lambda: "Darwin")
     monkeypatch.setattr(subprocess, "check_output", helpers.fake_bundle_id)
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
