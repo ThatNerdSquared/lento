@@ -5,6 +5,7 @@ import plistlib
 import subprocess
 import uuid
 from lento import utils
+from lento.config import Config
 from lento.utils import is_url
 from PIL import Image
 
@@ -115,6 +116,11 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
                 app
             ]).decode("utf-8")
 
+            if app[:14] == "/Applications/":
+                app = os.path.join(
+                    Config.MACOS_APPLICATION_FOLDER,
+                    app_name + ".app",
+                )
             with open(app + "/Contents/Info.plist", "rb") as fp:
                 app_plist = plistlib.load(fp)
             icon_name = app_plist["CFBundleIconFile"]
