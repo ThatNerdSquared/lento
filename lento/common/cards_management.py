@@ -242,3 +242,32 @@ def add_notification(
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)
+
+
+def update_notification_list(card_to_modify, new_notifs_dict):
+    """Update notifications for a card. Minimal validation."""
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        settings = json.load(settings_json)
+
+    if not isinstance(new_notifs_dict, dict):
+        raise Exception("new_notifs_dict is not a dict!")
+    for item in list(new_notifs_dict.keys()):
+        is_notif_dict_valid = set(new_notifs_dict[item].keys()) == set([
+            "name",
+            "enabled",
+            "type",
+            "blocked_visit_triggers",
+            "associated_goals",
+            "time_interval_trigger",
+            "title",
+            "body",
+            "audio_paths"
+        ])
+        if not is_notif_dict_valid:
+            raise Exception(f"Notif {item} had invalid structure!")
+
+    settings["cards"][card_to_modify]["notifications"] = new_notifs_dict
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(settings, settings_json)

@@ -216,6 +216,61 @@ data = {
             "theme": "automatic"
         }
     },
+    "bare_config_multiple_notif": {
+        "is_block_running": False,
+        "cards": {
+            "Untitled Card": {
+                "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
+                "name": "Untitled Card",
+                "emoji": "😃",
+                "time": 0,
+                "hard_blocked_sites": {},
+                "soft_blocked_sites": {},
+                "hard_blocked_apps": {},
+                "soft_blocked_apps": {},
+                "notifications": {
+                    "a019868e-f43f-478f-8dcc-ba78c35525c4": {
+                        "name": "Test Notif 1",
+                        "enabled": True,
+                        "type": "banner",
+                        "blocked_visit_triggers": [
+                            "youtube.com",
+                            "twitter.com"
+                        ],
+                        "associated_goals": [
+                            "Debug USACO problem"
+                        ],
+                        "time_interval_trigger": None,
+                        "title": "Get back to %g!",
+                        "body": "Keep focused!",
+                        "audio_paths": {
+                            "reminder": "~/Desktop/reminder.mp3",
+                            "Frog": "/System/Library/Sounds/Frog.aiff"
+                        }
+                    },
+                    "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
+                        "name": "Test Notif 2",
+                        "enabled": False,
+                        "type": "popup",
+                        "blocked_visit_triggers": [],
+                        "associated_goals": [
+                            "Create pet AI"
+                        ],
+                        "time_interval_trigger": 900000,
+                        "title": "Work on %g",
+                        "body": "Keep focused!",
+                        "audio_paths": {
+                            "Bloop": "/System/Library/Sounds/Bloop.aiff"
+                        }
+                    }
+                },
+                "goals": []
+            }
+        },
+        "application_settings": {
+            "theme": "automatic"
+        }
+    },
     "GRIS": """<?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -675,7 +730,76 @@ data = {
     <key>UserAgent</key>
     <string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
 </dict>
-</plist>"""  # noqa: E501
+</plist>""",  # noqa: E501
+    "reordered_notifs_dict": {
+        "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
+            "name": "Test Notif 2",
+            "enabled": False,
+            "type": "popup",
+            "blocked_visit_triggers": [],
+            "associated_goals": [
+                "Create pet AI"
+            ],
+            "time_interval_trigger": 900000,
+            "title": "Work on %g",
+            "body": "Keep focused!",
+            "audio_paths": {
+                "Bloop": "/System/Library/Sounds/Bloop.aiff"
+            }
+        },
+        "a019868e-f43f-478f-8dcc-ba78c35525c4": {
+            "name": "Test Notif 1",
+            "enabled": True,
+            "type": "banner",
+            "blocked_visit_triggers": [
+                "youtube.com",
+                "twitter.com"
+            ],
+            "associated_goals": [
+                "Debug USACO problem"
+            ],
+            "time_interval_trigger": None,
+            "title": "Get back to %g!",
+            "body": "Keep focused!",
+            "audio_paths": {
+                "reminder": "~/Desktop/reminder.mp3",
+                "Frog": "/System/Library/Sounds/Frog.aiff"
+            }
+        }
+    },
+    "deleted_notifs_dict": {
+        "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
+            "name": "Test Notif 2",
+            "enabled": False,
+            "type": "popup",
+            "blocked_visit_triggers": [],
+            "associated_goals": [
+                "Create pet AI"
+            ],
+            "time_interval_trigger": 900000,
+            "title": "Work on %g",
+            "body": "Keep focused!",
+            "audio_paths": {
+                "Bloop": "/System/Library/Sounds/Bloop.aiff"
+            }
+        }
+    },
+    "flawed_notifs_dict": {
+        "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
+            "name": "Test Notif 2",
+            "enabled": False,
+            "blocked_visit_triggers": [],
+            "associated_goals": [
+                "Create pet AI"
+            ],
+            "time_interval_trigger": 900000,
+            "title": "Work on %g",
+            "body": "Keep focused!",
+            "audio_paths": {
+                "Bloop": "/System/Library/Sounds/Bloop.aiff"
+            }
+        }
+    }
 }
 
 
