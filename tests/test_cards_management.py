@@ -424,7 +424,7 @@ def test_add_notification_works_correctly(monkeypatch, tmp_path):
     data = copy.deepcopy(helpers.data["bare_config"])
     data["cards"]["Untitled Card"]["hard_blocked_sites"]["youtube.com"] = True
     data["cards"]["Untitled Card"]["hard_blocked_sites"]["twitter.com"] = True
-    data["cards"]["Untitled Card"]["goals"].append("Debug USACO problem")
+    data["cards"]["Untitled Card"]["goals"]["Debug USACO problem"] = True
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(data, settings_json)
 
@@ -464,7 +464,7 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
     data = copy.deepcopy(helpers.data["bare_config"])
     data["cards"]["Untitled Card"]["hard_blocked_sites"]["youtube.com"] = True
     data["cards"]["Untitled Card"]["hard_blocked_sites"]["twitter.com"] = True
-    data["cards"]["Untitled Card"]["goals"].append("Debug USACO problem")
+    data["cards"]["Untitled Card"]["goals"]["Debug USACO problem"] = True
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(data, settings_json)
 
@@ -783,4 +783,43 @@ def test_update_notification_list_rejects_flawed_data(monkeypatch, tmp_path):
         CardsManagement.update_notification_list(
             "Untitled Card",
             helpers.data["flawed_notifs_dict"]
+        )
+
+
+def test_add_goal_works_correctly(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config"], settings_json)
+
+    CardsManagement.add_goal(
+        "Untitled Card",
+        "Conquer world"
+    )
+
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        new_settings = json.load(settings_json)
+
+    new_goals_dict = new_settings["cards"]["Untitled Card"]["goals"]
+    assert "Conquer world" in new_goals_dict
+    assert new_goals_dict["Conquer world"] is False
+
+
+def test_add_goal_rejects_flawed_data(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config"], settings_json)
+
+    with pytest.raises(Exception, match="Goal to add is not string!"):
+        CardsManagement.add_goal(
+            "Untitled Card",
+            42
+        )
+    with pytest.raises(KeyError):
+        CardsManagement.add_goal(
+            42,
+            "Conquer world"
         )

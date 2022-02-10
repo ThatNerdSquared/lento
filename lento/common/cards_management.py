@@ -21,7 +21,7 @@ def create_card():
         "hard_blocked_apps": {},
         "soft_blocked_apps": {},
         "notifications": {},
-        "goals": []
+        "goals": {}
     }
 
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
@@ -268,6 +268,21 @@ def update_notification_list(card_to_modify, new_notifs_dict):
             raise Exception(f"Notif {item} had invalid structure!")
 
     settings["cards"][card_to_modify]["notifications"] = new_notifs_dict
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(settings, settings_json)
+
+
+def add_goal(card_to_modify: str, goal_to_add: str) -> None:
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        settings = json.load(settings_json)
+
+    if not isinstance(goal_to_add, str):
+        raise Exception("Goal to add is not string!")
+
+    settings["cards"][card_to_modify]["goals"][goal_to_add] = False
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)

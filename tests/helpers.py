@@ -19,7 +19,7 @@ data = {
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": []
+                "goals": {}
             }
         },
         "application_settings": {
@@ -39,7 +39,7 @@ data = {
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": []
+                "goals": {}
             },
             "Llama Taming": {
                 "id": "e68d8993-ee30-4e3f-941b-43c074e2759c",
@@ -75,7 +75,7 @@ data = {
                         }
                     }
                 },
-                "goals": ["Obtain llama"]
+                "goals": {"Obtain llama": True}
             }
         },
         "application_settings": {
@@ -95,7 +95,7 @@ data = {
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": []
+                "goals": {}
             }
         },
         "application_settings": {
@@ -126,7 +126,7 @@ data = {
                 },
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": []
+                "goals": {}
             }
         },
         "application_settings": {
@@ -157,7 +157,7 @@ data = {
                 },
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": []
+                "goals": {}
             }
         },
         "application_settings": {
@@ -209,7 +209,7 @@ data = {
                         }
                     }
                 },
-                "goals": []
+                "goals": {}
             }
         },
         "application_settings": {
@@ -264,7 +264,7 @@ data = {
                         }
                     }
                 },
-                "goals": []
+                "goals": {}
             }
         },
         "application_settings": {

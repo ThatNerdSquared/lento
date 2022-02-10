@@ -71,10 +71,10 @@
                     }
                 }
             },
-            "goals": [
-                "Debug pet AI",
-                "Solve USACO problem"
-            ]
+            "goals": {
+                "Debug pet AI": true,
+                "Solve USACO problem": false
+            }
         }
     },
     "application_settings": {
