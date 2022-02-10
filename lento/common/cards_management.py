@@ -274,6 +274,7 @@ def update_notification_list(card_to_modify, new_notifs_dict):
 
 
 def add_goal(card_to_modify: str, goal_to_add: str) -> None:
+    """Add a goal to a card. Automatically adds as disabled."""
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
 
     with open(path, "r", encoding="UTF-8") as settings_json:
@@ -283,6 +284,24 @@ def add_goal(card_to_modify: str, goal_to_add: str) -> None:
         raise Exception("Goal to add is not string!")
 
     settings["cards"][card_to_modify]["goals"][goal_to_add] = False
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(settings, settings_json)
+
+
+def update_goal_list(card_to_modify, new_goals_dict):
+    """Update goals for a card. Minimal validation."""
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        settings = json.load(settings_json)
+
+    if not isinstance(new_goals_dict, dict):
+        raise Exception("new_goals_dict is not a dict!")
+    for item in list(new_goals_dict.keys()):
+        if not isinstance(new_goals_dict[item], bool):
+            raise Exception(f"Goal '{item}' has invalid structure!")
+
+    settings["cards"][card_to_modify]["goals"] = new_goals_dict
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)

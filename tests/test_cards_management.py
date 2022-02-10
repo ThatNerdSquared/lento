@@ -823,3 +823,68 @@ def test_add_goal_rejects_flawed_data(monkeypatch, tmp_path):
             42,
             "Conquer world"
         )
+
+
+def test_update_goal_list_reorders_correctly(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config_with_goals"], settings_json)
+
+    CardsManagement.update_goal_list(
+        "Untitled Card",
+        helpers.data["reordered_goal_dict"]
+    )
+
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        new_settings = json.load(settings_json)
+
+    card_goals_dict = new_settings["cards"]["Untitled Card"]["goals"]
+
+    assert "Conquer world" in card_goals_dict
+    assert "Debug USACO problem" in card_goals_dict
+    assert card_goals_dict["Conquer world"] is False
+    assert card_goals_dict["Debug USACO problem"] is True
+
+
+def test_update_goal_list_deletes_correctly(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config_with_goals"], settings_json)
+
+    CardsManagement.update_goal_list(
+        "Untitled Card",
+        {"Conquer world": False}
+    )
+
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        new_settings = json.load(settings_json)
+
+    card_goals_dict = new_settings["cards"]["Untitled Card"]["goals"]
+
+    assert "Conquer world" in card_goals_dict
+    assert "Debug USACO problem" not in card_goals_dict
+    assert card_goals_dict["Conquer world"] is False
+    assert list(card_goals_dict.keys()) == ["Conquer world"]
+
+
+def test_update_goal_list_rejects_flawed_data(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(helpers.data["bare_config_with_goals"], settings_json)
+
+    with pytest.raises(Exception):
+        CardsManagement.update_goal_list(
+            "Untitled Card",
+            "Llama"
+        )
+    with pytest.raises(Exception):
+        CardsManagement.update_goal_list(
+            "Llama",
+            helpers.data["reordered_goal_dict"]
+        )
