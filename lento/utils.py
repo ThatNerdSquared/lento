@@ -3,6 +3,7 @@ import os
 import platform
 import subprocess
 import sys
+import uuid
 from urllib.parse import urlparse
 
 
@@ -36,10 +37,38 @@ def get_apps():
     current_os = platform.system()
     apps = {}
     if current_os == "Windows":
-        command = "powershell \"Get-StartApps | convertto-json\""
-        app_data = json.loads(subprocess.getoutput(command))
-        for app in app_data:
-            apps[app['Name']] = app['AppID']
+        subprocess.call("powershell \"Add-Type -AssemblyName System.Drawing\"")
+        command = "powershell \"Get-Process -FileVersionInfo -ErrorAction SilentlyContinue | Select-Object FileName\""  # noqa: E501
+        raw_data = subprocess.getoutput(command).split("\n")
+        items = remove_dupes_blanks_and_whitespace(raw_data[3:])
+        for app_path in items:
+            app_name = os.path.basename(app_path).replace(".exe", "")
+            if "C:\\Program Files\\WindowsApps" in app_path:
+                command = f"powershell \"(Get-AppxPackage -Name \"*{app_name}*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\""  # noqa: E501
+                app_icon = subprocess.getoutput(command)
+                if app_icon == "":
+                    app_icon_path = None
+                else:
+                    app_icon_path = os.path.join(
+                        app_path[:app_path.rindex("\\")+1],
+                        "".join([
+                            app_icon[:-4],
+                            ".scale-200.png"
+                        ])
+                    )
+            else:
+                app_icon_path = os.path.join(
+                    os.path.expanduser("~"),
+                    "AppData",
+                    "Local",
+                    "Lento",
+                    f"{app_name}.bmp"
+                )
+                command = f"powershell \"[System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save({app_icon_path})\""  # noqa: E501
+            apps[app_name] = {
+                "path": app_path,
+                "icon_path": app_icon_path
+            }
     elif current_os == "Darwin":
         raise Exception("This function does not currently support macOS.")
     else:
@@ -48,3 +77,13 @@ def get_apps():
         )
 
     return(apps)
+
+
+def remove_dupes_blanks_and_whitespace(list_to_process):
+    no_blanks_list = list(filter(None, list_to_process))
+    no_extra_whitespace_list = []
+    for item in no_blanks_list:
+        no_extra_whitespace_list.append(item.rstrip())
+    no_dupes_list = list(dict.fromkeys(no_extra_whitespace_list))
+
+    return no_dupes_list

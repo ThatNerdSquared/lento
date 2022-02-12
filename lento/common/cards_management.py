@@ -103,10 +103,10 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
 
     card = settings["cards"][card_to_modify]
 
-    for app in apps_to_add:
-        current_os = platform.system()
-        if current_os == "Darwin":
-            app_name = app[app.rindex("/")+1:].replace(".app", "")
+    current_os = platform.system()
+    if current_os == "Darwin":
+        for app in apps_to_add:
+            app_name = os.path.basename(app).replace(".app", "")
 
             bundle_id = subprocess.check_output([
                 "mdls",
@@ -153,11 +153,11 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
                 "bundle_id": bundle_id,
                 "app_icon_path": path_to_save_at
             }
-        elif current_os == "Windows":
-            e = utils.get_apps()
-            print(e)
-        else:
-            raise Exception("OS name invalid or not found!")
+    elif current_os == "Windows":
+        e = utils.get_apps()
+        print(json.dumps(e, indent=4))
+    else:
+        raise Exception("OS name invalid or not found!")
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)

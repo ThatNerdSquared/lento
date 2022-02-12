@@ -335,7 +335,6 @@ def test_update_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     }
 
 
-@pytest.mark.skip
 def test_update_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     monkeypatch.setattr(platform, "system", lambda: "Windows")
