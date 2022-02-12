@@ -1,3 +1,4 @@
+# flake8: noqa
 data = {
     "initial_blank_config": {
         "is_block_running": False,
@@ -627,7 +628,7 @@ data = {
         </dict>
     </array>
 </dict>
-</plist>""",  # noqa: E501
+</plist>""",
     "NetNewsWire": """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -730,7 +731,7 @@ data = {
     <key>UserAgent</key>
     <string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
 </dict>
-</plist>""",  # noqa: E501
+</plist>""",
     "reordered_notifs_dict": {
         "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
             "name": "Test Notif 2",
@@ -826,6 +827,16 @@ data = {
     "reordered_goal_dict": {
         "Conquer world": False,
         "Debug USACO problem": True
+    },
+    "proper_apps_dict": {
+        "Trello": {
+            "path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe",
+            "icon_path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\assets\\Square310x310Logo.scale-200.png"
+        },
+        "vivaldi": {
+            "path": "C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe",
+            "icon_path": f"C:\\Users\\llamaempire\\AppData\\Local\\Lento\\vivaldi.bmp"
+        }
     }
 }
 
@@ -848,3 +859,17 @@ class fake_image:
 class fake_rgb:
     def save(x):
         return True
+
+def fake_subprocess(cmd):
+    cases = {
+        "powershell \"Get-Process -FileVersionInfo -ErrorAction SilentlyContinue | Select-Object FileName\"": """     
+FileName   
+--------   
+C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe   
+C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe   
+C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe   
+C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe   """,
+            "powershell \"(Get-AppxPackage -Name \"*Trello*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\"": "assets\Square310x310Logo.png",
+            "powershell \"{Add-Type -AssemblyName System.Drawing\n[System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')command_string}\"": ""
+    }
+    return cases[cmd]

@@ -1,9 +1,7 @@
-import json
 import os
 import platform
 import subprocess
 import sys
-import uuid
 from urllib.parse import urlparse
 
 
@@ -37,7 +35,6 @@ def get_apps():
     current_os = platform.system()
     apps = {}
     if current_os == "Windows":
-        subprocess.call("powershell \"Add-Type -AssemblyName System.Drawing\"")
         command = "powershell \"Get-Process -FileVersionInfo -ErrorAction SilentlyContinue | Select-Object FileName\""  # noqa: E501
         raw_data = subprocess.getoutput(command).split("\n")
         items = remove_dupes_blanks_and_whitespace(raw_data[3:])
@@ -49,8 +46,15 @@ def get_apps():
                 if app_icon == "":
                     app_icon_path = None
                 else:
+                    package_name = app_path.replace(
+                        "C:\\Program Files\\WindowsApps\\",
+                        ""
+                    )
                     app_icon_path = os.path.join(
-                        app_path[:app_path.rindex("\\")+1],
+                        "C:\\",
+                        "Program Files",
+                        "WindowsApps",
+                        package_name[:package_name.index("\\")+1],
                         "".join([
                             app_icon[:-4],
                             ".scale-200.png"
@@ -64,7 +68,10 @@ def get_apps():
                     "Lento",
                     f"{app_name}.bmp"
                 )
-                command = f"powershell \"[System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save({app_icon_path})\""  # noqa: E501
+                command_string = f"""Add-Type -AssemblyName System.Drawing
+                    [System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')"""  # noqa: E501
+                command = f"powershell \"{command_string}\""
+                subprocess.call(command, shell=True)
             apps[app_name] = {
                 "path": app_path,
                 "icon_path": app_icon_path
