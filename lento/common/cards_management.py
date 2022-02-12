@@ -153,7 +153,12 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
                 "app_icon_path": path_to_save_at
             }
     elif current_os == "Windows":
-        print("todo")
+        for app in apps_to_add:
+            card[list_to_modify][app["name"]] = {
+                "enabled": True,
+                "path": app["path"],
+                "app_icon_path": app["icon_path"]
+            }
     else:
         raise Exception("OS name invalid or not found!")
 

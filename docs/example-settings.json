@@ -19,9 +19,10 @@
                     "bundle_id": "unity.nomada studio.GRIS",
                     "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"
                 },
-                "Notepad": {
+                "vivaldi": {
                     "enabled": true,
-                    "app_icon_path": "~/Library/Application Support/Lento/Into the Breach.jpg"
+                    "path": "C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe",
+                    "app_icon_path": "C:\\Users\\llamaempire\\AppData\\Local\\Lento\\vivaldi.bmp"
                 }
             },
             "soft_blocked_apps": {
@@ -30,9 +31,10 @@
                     "bundle_id": "com.ranchero.NetNewsWire-Evergreen",
                     "app_icon_path": "~/Library/Application Support/Lento/NetNewsWire.jpg"
                 },
-                "Raindrop.io": {
+                "Trello": {
                     "enabled": false,
-                    "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg"
+                    "path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe",
+                    "icon_path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\assets\\Square310x310Logo.scale-200.png"
                 }
             },
             "notifications": {

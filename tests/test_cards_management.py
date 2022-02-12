@@ -346,11 +346,7 @@ def test_update_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
     CardsManagement.add_to_app_blocklists(
         "Untitled Card",
         "hard_blocked_apps",
-        [
-            "Notepad",
-            "AutoHotKey",
-            "Discord"
-        ]
+        helpers.data['apps_to_add']
     )
 
     with open(path, "r", encoding="UTF-8") as settings_json:
@@ -358,9 +354,21 @@ def test_update_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
 
     hb_list = new_settings["cards"]["Untitled Card"]["hard_blocked_apps"]
 
-    assert "Notepad" in hb_list
-    assert "AutoHotKey" in hb_list
-    assert "Discord" in hb_list
+    appdata_dict = helpers.data["proper_apps_dict"]
+
+    assert "Trello" in hb_list
+    assert "vivaldi" in hb_list
+
+    assert hb_list["Trello"] == {
+        "enabled": True,
+        "path": appdata_dict["Trello"]["path"],
+        "app_icon_path": appdata_dict["Trello"]["icon_path"],
+    }
+    assert hb_list["vivaldi"] == {
+        "enabled": True,
+        "path": appdata_dict["vivaldi"]["path"],
+        "app_icon_path": appdata_dict["vivaldi"]["icon_path"],
+    }
 
 
 def test_update_app_blocklists_works_correctly(monkeypatch, tmp_path):

@@ -835,9 +835,21 @@ data = {
         },
         "vivaldi": {
             "path": "C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe",
-            "icon_path": f"C:\\Users\\llamaempire\\AppData\\Local\\Lento\\vivaldi.bmp"
+            "icon_path": "C:\\Users\\llamaempire\\AppData\\Local\\Lento\\vivaldi.bmp"
         }
-    }
+    },
+    "apps_to_add": [
+        {
+            "name": "Trello",
+            "path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe",
+            "icon_path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\assets\\Square310x310Logo.scale-200.png"
+        },
+        {
+            "name": "vivaldi",
+            "path": "C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe",
+            "icon_path": "C:\\Users\\llamaempire\\AppData\\Local\\Lento\\vivaldi.bmp"
+        }
+    ]
 }
 
 
@@ -869,7 +881,7 @@ C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb
 C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe   
 C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe   
 C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe   """,
-            "powershell \"(Get-AppxPackage -Name \"*Trello*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\"": "assets\Square310x310Logo.png",
+            "powershell \"(Get-AppxPackage -Name \"*Trello*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\"": "assets\\Square310x310Logo.png",
             "powershell \"{Add-Type -AssemblyName System.Drawing\n[System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')command_string}\"": ""
     }
     return cases[cmd]

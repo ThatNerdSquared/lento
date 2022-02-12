@@ -68,7 +68,8 @@ def get_apps():
                     "Lento",
                     f"{app_name}.bmp"
                 )
-                command_string = f"""Add-Type -AssemblyName System.Drawing
+                if not os.path.exists(app_icon_path):
+                    command_string = f"""Add-Type -AssemblyName System.Drawing
                     [System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')"""  # noqa: E501
                 command = f"powershell \"{command_string}\""
                 subprocess.call(command, shell=True)
