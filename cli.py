@@ -155,25 +155,70 @@ elif f == "update_app_blocklists":
 elif f == "add_notification":
     CardsManagement.add_notification(
         param1,
+        True,
         param2,
-        param3,
-        param4,
-        param5,
-        param6,
-        param7,
-        param8,
-        param9,
-        param10,
+        "banner",
+        ["twitter.com", "youtube.com"],
+        ["Debug USACO problem"],
+        42,
+        "get back to work",
+        "keep focused",
+        {
+            "reminder": "~/Desktop/reminder.mp3",
+            "Frog": "/System/Library/Sounds/Frog.aiff"
+        }
     )
 elif f == "update_notification_list":
     CardsManagement.update_notification_list(
         param1,
-        param2,
+        {
+            "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
+                "name": "testnotif2",
+                "enabled": True,
+                "type": "banner",
+                "blocked_visit_triggers": [
+                    "twitter.com",
+                    "youtube.com"
+                ],
+                "associated_goals": [
+                    "Debug USACO problem"
+                ],
+                "time_interval_trigger": 42,
+                "title": "get back to work",
+                "body": "keep focused",
+                "audio_paths": {
+                    "reminder": "~/Desktop/reminder.mp3",
+                    "Frog": "/System/Library/Sounds/Frog.aiff"
+                }
+            },
+            "ba606651f167406ca7cd88a8c9b05ceb": {
+                "name": "testnotif1",
+                "enabled": True,
+                "type": "banner",
+                "blocked_visit_triggers": [
+                    "twitter.com",
+                    "youtube.com"
+                ],
+                "associated_goals": [
+                    "Debug USACO problem"
+                ],
+                "time_interval_trigger": 42,
+                "title": "get back to work",
+                "body": "keep focused",
+                "audio_paths": {
+                    "reminder": "~/Desktop/reminder.mp3",
+                    "Frog": "/System/Library/Sounds/Frog.aiff"
+                }
+            }
+        },
     )
 elif f == "add_goal":
     CardsManagement.add_goal(param1, param2)
 elif f == "update_goal_list":
-    CardsManagement.update_goal_list(param1, param2)
+    CardsManagement.update_goal_list(param1, {
+        "Conquer world": True,
+        "Debug USACO problem": False,
+    })
 else:
     result_options["message"] = f"INVALID COMMAND: {f}"
 
