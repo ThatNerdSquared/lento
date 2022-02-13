@@ -75,7 +75,7 @@ def update_metadata(card_to_modify, field_to_modify, new_value):
 
 
 def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):
-    """Update either the `hard_blocked_sites` or `soft_blocked_sites` lists."""
+    """Add to either the `hard_blocked_sites` or `soft_blocked_sites` lists."""
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
     with open(path, "r", encoding="UTF-8") as settings_json:
         settings = json.load(settings_json)
@@ -91,6 +91,27 @@ def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):
         raise Exception("URL not valid!")
 
     settings["cards"][card_to_modify][list_to_modify][new_value] = True
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(settings, settings_json)
+
+
+def update_site_blocklists(card_to_modify, list_to_modify, new_sites_dict):
+    """Update one of the blocked_sites lists. Minimal validation."""
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        settings = json.load(settings_json)
+
+    if settings["cards"][card_to_modify][list_to_modify] is None:
+        raise Exception("List is nonexistent!")
+    elif list_to_modify not in [
+                "hard_blocked_sites",
+                "soft_blocked_sites"
+            ]:
+        raise Exception("Card field is restricted!")
+    elif not isinstance(new_sites_dict, dict):
+        raise Exception("new_sites_dict is not a dict!")
+
+    settings["cards"][card_to_modify][list_to_modify] = new_sites_dict
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)
 

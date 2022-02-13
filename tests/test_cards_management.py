@@ -240,7 +240,78 @@ def test_add_to_site_blocklists_denies_restricted_field_change(
         )
 
 
-def test_update_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
+def test_update_site_blocklists_works_correctly(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(
+            helpers.data["bare_config_with_blocked_sites"],
+            settings_json
+        )
+
+    pretest_dict = helpers.data["bare_config_with_blocked_sites"]
+    assert pretest_dict["cards"]["Untitled Card"]["hard_blocked_sites"] == {
+        "youtube.com": True,
+        "twitter.com": True
+    }
+
+    CardsManagement.update_site_blocklists(
+        "Untitled Card",
+        "hard_blocked_sites",
+        {
+            "youtube.com": True,
+            "twitter.com": False
+        }
+    )
+    with open(path, "r", encoding="UTF-8") as settings_json:
+        new_settings = json.load(settings_json)
+
+    cards_dict = new_settings["cards"]["Untitled Card"]
+
+    assert "youtube.com" in cards_dict["hard_blocked_sites"]
+    assert "twitter.com" in cards_dict["hard_blocked_sites"]
+    assert cards_dict["hard_blocked_sites"]["youtube.com"] is True
+    assert cards_dict["hard_blocked_sites"]["twitter.com"] is False
+
+
+def test_update_site_blocklists_rejects_flawed_data(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(
+            helpers.data["bare_config_with_blocked_sites"],
+            settings_json
+        )
+
+    with pytest.raises(KeyError):
+        CardsManagement.update_site_blocklists(
+            "Untitled Card",
+            "hard_blocked_NIGHTS",
+            {
+                "youtube.com": True,
+                "twitter.com": False
+            }
+        )
+    with pytest.raises(Exception, match="Card field is restricted!"):
+        CardsManagement.update_site_blocklists(
+            "Untitled Card",
+            "name",
+            {
+                "youtube.com": True,
+                "twitter.com": False
+            }
+        )
+    with pytest.raises(Exception, match="new_sites_dict is not a dict!"):
+        CardsManagement.update_site_blocklists(
+            "Untitled Card",
+            "hard_blocked_sites",
+            "llama"
+        )
+
+
+def test_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     folders = {
         "application_support": os.path.join(
@@ -335,7 +406,7 @@ def test_update_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     }
 
 
-def test_update_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
+def test_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     appdata_dict = copy.deepcopy(helpers.data["proper_apps_dict"])
     appdata_dict["vivaldi"]["path"] = os.path.join(

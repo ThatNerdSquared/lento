@@ -5,6 +5,7 @@
 # IT WITH LENTO MAY HAVE UNINTENDED OR UNEXPECTED
 # CONSEQUENCES.
 import argparse
+import json
 from lento.common import cards_management as CardsManagement
 from lento import utils
 
@@ -59,6 +60,13 @@ elif f == "update_metadata":
     result_options["output"] = CardsManagement.read_cards()
 elif f == "add_to_site_blocklists":
     r = CardsManagement.add_to_site_blocklists(param1, param2, param3)
+    result_options["output"] = CardsManagement.read_cards()
+elif f == "update_site_blocklists":
+    r = CardsManagement.update_site_blocklists(
+        param1,
+        param2,
+        json.loads(param3)
+    )
     result_options["output"] = CardsManagement.read_cards()
 elif f == "add_to_app_blocklists":
     r = CardsManagement.add_to_app_blocklists(
