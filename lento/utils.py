@@ -4,6 +4,7 @@ import subprocess
 import sys
 from urllib.parse import urlparse
 from pathlib import Path
+from lento.config import Config
 
 
 def get_data_file_path(relative_path):
@@ -41,14 +42,14 @@ def get_apps():
         items = remove_dupes_blanks_and_whitespace(raw_data[3:])
         for app_path in items:
             app_name = os.path.basename(app_path).replace(".exe", "")
-            if os.path.join("C:", "Program Files", "WindowsApps") in app_path:
+            if os.path.join(Config.DRIVE_LETTER, "Program Files", "WindowsApps") in app_path:
                 command = f"powershell \"(Get-AppxPackage -Name \"*{app_name}*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\""  # noqa: E501
                 app_icon = subprocess.getoutput(command)
                 if app_icon == "":
                     app_icon_path = None
                 else:
                     app_icon_path = os.path.join(
-                        "C:",
+                        Config.DRIVE_LETTER,
                         "Program Files",
                         "WindowsApps",
                         Path(app_path).parts[3],
@@ -66,10 +67,8 @@ def get_apps():
                     f"{app_name}.bmp"
                 )
                 if not os.path.exists(app_icon_path):
-                    command_string = f"""Add-Type -AssemblyName System.Drawing
-                    [System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')"""  # noqa: E501
-                command = f"powershell \"{command_string}\""
-                subprocess.call(command, shell=True)
+                    command = f"powershell \"Add-Type -AssemblyName System.Drawing; [System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')\""  # noqa: E501
+                    subprocess.call(command, shell=True)
             apps[app_name] = {
                 "path": app_path,
                 "icon_path": app_icon_path

@@ -1,13 +1,16 @@
 # THIS LENTO CLI IS FOR DEVELOPER USE ONLY. DO NOT
 # ATTEMPT TO USE THIS FOR SCRIPTING PURPOSES. END-USER
-# USE OF THIS SCRIPT IS NOT SUPPORTED. WE USE THIS 
+# USE OF THIS SCRIPT IS NOT SUPPORTED. WE USE THIS
 # SCRIPT FOR LIVE-AMMO TESTING OF THE BACKEND; USING
 # IT WITH LENTO MAY HAVE UNINTENDED OR UNEXPECTED
 # CONSEQUENCES.
 import argparse
-import json
+import copy
+import os
+import platform
 from lento.common import cards_management as CardsManagement
 from lento import utils
+from tests import helpers
 
 parser = argparse.ArgumentParser(
     description="Run backend functions to make sure they work."
@@ -65,18 +68,50 @@ elif f == "update_site_blocklists":
     r = CardsManagement.update_site_blocklists(
         param1,
         param2,
-        json.loads(param3)
+        {
+            "youtube.com": True,
+            "twitter.com": False
+        }
     )
     result_options["output"] = CardsManagement.read_cards()
 elif f == "add_to_app_blocklists":
-    r = CardsManagement.add_to_app_blocklists(
-        param1,
-        param2,
-        param3.split(",")
-    )
-    result_options["output"] = CardsManagement.read_cards()
+    if platform.system() == "Windows":
+        apps_to_add = copy.deepcopy(helpers.data["apps_to_add"])
+        apps_to_add[1]["path"] = os.path.join(
+            os.path.expanduser("~"),
+            "AppData",
+            "Local",
+            "Vivaldi",
+            "Application",
+            "vivaldi.exe"
+        )
+        apps_to_add[1]["icon_path"] = os.path.join(
+            os.path.expanduser("~"),
+            "AppData",
+            "Local",
+            "Lento",
+            "vivaldi.bmp"
+        )
+        r = CardsManagement.add_to_app_blocklists(
+            param1,
+            param2,
+            apps_to_add
+        )
+        result_options["output"] = CardsManagement.read_cards()
+    elif platform.system() == "Darwin":
+        r = CardsManagement.add_to_app_blocklists(
+            param1,
+            param2,
+            [
+                "/Applications/GRIS.app",
+                "/Applications/Scrivener.app",
+                "/Applications/NetNewsWire.app"
+            ]
+        )
+        result_options["output"] = CardsManagement.read_cards()
 elif f == "get_apps":
     r = utils.get_apps()
+    result_options["output"] = r
 elif f == "update_app_blocklists":
     r = CardsManagement.update_app_blocklists(
         param1,

@@ -1,7 +1,9 @@
 import copy
+import json
 import os
 import platform
 import subprocess
+from lento.config import Config
 from lento import utils
 from tests import helpers
 
@@ -15,6 +17,8 @@ def test_remove_dupes_blanks_and_whitespace():
 
 def test_get_apps_windows(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    if platform.system() == "Darwin":
+        monkeypatch.setattr(Config, "DRIVE_LETTER", "C:/")
     monkeypatch.setattr(platform, "system", lambda: "Windows")
     monkeypatch.setattr(subprocess, "getoutput", helpers.fake_subprocess)
     monkeypatch.setattr(subprocess, "call", lambda x, shell="": "")

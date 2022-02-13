@@ -1,5 +1,6 @@
 # flake8: noqa
 import os
+from lento.config import Config
 
 data = {
     "initial_blank_config": {
@@ -856,7 +857,7 @@ data = {
     "proper_apps_dict": {
         "Trello": {
             "path": str(os.path.join(
-                "C:",
+                Config.DRIVE_LETTER,
                 "Program Files",
                 "WindowsApps",
                 "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
@@ -864,7 +865,7 @@ data = {
                 "Trello.exe"
             )),
             "icon_path": str(os.path.join(
-                "C:",
+                Config.DRIVE_LETTER,
                 "Program Files",
                 "WindowsApps",
                 "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
@@ -878,7 +879,7 @@ data = {
         {
             "name": "Trello",
             "path": str(os.path.join(
-                "C:",
+                Config.DRIVE_LETTER,
                 "Program Files",
                 "WindowsApps",
                 "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
@@ -886,7 +887,7 @@ data = {
                 "Trello.exe"
             )),
             "icon_path": str(os.path.join(
-                "C:",
+                Config.DRIVE_LETTER,
                 "Program Files",
                 "WindowsApps",
                 "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
@@ -923,7 +924,7 @@ class fake_rgb:
 def fake_subprocess(cmd):
     correct_trello_path = "".join([
         str(os.path.join(
-            "C:",
+            Config.DRIVE_LETTER,
             "Program Files",
             "WindowsApps",
             "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
