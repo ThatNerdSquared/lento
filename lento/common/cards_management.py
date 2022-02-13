@@ -74,7 +74,7 @@ def update_metadata(card_to_modify, field_to_modify, new_value):
         json.dump(settings, settings_json)
 
 
-def update_site_blocklists(card_to_modify, list_to_modify, new_value):
+def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):
     """Update either the `hard_blocked_sites` or `soft_blocked_sites` lists."""
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
     with open(path, "r", encoding="UTF-8") as settings_json:
