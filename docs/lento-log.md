@@ -146,3 +146,11 @@ I'm currently still working on how to do this on Windows. While I'm thinking abo
 I first followed an article giving instructions for how to extract icons from a file using Powershell. This worked on regular .exes. However, I didn't have a filepath to run these commands on for Windows Store apps. After some digging around, I discovered that Windows Store Apps are stored in a folder called `C:\Users\[current_username]\WindowsApps`. Using an administrator-level Powershell window, I navigated through this folder and managed to open up the data folders for some of these apps in File Explorer. Immediately, I noticed that there was a file called `AppxManifest.xml`. Usually manifest files provide metadata, so I opened up one of them in VSCode. A bit of browsing revealed that the path to the app icon files was defined in the `AppxManifest`! I ran a search to see if there was a way to programmatically pull attributes from the `AppxManifest` using Powershell. Sure enough, there was some solid documentation for a command called `Get-AppxManifest`. I tweaked the examples a bit and managed to get it working!
 
 I've documented the exact steps and commands needed to do this on my todo list to implement tomorrow. Hopefully the build will go smoothly now that I have a clear idea of how to extract the app icons.
+
+## 2022-02-13
+`Nathan:` Over the last few days, I've been finishing up CardsManagement. There have been a lot less possibly-fatal errors since the 8th, although I've still come across some minor issues that required some research and troubleshooting:
+- formatting of powershell commands that we want to run from Python (they get passed through cmd.exe first, leading to some necessary formatting changes)
+- making tests involving paths work on both Windows and macOS (different structures/folder conventions need to be accounted for)
+- some weird errors that made it past automated tests (comparing orders of items in dicts)
+
+Other than those, I haven't faced any notable issues and have just about finished CardsManagement. Creating a PR today for code review.
