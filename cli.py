@@ -6,6 +6,7 @@
 # CONSEQUENCES.
 import argparse
 import copy
+import json
 import os
 import platform
 from lento.common import cards_management as CardsManagement
@@ -53,19 +54,18 @@ if f == "create_card":
     CardsManagement.create_card()
     result_options["output"] = CardsManagement.read_cards()
 elif f == "read_cards":
-    r = CardsManagement.read_cards()
-    result_options["output"] = r
+    result_options["output"] = CardsManagement.read_cards()
 elif f == "delete_card":
-    r = CardsManagement.delete_card(param1)
+    CardsManagement.delete_card(param1)
     result_options["output"] = CardsManagement.read_cards()
 elif f == "update_metadata":
-    r = CardsManagement.update_metadata(param1, param2, param3)
+    CardsManagement.update_metadata(param1, param2, param3)
     result_options["output"] = CardsManagement.read_cards()
 elif f == "add_to_site_blocklists":
-    r = CardsManagement.add_to_site_blocklists(param1, param2, param3)
+    CardsManagement.add_to_site_blocklists(param1, param2, param3)
     result_options["output"] = CardsManagement.read_cards()
 elif f == "update_site_blocklists":
-    r = CardsManagement.update_site_blocklists(
+    CardsManagement.update_site_blocklists(
         param1,
         param2,
         {
@@ -92,14 +92,14 @@ elif f == "add_to_app_blocklists":
             "Lento",
             "vivaldi.bmp"
         )
-        r = CardsManagement.add_to_app_blocklists(
+        CardsManagement.add_to_app_blocklists(
             param1,
             param2,
             apps_to_add
         )
         result_options["output"] = CardsManagement.read_cards()
     elif platform.system() == "Darwin":
-        r = CardsManagement.add_to_app_blocklists(
+        CardsManagement.add_to_app_blocklists(
             param1,
             param2,
             [
@@ -113,13 +113,47 @@ elif f == "get_apps":
     r = utils.get_apps()
     result_options["output"] = r
 elif f == "update_app_blocklists":
-    r = CardsManagement.update_app_blocklists(
-        param1,
-        param2,
-        param3,
-    )
+    if platform.system() == "Windows":
+        CardsManagement.update_app_blocklists(
+            param1,
+            param2,
+            {
+                "vivaldi": {
+                    "enabled": True,
+                    "path": "C:\\Users\\natha\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe",  # noqa: E501
+                    "app_icon_path": "C:\\Users\\natha\\AppData\\Local\\Lento\\vivaldi.bmp"  # noqa: E501
+                },
+                "Trello": {
+                    "enabled": False,
+                    "path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe",  # noqa: E501
+                    "app_icon_path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\assets\\Square310x310Logo.scale-200.png"  # noqa: E501
+                }
+            }
+        )
+    elif platform.system() == "Darwin":
+        CardsManagement.update_app_blocklists(
+            param1,
+            param2,
+            {
+                "Scrivener": {
+                    "enabled": True,
+                    "bundle_id": "com.literatureandlatte.scrivener3",
+                    "app_icon_path": "~/Library/Application Support/Lento/Scrivener.jpg"  # noqa: E501
+                },
+                "NetNewsWire": {
+                    "enabled": True,
+                    "bundle_id": "com.ranchero.NetNewsWire-Evergreen",
+                    "app_icon_path": "~/Library/Application Support/Lento/NetNewsWire.jpg"  # noqa: E501
+                },
+                "GRIS": {
+                    "enabled": True,
+                    "bundle_id": "unity.nomada studio.GRIS",
+                    "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"  # noqa: E501
+                },
+            }
+        )
 elif f == "add_notification":
-    r = CardsManagement.add_notification(
+    CardsManagement.add_notification(
         param1,
         param2,
         param3,
@@ -132,18 +166,18 @@ elif f == "add_notification":
         param10,
     )
 elif f == "update_notification_list":
-    r = CardsManagement.update_notification_list(
+    CardsManagement.update_notification_list(
         param1,
         param2,
     )
 elif f == "add_goal":
-    r = CardsManagement.add_goal(param1, param2)
+    CardsManagement.add_goal(param1, param2)
 elif f == "update_goal_list":
-    r = CardsManagement.update_goal_list(param1, param2)
+    CardsManagement.update_goal_list(param1, param2)
 else:
     result_options["message"] = f"INVALID COMMAND: {f}"
 
 print(result_options["message"])
 if result_options["output"] is not None:
     print("OUTPUT:")
-    print(result_options["output"])
+    print(json.dumps(result_options["output"], indent=4))

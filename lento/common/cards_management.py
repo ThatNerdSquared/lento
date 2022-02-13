@@ -198,7 +198,7 @@ def update_app_blocklists(card_to_modify, list_to_modify, new_list_structure):
             ]:
         raise Exception("Card field is restricted!")
 
-    settings["cards"][card_to_modify][list_to_modify] == new_list_structure
+    settings["cards"][card_to_modify][list_to_modify] = new_list_structure
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)

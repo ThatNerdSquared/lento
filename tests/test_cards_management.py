@@ -273,6 +273,7 @@ def test_update_site_blocklists_works_correctly(monkeypatch, tmp_path):
     assert "twitter.com" in cards_dict["hard_blocked_sites"]
     assert cards_dict["hard_blocked_sites"]["youtube.com"] is True
     assert cards_dict["hard_blocked_sites"]["twitter.com"] is False
+    assert list(cards_dict["hard_blocked_sites"].keys()) == ["youtube.com", "twitter.com"]
 
 
 def test_update_site_blocklists_rejects_flawed_data(monkeypatch, tmp_path):
@@ -404,6 +405,7 @@ def test_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
             "Library/Application Support/Lento/NetNewsWire.jpg"
         )
     }
+    assert list(hb_list.keys()) == ["GRIS", "Scrivener", "NetNewsWire"]
 
 
 def test_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
@@ -472,6 +474,8 @@ def test_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
         "app_icon_path": appdata_dict["vivaldi"]["icon_path"],
     }
 
+    assert list(hb_list.keys()) == ["Trello", "vivaldi"]
+
 
 def test_update_app_blocklists_works_correctly(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
@@ -490,8 +494,9 @@ def test_update_app_blocklists_works_correctly(monkeypatch, tmp_path):
         new_settings = json.load(settings_json)
 
     new_hblist = new_settings["cards"]["Untitled Card"]["hard_blocked_apps"]
-    correct_cards = helpers.data["bare_config_reordered_apps"]["cards"]
-    assert new_hblist == correct_cards["Untitled Card"]["hard_blocked_apps"]
+    correct_hblist = helpers.data["bare_config_reordered_apps"]["cards"]["Untitled Card"]["hard_blocked_apps"]  # noqa: E501
+    assert new_hblist == correct_hblist
+    assert list(new_hblist.keys()) == list(correct_hblist.keys())
 
 
 def test_update_app_blocklists_rejects_incorrect(monkeypatch, tmp_path):
