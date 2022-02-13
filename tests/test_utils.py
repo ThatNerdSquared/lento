@@ -22,6 +22,14 @@ def test_get_apps_windows(monkeypatch, tmp_path):
     apps = utils.get_apps()
 
     proper_apps_dict = copy.deepcopy(helpers.data["proper_apps_dict"])
+    proper_apps_dict['vivaldi']['path'] = os.path.join(
+        os.path.expanduser("~"),
+        "AppData",
+        "Local",
+        "Vivaldi",
+        "Application",
+        "vivaldi.exe"
+    )
     proper_apps_dict['vivaldi']['icon_path'] = os.path.join(
         os.path.expanduser("~"),
         "AppData",

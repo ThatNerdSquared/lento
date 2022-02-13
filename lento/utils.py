@@ -3,6 +3,7 @@ import platform
 import subprocess
 import sys
 from urllib.parse import urlparse
+from pathlib import Path
 
 
 def get_data_file_path(relative_path):
@@ -40,21 +41,17 @@ def get_apps():
         items = remove_dupes_blanks_and_whitespace(raw_data[3:])
         for app_path in items:
             app_name = os.path.basename(app_path).replace(".exe", "")
-            if "C:\\Program Files\\WindowsApps" in app_path:
+            if os.path.join("C:", "Program Files", "WindowsApps") in app_path:
                 command = f"powershell \"(Get-AppxPackage -Name \"*{app_name}*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\""  # noqa: E501
                 app_icon = subprocess.getoutput(command)
                 if app_icon == "":
                     app_icon_path = None
                 else:
-                    package_name = app_path.replace(
-                        "C:\\Program Files\\WindowsApps\\",
-                        ""
-                    )
                     app_icon_path = os.path.join(
-                        "C:\\",
+                        "C:",
                         "Program Files",
                         "WindowsApps",
-                        package_name[:package_name.index("\\")+1],
+                        Path(app_path).parts[3],
                         "".join([
                             app_icon[:-4],
                             ".scale-200.png"

@@ -337,24 +337,55 @@ def test_update_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
 
 def test_update_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    appdata_dict = copy.deepcopy(helpers.data["proper_apps_dict"])
+    appdata_dict['vivaldi']['path'] = os.path.join(
+        os.path.expanduser("~"),
+        "AppData",
+        "Local",
+        "Vivaldi",
+        "Application",
+        "vivaldi.exe"
+    )
+    appdata_dict['vivaldi']['icon_path'] = os.path.join(
+        os.path.expanduser("~"),
+        "AppData",
+        "Local",
+        "Lento",
+        "vivaldi.bmp"
+    )
     monkeypatch.setattr(platform, "system", lambda: "Windows")
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(helpers.data["bare_config"], settings_json)
 
+    apps_to_add = copy.deepcopy(helpers.data['apps_to_add'])
+    apps_to_add[1]['path'] = os.path.join(
+        os.path.expanduser("~"),
+        "AppData",
+        "Local",
+        "Vivaldi",
+        "Application",
+        "vivaldi.exe"
+    )
+    apps_to_add[1]['icon_path'] = os.path.join(
+        os.path.expanduser("~"),
+        "AppData",
+        "Local",
+        "Lento",
+        "vivaldi.bmp"
+    )
+
     CardsManagement.add_to_app_blocklists(
         "Untitled Card",
         "hard_blocked_apps",
-        helpers.data['apps_to_add']
+        apps_to_add
     )
 
     with open(path, "r", encoding="UTF-8") as settings_json:
         new_settings = json.load(settings_json)
 
     hb_list = new_settings["cards"]["Untitled Card"]["hard_blocked_apps"]
-
-    appdata_dict = helpers.data["proper_apps_dict"]
 
     assert "Trello" in hb_list
     assert "vivaldi" in hb_list

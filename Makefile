@@ -12,6 +12,11 @@ test:
 	@${PYTHON} -m pytest tests
 	@echo Done!
 
+vtest:
+	@echo Testing...
+	@${PYTHON} -m pytest -vv tests
+	@echo Done!
+
 run: test lint
 	@${PYTHON} app.py
 

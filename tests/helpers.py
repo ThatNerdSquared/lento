@@ -1,4 +1,6 @@
 # flake8: noqa
+import os
+
 data = {
     "initial_blank_config": {
         "is_block_running": False,
@@ -830,24 +832,47 @@ data = {
     },
     "proper_apps_dict": {
         "Trello": {
-            "path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe",
-            "icon_path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\assets\\Square310x310Logo.scale-200.png"
+            "path": str(os.path.join(
+                "C:",
+                "Program Files",
+                "WindowsApps",
+                "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
+                "app",
+                "Trello.exe"
+            )),
+            "icon_path": str(os.path.join(
+                "C:",
+                "Program Files",
+                "WindowsApps",
+                "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
+                "assets",
+                "Square310x310Logo.scale-200.png"
+            ))
         },
-        "vivaldi": {
-            "path": "C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe",
-            "icon_path": "C:\\Users\\llamaempire\\AppData\\Local\\Lento\\vivaldi.bmp"
-        }
+        "vivaldi": { }
     },
     "apps_to_add": [
         {
             "name": "Trello",
-            "path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe",
-            "icon_path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\assets\\Square310x310Logo.scale-200.png"
+            "path": str(os.path.join(
+                "C:",
+                "Program Files",
+                "WindowsApps",
+                "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
+                "app",
+                "Trello.exe"
+            )),
+            "icon_path": str(os.path.join(
+                "C:",
+                "Program Files",
+                "WindowsApps",
+                "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
+                "assets",
+                "Square310x310Logo.scale-200.png"
+            ))
         },
         {
             "name": "vivaldi",
-            "path": "C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe",
-            "icon_path": "C:\\Users\\llamaempire\\AppData\\Local\\Lento\\vivaldi.bmp"
         }
     ]
 }
@@ -873,15 +898,37 @@ class fake_rgb:
         return True
 
 def fake_subprocess(cmd):
+    correct_trello_path = "".join([
+        str(os.path.join(
+            "C:",
+            "Program Files",
+            "WindowsApps",
+            "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
+            "app",
+            "Trello.exe"
+        )),
+        "   "
+    ])
+    correct_vivaldi_path = "".join([
+        str(os.path.join(
+            os.path.expanduser("~"),
+            "AppData",
+            "Local",
+            "Vivaldi",
+            "Application",
+            "vivaldi.exe"
+        )),
+        "   "
+    ])
     cases = {
-        "powershell \"Get-Process -FileVersionInfo -ErrorAction SilentlyContinue | Select-Object FileName\"": """     
+        "powershell \"Get-Process -FileVersionInfo -ErrorAction SilentlyContinue | Select-Object FileName\"": f"""     
 FileName   
 --------   
-C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe   
-C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe   
-C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe   
-C:\\Users\\llamaempire\\AppData\\Local\\Vivaldi\\Application\\vivaldi.exe   """,
-            "powershell \"(Get-AppxPackage -Name \"*Trello*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\"": "assets\\Square310x310Logo.png",
+{correct_trello_path}
+{correct_trello_path}
+{correct_vivaldi_path}
+{correct_vivaldi_path}""",
+            "powershell \"(Get-AppxPackage -Name \"*Trello*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\"": os.path.join("assets", "Square310x310Logo.png"),
             "powershell \"{Add-Type -AssemblyName System.Drawing\n[System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')command_string}\"": ""
     }
     return cases[cmd]
