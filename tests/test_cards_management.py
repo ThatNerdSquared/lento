@@ -186,14 +186,40 @@ def test_add_to_site_blocklists_denies_malformed_data(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
 
+    cfg = copy.deepcopy(helpers.data["bare_config"])
     with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+        json.dump(cfg, settings_json)
 
     with pytest.raises(Exception, match="URL not valid!"):
         CardsManagement.add_to_site_blocklists(
             "Untitled Card",
             "hard_blocked_sites",
             "llama"
+        )
+
+    cfg["cards"]["Untitled Card"]["soft_blocked_sites"] = {
+        "youtube.com": True
+    }
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(cfg, settings_json)
+    with pytest.raises(Exception, match="'youtube.com' already soft blocked!"):
+        CardsManagement.add_to_site_blocklists(
+            "Untitled Card",
+            "hard_blocked_sites",
+            "youtube.com"
+        )
+
+    cfg["cards"]["Untitled Card"]["soft_blocked_sites"] = {}
+    cfg["cards"]["Untitled Card"]["hard_blocked_sites"] = {
+        "youtube.com": True
+    }
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(cfg, settings_json)
+    with pytest.raises(Exception, match="'youtube.com' already hard blocked!"):
+        CardsManagement.add_to_site_blocklists(
+            "Untitled Card",
+            "soft_blocked_sites",
+            "youtube.com"
         )
 
 
@@ -408,6 +434,56 @@ def test_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     assert list(hb_list.keys()) == ["GRIS", "Scrivener", "NetNewsWire"]
 
 
+def test_add_to_app_blocklists_rejects_dupes_darwin(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    monkeypatch.setattr(platform, "system", lambda: "Darwin")
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    cfg = copy.deepcopy(helpers.data["bare_config"])
+    cfg["cards"]["Untitled Card"]["soft_blocked_apps"] = {
+        "GRIS": {
+            "enabled": True,
+            "bundle_id": "unity.nomada studio.GRIS",
+            "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"
+        }
+    }
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(cfg, settings_json)
+
+    with pytest.raises(Exception, match="'GRIS' already soft blocked!"):
+        CardsManagement.add_to_app_blocklists(
+            "Untitled Card",
+            "hard_blocked_apps",
+            [
+                "/Applications/GRIS.app",
+                "/Applications/Scrivener.app",
+                "/Applications/NetNewsWire.app"
+            ]
+        )
+
+    cfg["cards"]["Untitled Card"]["soft_blocked_apps"] = {}
+    cfg["cards"]["Untitled Card"]["hard_blocked_apps"] = {
+        "GRIS": {
+            "enabled": True,
+            "bundle_id": "unity.nomada studio.GRIS",
+            "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"
+        }
+    }
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(cfg, settings_json)
+
+    with pytest.raises(Exception, match="'GRIS' already hard blocked!"):
+        CardsManagement.add_to_app_blocklists(
+            "Untitled Card",
+            "soft_blocked_apps",
+            [
+                "/Applications/GRIS.app",
+                "/Applications/Scrivener.app",
+                "/Applications/NetNewsWire.app"
+            ]
+        )
+
+
 def test_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
     monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     appdata_dict = copy.deepcopy(helpers.data["proper_apps_dict"])
@@ -475,6 +551,49 @@ def test_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
     }
 
     assert list(hb_list.keys()) == ["Trello", "vivaldi"]
+
+
+def test_add_to_app_blocklists_rejects_dupes_windows(monkeypatch, tmp_path):
+    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    monkeypatch.setattr(platform, "system", lambda: "Windows")
+    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+
+    appdata_dict = helpers.data["proper_apps_dict"]
+    cfg = copy.deepcopy(helpers.data["bare_config"])
+    cfg["cards"]["Untitled Card"]["soft_blocked_apps"] = {
+        "Trello": {
+            "enabled": True,
+            "path": appdata_dict["Trello"]["path"],
+            "app_icon_path": appdata_dict["Trello"]["icon_path"],
+        },
+    }
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(cfg, settings_json)
+
+    with pytest.raises(Exception, match="'Trello' already soft blocked!"):
+        CardsManagement.add_to_app_blocklists(
+            "Untitled Card",
+            "hard_blocked_apps",
+            helpers.data["apps_to_add"]
+        )
+
+    cfg["cards"]["Untitled Card"]["soft_blocked_apps"] = {}
+    cfg["cards"]["Untitled Card"]["hard_blocked_apps"] = {
+        "Trello": {
+            "enabled": True,
+            "path": appdata_dict["Trello"]["path"],
+            "app_icon_path": appdata_dict["Trello"]["icon_path"],
+        },
+    }
+    with open(path, "w", encoding="UTF-8") as settings_json:
+        json.dump(cfg, settings_json)
+
+    with pytest.raises(Exception, match="'Trello' already hard blocked!"):
+        CardsManagement.add_to_app_blocklists(
+            "Untitled Card",
+            "soft_blocked_apps",
+            helpers.data["apps_to_add"]
+        )
 
 
 def test_update_app_blocklists_works_correctly(monkeypatch, tmp_path):

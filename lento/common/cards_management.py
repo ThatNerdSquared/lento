@@ -80,7 +80,8 @@ def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):
     with open(path, "r", encoding="UTF-8") as settings_json:
         settings = json.load(settings_json)
 
-    if settings["cards"][card_to_modify][list_to_modify] is None:
+    card_to_mod = settings["cards"][card_to_modify]
+    if card_to_mod[list_to_modify] is None:
         raise Exception("List is nonexistent!")
     elif list_to_modify not in [
                 "hard_blocked_sites",
@@ -89,6 +90,12 @@ def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):
         raise Exception("Card field is restricted!")
     elif is_url(new_value) is False:
         raise Exception("URL not valid!")
+    elif list_to_modify == "hard_blocked_sites":
+        if new_value in card_to_mod["soft_blocked_sites"]:
+            raise Exception(f"'{new_value}' already soft blocked!")
+    elif list_to_modify == "soft_blocked_sites":
+        if new_value in card_to_mod["hard_blocked_sites"]:
+            raise Exception(f"'{new_value}' already hard blocked!")
 
     settings["cards"][card_to_modify][list_to_modify][new_value] = True
     with open(path, "w", encoding="UTF-8") as settings_json:
@@ -127,6 +134,13 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
     if current_os == "Darwin":
         for app in apps_to_add:
             app_name = os.path.basename(app).replace(".app", "")
+
+            if list_to_modify == "hard_blocked_apps":
+                if app_name in card["soft_blocked_apps"]:
+                    raise Exception(f"'{app_name}' already soft blocked!")
+            elif list_to_modify == "soft_blocked_apps":
+                if app_name in card["hard_blocked_apps"]:
+                    raise Exception(f"'{app_name}' already hard blocked!")
 
             bundle_id = subprocess.check_output([
                 "mdls",
@@ -175,6 +189,13 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
             }
     elif current_os == "Windows":
         for app in apps_to_add:
+            app_name = app["name"]
+            if list_to_modify == "hard_blocked_apps":
+                if app_name in card["soft_blocked_apps"]:
+                    raise Exception(f"'{app_name}' already soft blocked!")
+            elif list_to_modify == "soft_blocked_apps":
+                if app_name in card["hard_blocked_apps"]:
+                    raise Exception(f"'{app_name}' already hard blocked!")
             card[list_to_modify][app["name"]] = {
                 "enabled": True,
                 "path": app["path"],
