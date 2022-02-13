@@ -38,14 +38,14 @@ def read_cards():
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
     with open(path, "r", encoding="UTF-8") as settings_json:
         settings = json.load(settings_json)
-    return settings['cards']
+    return settings["cards"]
 
 
 def delete_card(card_to_delete):
     path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
     with open(path, "r", encoding="UTF-8") as settings_json:
         settings = json.load(settings_json)
-    del settings['cards'][card_to_delete]
+    del settings["cards"][card_to_delete]
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)
 
