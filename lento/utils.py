@@ -42,7 +42,7 @@ def get_apps():
         items = remove_dupes_blanks_and_whitespace(raw_data[3:])
         for app_path in items:
             app_name = os.path.basename(app_path).replace(".exe", "")
-            if os.path.join(Config.DRIVE_LETTER, "Program Files", "WindowsApps") in app_path:
+            if os.path.join(Config.DRIVE_LETTER, "Program Files", "WindowsApps") in app_path:  # noqa: E501
                 command = f"powershell \"(Get-AppxPackage -Name \"*{app_name}*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\""  # noqa: E501
                 app_icon = subprocess.getoutput(command)
                 if app_icon == "":

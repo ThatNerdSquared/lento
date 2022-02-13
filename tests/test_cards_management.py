@@ -299,7 +299,10 @@ def test_update_site_blocklists_works_correctly(monkeypatch, tmp_path):
     assert "twitter.com" in cards_dict["hard_blocked_sites"]
     assert cards_dict["hard_blocked_sites"]["youtube.com"] is True
     assert cards_dict["hard_blocked_sites"]["twitter.com"] is False
-    assert list(cards_dict["hard_blocked_sites"].keys()) == ["youtube.com", "twitter.com"]
+    assert list(cards_dict["hard_blocked_sites"].keys()) == [
+        "youtube.com",
+        "twitter.com"
+    ]
 
 
 def test_update_site_blocklists_rejects_flawed_data(monkeypatch, tmp_path):
