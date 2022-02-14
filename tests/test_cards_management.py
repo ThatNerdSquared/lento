@@ -377,12 +377,11 @@ def test_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
         plist_file.write(helpers.data[file])
         plist_file.close()
 
-    if platform.system() == "Windows":
-        monkeypatch.setattr(
-            Config,
-            "MACOS_APPLICATION_FOLDER",
-            os.path.join(tmp_path, folders["apps_folder"])
-        )
+    monkeypatch.setattr(
+        Config,
+        "MACOS_APPLICATION_FOLDER",
+        os.path.join(tmp_path, folders["apps_folder"])
+    )
     monkeypatch.setattr(Image, "open", lambda x: helpers.fake_image)
     monkeypatch.setattr(platform, "system", lambda: "Darwin")
     monkeypatch.setattr(subprocess, "check_output", helpers.fake_bundle_id)
