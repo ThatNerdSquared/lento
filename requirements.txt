@@ -1,8 +1,10 @@
 # Prod
 PySide6>=6.2.2.1
-watchdog>=2.1.6
-pyobjc>=8.1
+# watchdog>=2.1.6
+# pyobjc>=8.1
+# psutil>=5.9.0
 python-dotenv>=0.19.2
+pillow>=9.0.0
 
 # Dev
 flake8>=4.0.1

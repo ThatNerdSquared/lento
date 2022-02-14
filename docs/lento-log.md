@@ -109,9 +109,48 @@ It's worth talking about some initial obstacles I had to troubleshoot with this 
 I also had to overcome an issue with the scrolling log entry interface. The log interface had to be able to scroll in reverse chronological order, as well as wrap text. I couldn't figure out how to to do this for a while. Eventually, after consulting some online documentation and experimenting with different methods, I managed to settle on a solution using a specific combination of QScrollView() and layouts.
 
 ## 2022-01-16
-Over the last few days, I've been fixing up some smaller issues with Peregrine. I'm coming to a close with my work on it as a prototype for Lento. Soon, I'll port some parts of Peregrine over to Lento and then stop work on Peregrine until after Lento v1.
+`Nathan:` Over the last few days, I've been fixing up some smaller issues with Peregrine. I'm coming to a close with my work on it as a prototype for Lento. Soon, I'll port some parts of Peregrine over to Lento and then stop work on Peregrine until after Lento v1.
 
 The last interesting problem I've encountered with Peregrine involves packaging the Python code into OS-specific app packages. We're using PyInstaller to do this with both Peregrine and Lento. The problem is that PyInstaller requires a certain setup for each OS. For example, the command you need to run to use PyInstaller on macOS differs slightly with the command you need to use on Windows. I spent an hour or two working out the nuances of these setups with Charlie, switching between macOS and Windows to rapidly iterate on my ideas. After a bit of experimenting, I managed to work out the correct configuration for each platform. This was a great experience as I can directly port the PyInstaller setup from Peregrine to Lento, completely avoiding these problems next time.
 
 ## 2022-01-18
-Updated some of the docs for Lento to note down all of the things I've learned from the Peregrine prototype.
+`Nathan:` Updated some of the docs for Lento to note down all of the things I've learned from the Peregrine prototype.
+
+## 2022-01-23
+`Nathan:` Started on the CardsManagement part of the backend. Hoping to write clean code with 100% test coverage. CardsManagement is easier to test and think about than the other parts of the backend so I'm starting with it as a sort of warm-up.
+
+`Charlie:` Started on GUI — Currently learning GUI design with PySide and Qt, wiped computer and set up coding environments again. Currently planning each part of GUI code, scoping out functions needed + requirements + linking w/backend. Experimenting with colours, widget design, page layout, and animations in PySide — mapping out more interfaces as I go.
+
+## 2022-01-25
+We ran through a bunch of [CodeWars](https://www.codewars.com) problems today. While not directly related to Lento, they sharpened our skills with Python, which will make development faster/easier. This is especially important for Nathan, as he's coming from JS/TS and still getting used to/learning Python.
+
+## 2022-01-28
+`Nathan:` I've been putting some serious work into `CardsManagement` over the last few days. One of the issues I've encountered so far is URL validation. Initially, I wanted to add a check to make sure that when a user adds a URL to a blocklist, a website actually exists at that URL. I also wanted to check to make sure the URL had valid formatting.
+
+However, this turned out to be a lot harder than I originally anticipated. After some research (reading over the original W3C URL spec along with some articles), it turns out that there are so many formats for valid URLs that it's basically impossible to define what a "correct" or "incorrect" URL looks like based on the text alone. Experimenting with different methods also showed that pinging the server at the URL to check for a website also presented issues; we had to consider cases where the user would be offline, where the website would be down, other firewall/router restrictions, etc. Ultimately, we decided to forgo URL validation. While that isn't as clean of a solution as I'd hoped for, it doesn't have any large impact on Lento's UX.
+
+I've also faced some problems with the app blocklists, as they require different methods on macOS and Windows. Right now, I'm not sure how to extract and store all the information we'll need for the blocklists (app name, icon, bundle ID if on macOS, enabled/disabled) on either platform. I'll be investigating this more as I try to finish up the `CardsManagement` section in the next week.
+
+## 2022-02-01
+`Nathan:` I've successfully solved the app blocklists issues on macOS! After some thinking and drawing a few diagrams, I've managed to find methods for extracting each bit of required info:
+- **app name**: parse from the file path by finding what's directly in front of the ".app" string
+- **app icon**: the file name for this is defined in an Info.plist file found inside every app package. After browsing the internet for a while, I've discovered that you can parse these .plist files as Python dictionaries *directly from the Python standard library*! Using the built-in `plistlib` library, I was able to find the file name f the app icon, and then convert it to a .jpg using the `pillow` library. We've decided on storing these in an application support folder, which on macOS is `~/Library/Application Support/Lento/`.
+- **bundle ID**: some research (searching StackOverflow) revealed that there was a command to get the bundle ID from a `.app` file, so I'm running this and then capturing the output.
+- **enabled/disabled**: default to enabled, this matches with the user expectations.
+
+I'm currently still working on how to do this on Windows. While I'm thinking about that, I'm also working on some of the last parts of `CardsManagement`, namely notification and goal management.
+
+## 2022-02-08
+`Nathan:` Figured out how to extract app icons on Windows! To understand why this is so hard, it's useful to know that there are 2 types of Windows apps: regular .exes, and Windows Store apps. I didn't understand the distinction between these at first, which led to some problems later on.
+
+I first followed an article giving instructions for how to extract icons from a file using Powershell. This worked on regular .exes. However, I didn't have a filepath to run these commands on for Windows Store apps. After some digging around, I discovered that Windows Store Apps are stored in a folder called `C:\Users\[current_username]\WindowsApps`. Using an administrator-level Powershell window, I navigated through this folder and managed to open up the data folders for some of these apps in File Explorer. Immediately, I noticed that there was a file called `AppxManifest.xml`. Usually manifest files provide metadata, so I opened up one of them in VSCode. A bit of browsing revealed that the path to the app icon files was defined in the `AppxManifest`! I ran a search to see if there was a way to programmatically pull attributes from the `AppxManifest` using Powershell. Sure enough, there was some solid documentation for a command called `Get-AppxManifest`. I tweaked the examples a bit and managed to get it working!
+
+I've documented the exact steps and commands needed to do this on my todo list to implement tomorrow. Hopefully the build will go smoothly now that I have a clear idea of how to extract the app icons.
+
+## 2022-02-13
+`Nathan:` Over the last few days, I've been finishing up CardsManagement. There have been a lot less possibly-fatal errors since the 8th, although I've still come across some minor issues that required some research and troubleshooting:
+- formatting of powershell commands that we want to run from Python (they get passed through cmd.exe first, leading to some necessary formatting changes)
+- making tests involving paths work on both Windows and macOS (different structures/folder conventions need to be accounted for)
+- some weird errors that made it past automated tests (comparing orders of items in dicts)
+
+Other than those, I haven't faced any notable issues and have just about finished CardsManagement. Creating a PR today for code review.

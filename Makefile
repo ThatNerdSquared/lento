@@ -3,14 +3,19 @@ PYTHON := python3
 .PHONY = lint test run build_macos build_windows remove-build-files
 
 lint:
-	@echo "Linting..."
-	@${PYTHON} -m flake8 lento
-	@echo "Done!"
+	@echo Linting...
+	@${PYTHON} -m flake8 lento tests --exclude="tests/helpers.py"
+	@echo Done!
 
 test:
-	@echo "Testing..."
+	@echo Testing...
 	@${PYTHON} -m pytest tests
-	@echo "Done!"
+	@echo Done!
+
+vtest:
+	@echo Testing...
+	@${PYTHON} -m pytest -vv tests
+	@echo Done!
 
 run: test lint
 	@${PYTHON} app.py
