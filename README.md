@@ -1,8 +1,9 @@
-# Lento: A Modern Distraction Blocker
+# Lento: Goal-Based Productivity
 
-Lento is a modern distraction blocker for Windows and macOS, built with
-Python. There are a lot of similar products out there, but we built Lento
-because we couldn't find an alternative with all of the features we wanted.
+Lento is a goal-based productivity app for Windows and macOS, incorporating
+distraction blockers and to-do lists. There are a lot of similar products out
+there, but we built Lento because we couldn't find an alternative with all of
+the features we wanted.
 
 ## Features
 
@@ -21,7 +22,7 @@ Firefox, Edge, Safari, Vivaldi, or another!).
 intervals/on idle/when switching apps.
 - Clean, easy to use UI.
 - Works across Windows and macOS (Linux support coming soon).
-- Free and open source!
+- Built with Python, free, and open source!
 
 ## Installing
 
