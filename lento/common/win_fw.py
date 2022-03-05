@@ -1,6 +1,4 @@
-import json
-from lento.config import Config
-from lento.common.backends._firewall import Firewall
+from lento.common._firewall import Firewall
 
 
 class WindowsFirewall(Firewall):

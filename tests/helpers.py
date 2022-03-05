@@ -956,3 +956,11 @@ FileName
             "powershell \"{Add-Type -AssemblyName System.Drawing\n[System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')command_string}\"": ""
     }
     return cases[cmd]
+
+
+def fake_gethost(domain):
+    match domain:
+        case "youtube.com":
+            return "172.217.14.206"
+        case "twitter.com":
+            return "104.244.42.193"
