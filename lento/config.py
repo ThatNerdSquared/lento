@@ -21,3 +21,6 @@ class Config:
     TEST_VAR = os.getenv('TEST_VAR')
     MACOS_APPLICATION_FOLDER = Path("/Applications/")
     DRIVE_LETTER = "C:\\"
+    SETTINGS_PATH = Path(str(
+        os.getenv("USERPROFILE" if "win" in sys.platform else "HOME")
+    )) / "lentosettings.json"
