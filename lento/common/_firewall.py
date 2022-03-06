@@ -11,6 +11,10 @@ class Firewall(ABC):
     async def block_website(self, website):
         """Will be implemented by children for each platform."""
 
+    @abstractmethod
+    async def unblock_websites(self, website):
+        """Will be implemented by children for each platform."""
+
     async def block_hb_websites(self, card_to_activate):
         with open(Config.SETTINGS_PATH, "r", encoding="UTF-8") as userconfig:
             settings = json.load(userconfig)

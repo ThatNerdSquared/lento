@@ -25,7 +25,12 @@ set skip on lo0
             pf_anchor = anchor.read()
 
         site = socket.gethostbyname(website)
-        anchor_text = f"block return out proto tcp from any to {site}"
+        anchor_text = f"""block return out proto tcp from any to {site}
+block return out proto udp from any to {site}"""
 
         with open(Config.PF_ANCHOR_PATH, "w", encoding="UTF-8") as anchor:
             anchor.write(f"""{pf_anchor}\n{anchor_text}""")
+
+    async def unblock_websites(self):
+        with open(Config.PF_ANCHOR_PATH, "w", encoding="UTF-8") as anchor:
+            anchor.write('')
