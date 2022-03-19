@@ -93,6 +93,9 @@ def remove_dupes_blanks_and_whitespace(list_to_process):
     return no_dupes_list
 
 
-async def write_to_root_file_macos(text):
-    cmd = f"osascript -e 'do shell script \"{text}\" | tee -a /etc/pf.conf > /dev/null\" with administrator privileges'"
-    os.system(cmd)
+def escalate_privileges():
+    if os.getuid() == 0:
+        return
+    cmd = ["sudo", sys.executable, sys.argv]
+    applescript_wrapped_cmd = f"/usr/bin/osascript -e 'do shell script \"{cmd}\" with administrator privileges'"  # noqa: E501
+    subprocess.call(applescript_wrapped_cmd)

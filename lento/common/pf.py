@@ -1,3 +1,4 @@
+import elevate
 import os
 from pathlib import Path
 import socket
@@ -10,8 +11,12 @@ class PacketFilter(Firewall):
     """Firewall on macOS."""
 
     async def pre_block(self):
-        cmd = "echo \"# ca.lentoapp\nanchor \"ca.lentoapp\"\nload anchor \"ca.lentoapp\" from \"/etc/pf.anchors/ca.lentoapp\""
-        await utils.write_to_root_file_macos(cmd)
+        # utils.escalate_privileges()
+        elevate.elevate()
+        with open(Config.PF_CONFIG_PATH, "a", encoding="UTF-8") as pfconf:
+            pfconf.write("""#ca.lentoapp
+anchor "ca.lentoapp"
+load anchor "ca.lentoapp" from "/etc/pf.anchors/ca.lentoapp\"""")
 
         if not Path(Config.PF_ANCHOR_PATH).exists() or os.stat(Config.PF_ANCHOR_PATH).st_size == 0:
             with open(Config.PF_ANCHOR_PATH, "w", encoding="UTF-8") as anchor:
