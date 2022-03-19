@@ -91,3 +91,8 @@ def remove_dupes_blanks_and_whitespace(list_to_process):
     no_dupes_list = list(dict.fromkeys(no_extra_whitespace_list))
 
     return no_dupes_list
+
+
+async def write_to_root_file_macos(text):
+    cmd = f"osascript -e 'do shell script \"{text}\" | tee -a /etc/pf.conf > /dev/null\" with administrator privileges'"
+    os.system(cmd)

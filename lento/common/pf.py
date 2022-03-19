@@ -1,25 +1,32 @@
+import os
 from pathlib import Path
 import socket
+from lento import utils
 from lento.common._firewall import Firewall
 from lento.config import Config
 
 
 class PacketFilter(Firewall):
     """Firewall on macOS."""
-    async def block_website(self, website):
-        """pf requires certain syntax in an anchor file to block sites."""
 
-        if not Path(Config.PF_ANCHOR_PATH).exists():
+    async def pre_block(self):
+        cmd = "echo \"# ca.lentoapp\nanchor \"ca.lentoapp\"\nload anchor \"ca.lentoapp\" from \"/etc/pf.anchors/ca.lentoapp\""
+        await utils.write_to_root_file_macos(cmd)
+
+        if not Path(Config.PF_ANCHOR_PATH).exists() or os.stat(Config.PF_ANCHOR_PATH).st_size == 0:
             with open(Config.PF_ANCHOR_PATH, "w", encoding="UTF-8") as anchor:
                 anchor.write("""# Options
 set block-policy drop
-set fingerprints "/etc/pf.os"
+set fingerprints \"/etc/pf.os\"
 set ruleset-optimization basic
 set skip on lo0
 
 #
 # Rules for Lento blocks
 #""")
+
+    async def block_website(self, website):
+        """pf requires certain syntax in a few config files to block sites."""
 
         with open(Config.PF_ANCHOR_PATH, "r", encoding="UTF-8") as anchor:
             pf_anchor = anchor.read()
@@ -34,3 +41,10 @@ block return out proto udp from any to {site}"""
     async def unblock_websites(self):
         with open(Config.PF_ANCHOR_PATH, "w", encoding="UTF-8") as anchor:
             anchor.write('')
+        new_lines = []
+        with open(Config.PF_CONFIG_PATH, "r", encoding="UTF-8") as pfconf:
+            for line in pfconf:
+                if "ca.lentoapp" not in line:
+                    new_lines.append(line)
+        with open(Config.PF_CONFIG_PATH, "w", encoding="UTF-8") as pfconf:
+            pfconf.write("".join(new_lines))

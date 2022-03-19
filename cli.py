@@ -4,14 +4,19 @@
 # SCRIPT FOR LIVE-AMMO TESTING OF THE BACKEND; USING
 # IT WITH LENTO MAY HAVE UNINTENDED OR UNEXPECTED
 # CONSEQUENCES.
+import asyncio
 import argparse
 import copy
 import json
 import os
+from pathlib import Path
 import platform
+import sys
 from lento.common import cards_management as CardsManagement
 from lento import utils
+from lento.config import Config
 from tests import helpers
+from lento.common import get_firewall
 
 parser = argparse.ArgumentParser(
     description="Run backend functions to make sure they work."
@@ -219,6 +224,15 @@ elif f == "update_goal_list":
         "Conquer world": True,
         "Debug USACO problem": False,
     })
+elif f == "pre_block":
+    fw = get_firewall()
+    asyncio.run(fw.pre_block())
+elif f == "block_hardblocked_sites":
+    fw = get_firewall()
+    asyncio.run(fw.block_hb_websites(param1))
+elif f == "unblock_hardblocked_sites":
+    fw = get_firewall()
+    asyncio.run(fw.unblock_websites())
 else:
     result_options["message"] = f"INVALID COMMAND: {f}"
 

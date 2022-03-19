@@ -8,6 +8,10 @@ class Firewall(ABC):
         super().__init__()
 
     @abstractmethod
+    async def pre_block(self):
+        """Will be implemented by children for each platform."""
+
+    @abstractmethod
     async def block_website(self, website):
         """Will be implemented by children for each platform."""
 
@@ -16,6 +20,7 @@ class Firewall(ABC):
         """Will be implemented by children for each platform."""
 
     async def block_hb_websites(self, card_to_activate):
+        await self.pre_block()
         with open(Config.SETTINGS_PATH, "r", encoding="UTF-8") as userconfig:
             settings = json.load(userconfig)
 
@@ -25,6 +30,7 @@ class Firewall(ABC):
             await self.block_website(str(website))
 
     async def block_sb_websites(self, card_to_activate):
+        await self.pre_block()
         with open(Config.SETTINGS_PATH, "r", encoding="UTF-8") as userconfig:
             settings = json.load(userconfig)
 

@@ -22,7 +22,7 @@ async def test_pf_block_hardblocked_websites(monkeypatch, tmp_path):
     monkeypatch.setattr(
         Config,
         "PF_ANCHOR_PATH",
-        Path(tmp_path) / "io.github.lento"
+        Path(tmp_path) / "ca.lentoapp"
     )
     monkeypatch.setattr(sys, "platform", "darwin")
     monkeypatch.setattr(socket, "gethostbyname", helpers.fake_gethost)
@@ -48,7 +48,7 @@ async def test_pf_block_softblocked_websites(monkeypatch, tmp_path):
     monkeypatch.setattr(
         Config,
         "PF_ANCHOR_PATH",
-        Path(tmp_path) / "io.github.lento"
+        Path(tmp_path) / "ca.lentoapp"
     )
     monkeypatch.setattr(sys, "platform", "darwin")
     monkeypatch.setattr(socket, "gethostbyname", helpers.fake_gethost)
@@ -69,7 +69,7 @@ async def test_pf_unblock_hardblocked_websites(monkeypatch, tmp_path):
     monkeypatch.setattr(
         Config,
         "PF_ANCHOR_PATH",
-        Path(tmp_path) / "io.github.lento"
+        Path(tmp_path) / "ca.lentoapp"
     )
     monkeypatch.setattr(sys, "platform", "darwin")
 
