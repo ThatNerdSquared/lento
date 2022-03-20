@@ -226,13 +226,13 @@ elif f == "update_goal_list":
     })
 elif f == "pre_block":
     fw = get_firewall()
-    asyncio.run(fw.pre_block())
+    fw.pre_block()
 elif f == "block_hardblocked_sites":
     fw = get_firewall()
-    asyncio.run(fw.block_hb_websites(param1))
+    fw.block_hb_websites(param1)
 elif f == "unblock_hardblocked_sites":
     fw = get_firewall()
-    asyncio.run(fw.unblock_websites())
+    fw.unblock_websites()
 else:
     result_options["message"] = f"INVALID COMMAND: {f}"
 

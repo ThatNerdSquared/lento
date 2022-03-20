@@ -91,11 +91,3 @@ def remove_dupes_blanks_and_whitespace(list_to_process):
     no_dupes_list = list(dict.fromkeys(no_extra_whitespace_list))
 
     return no_dupes_list
-
-
-def escalate_privileges():
-    if os.getuid() == 0:
-        return
-    cmd = ["sudo", sys.executable, sys.argv]
-    applescript_wrapped_cmd = f"/usr/bin/osascript -e 'do shell script \"{cmd}\" with administrator privileges'"  # noqa: E501
-    subprocess.call(applescript_wrapped_cmd)
