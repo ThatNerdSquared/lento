@@ -931,10 +931,15 @@ set skip on lo0
 #
 # Rules for Lento blocks
 #
+
 block return out proto tcp from any to 172.217.14.206
 block return out proto udp from any to 172.217.14.206
+
 block return out proto tcp from any to 104.244.42.193
-block return out proto udp from any to 104.244.42.193"""
+block return out proto udp from any to 104.244.42.193\n""",
+    "expected_pf_conf": """#io.github.lento
+anchor "io.github.lento"
+load anchor "io.github.lento" from "/etc/pf.anchors/io.github.lento\"\n"""
 }
 
 
@@ -957,7 +962,7 @@ class fake_rgb:
     def save(x):
         return True
 
-def fake_subprocess(cmd):
+def fake_subprocess(cmd, shell=True):
     correct_trello_path = "".join([
         str(os.path.join(
             Config.DRIVE_LETTER,
@@ -989,7 +994,9 @@ FileName
 {correct_vivaldi_path}
 {correct_vivaldi_path}""",
             "powershell \"(Get-AppxPackage -Name \"*Trello*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\"": os.path.join("assets", "Square310x310Logo.png"),
-            "powershell \"{Add-Type -AssemblyName System.Drawing\n[System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')command_string}\"": ""
+            "powershell \"{Add-Type -AssemblyName System.Drawing\n[System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')command_string}\"": "",
+            "/sbin/pfctl -E -f /etc/pf.conf": "rules_activated",
+            "/sbin/pfctl -F rules": "flushed_rules"
     }
     return cases[cmd]
 

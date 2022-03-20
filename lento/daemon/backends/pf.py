@@ -8,6 +8,8 @@ class PacketFilter(Firewall):
     """Firewall on macOS."""
 
     def pre_block(self):
+        if not Config.PF_CONFIG_PATH.exists():
+            Config.PF_CONFIG_PATH.touch()
         existing_config = Config.PF_CONFIG_PATH.read_text()
         Config.PF_CONFIG_PATH.write_text(existing_config + """#io.github.lento
 anchor "io.github.lento"
