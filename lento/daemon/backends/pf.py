@@ -1,6 +1,6 @@
 import socket
 import subprocess
-from lento.common._firewall import Firewall
+from lento.daemon.backends._firewall import Firewall
 from lento.config import Config
 
 

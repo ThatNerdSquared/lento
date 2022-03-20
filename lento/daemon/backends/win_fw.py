@@ -1,4 +1,4 @@
-from lento.common._firewall import Firewall
+from lento.daemon.backends._firewall import Firewall
 
 
 class WindowsFirewall(Firewall):

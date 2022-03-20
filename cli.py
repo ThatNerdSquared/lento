@@ -12,7 +12,7 @@ import platform
 from lento.common import cards_management as CardsManagement
 from lento import utils
 from tests import helpers
-from lento.common import get_firewall
+from lento.daemon import get_firewall
 
 parser = argparse.ArgumentParser(
     description="Run backend functions to make sure they work."

@@ -5,7 +5,7 @@ import sys
 import pytest
 from pathlib import Path
 from lento.config import Config
-from lento.common import get_firewall
+from lento.daemon import get_firewall
 from tests import helpers
 
 pytest_plugins = ('pytest_asyncio')
