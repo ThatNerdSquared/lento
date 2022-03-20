@@ -4,17 +4,13 @@
 # SCRIPT FOR LIVE-AMMO TESTING OF THE BACKEND; USING
 # IT WITH LENTO MAY HAVE UNINTENDED OR UNEXPECTED
 # CONSEQUENCES.
-import asyncio
 import argparse
 import copy
 import json
 import os
-from pathlib import Path
 import platform
-import sys
 from lento.common import cards_management as CardsManagement
 from lento import utils
-from lento.config import Config
 from tests import helpers
 from lento.common import get_firewall
 

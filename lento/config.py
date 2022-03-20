@@ -24,5 +24,5 @@ class Config:
     SETTINGS_PATH = Path(str(
         os.getenv("USERPROFILE" if "windows" in sys.platform else "HOME")
     )) / "lentosettings.json"
-    PF_ANCHOR_PATH = Path("/etc/pf.anchors/ca.lentoapp")
+    PF_ANCHOR_PATH = Path("/etc/pf.anchors/io.github.lento")
     PF_CONFIG_PATH = Path("/etc/pf.conf")

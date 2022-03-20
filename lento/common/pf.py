@@ -1,5 +1,3 @@
-import os
-from pathlib import Path
 import socket
 import subprocess
 from lento.common._firewall import Firewall
@@ -11,10 +9,10 @@ class PacketFilter(Firewall):
 
     def pre_block(self):
         existing_config = Config.PF_CONFIG_PATH.read_text()
-        Config.PF_CONFIG_PATH.write_text(existing_config + """#ca.lentoapp
-anchor "ca.lentoapp"
-load anchor "ca.lentoapp" from "/etc/pf.anchors/ca.lentoapp\"\n""")
-        if not Path(Config.PF_ANCHOR_PATH).exists() or os.stat(Config.PF_ANCHOR_PATH).st_size == 0:
+        Config.PF_CONFIG_PATH.write_text(existing_config + """#io.github.lento
+anchor "io.github.lento"
+load anchor "io.github.lento" from "/etc/pf.anchors/io.github.lento\"\n""")
+        if not Config.PF_ANCHOR_PATH.exists() or Config.PF_ANCHOR_PATH.stat().st_size == 0:  # noqa: E501
             Config.PF_ANCHOR_PATH.write_text("""# Options
 set block-policy drop
 set fingerprints \"/etc/pf.os\"
@@ -39,13 +37,11 @@ block return out proto udp from any to {ip}"""
         ]) + "\n")
 
     def unblock_websites(self):
-        with open(Config.PF_ANCHOR_PATH, "w", encoding="UTF-8") as anchor:
-            anchor.write('')
+        Config.PF_ANCHOR_PATH.write_text("")
         new_lines = []
-        with open(Config.PF_CONFIG_PATH, "r", encoding="UTF-8") as pfconf:
-            for line in pfconf:
-                if "ca.lentoapp" not in line:
-                    new_lines.append(line)
-        with open(Config.PF_CONFIG_PATH, "w", encoding="UTF-8") as pfconf:
-            pfconf.write("".join(new_lines))
+        pfconf = Config.PF_CONFIG_PATH.read_text()
+        for line in pfconf.split("\n"):
+            if "io.github.lento" not in line:
+                new_lines.append(line)
+        Config.PF_CONFIG_PATH.write_text("\n".join(new_lines))
         subprocess.call("/sbin/pfctl -F rules", shell=True)

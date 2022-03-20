@@ -22,8 +22,7 @@ class Firewall(ABC):
 
     def block_hb_websites(self, card_to_activate):
         self.pre_block()
-        with open(Config.SETTINGS_PATH, "r", encoding="UTF-8") as userconfig:
-            settings = json.load(userconfig)
+        settings = json.loads(Config.SETTINGS_PATH.read_text())
 
         websites = settings['cards'][card_to_activate]['hard_blocked_sites']
 
@@ -33,8 +32,7 @@ class Firewall(ABC):
 
     def block_sb_websites(self, card_to_activate):
         self.pre_block()
-        with open(Config.SETTINGS_PATH, "r", encoding="UTF-8") as userconfig:
-            settings = json.load(userconfig)
+        settings = json.loads(Config.SETTINGS_PATH.read_text())
 
         websites = settings['cards'][card_to_activate]['soft_blocked_sites']
 
