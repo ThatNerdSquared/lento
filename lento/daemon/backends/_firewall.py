@@ -13,29 +13,26 @@ class Firewall(ABC):
         """Will be implemented by children for each platform."""
 
     @abstractmethod
-    def block_website(self, website):
+    def hardblock_website(self, website):
+        """Will be implemented by children for each platform."""
+
+    @abstractmethod
+    def softblock_website(self, website):
         """Will be implemented by children for each platform."""
 
     @abstractmethod
     def unblock_websites(self, website):
         """Will be implemented by children for each platform."""
 
-    def block_hb_websites(self, card_to_activate):
+    def block_websites(self, card_to_activate):
         self.pre_block()
         settings = json.loads(Config.SETTINGS_PATH.read_text())
 
-        websites = settings['cards'][card_to_activate]['hard_blocked_sites']
+        sb_websites = settings['cards'][card_to_activate]['soft_blocked_sites']
+        hb_websites = settings['cards'][card_to_activate]['hard_blocked_sites']
 
-        for website in websites:
-            self.block_website(str(website))
-        subprocess.call("/sbin/pfctl -E -f /etc/pf.conf", shell=True)
-
-    def block_sb_websites(self, card_to_activate):
-        self.pre_block()
-        settings = json.loads(Config.SETTINGS_PATH.read_text())
-
-        websites = settings['cards'][card_to_activate]['soft_blocked_sites']
-
-        for website in websites:
-            self.block_website(str(website))
+        for website in sb_websites:
+            self.softblock_website(str(website))
+        for website in hb_websites:
+            self.hardblock_website(str(website))
         subprocess.call("/sbin/pfctl -E -f /etc/pf.conf", shell=True)

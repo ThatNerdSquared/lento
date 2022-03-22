@@ -20,6 +20,9 @@ vtest:
 run: test lint
 	@${PYTHON} app.py
 
+run-daemon: test lint
+	@${PYTHON} ./lento/daemon/webserver/app.py
+
 build-macos: test lint
 	@pyinstaller --name="Lento" \
 		--add-data "macos-style.qss:." \

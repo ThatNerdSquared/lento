@@ -223,10 +223,10 @@ elif f == "update_goal_list":
 elif f == "pre_block":
     fw = get_firewall()
     fw.pre_block()
-elif f == "block_hardblocked_sites":
+elif f == "block_websites":
     fw = get_firewall()
-    fw.block_hb_websites(param1)
-elif f == "unblock_hardblocked_sites":
+    fw.block_websites(param1)
+elif f == "unblock_websites":
     fw = get_firewall()
     fw.unblock_websites()
 else:
