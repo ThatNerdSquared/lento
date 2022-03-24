@@ -13,6 +13,10 @@ class Firewall(ABC):
         """Will be implemented by children for each platform."""
 
     @abstractmethod
+    def post_block(self):
+        """Will be implemented by children for each platform."""
+
+    @abstractmethod
     def hardblock_website(self, website):
         """Will be implemented by children for each platform."""
 
@@ -36,3 +40,4 @@ class Firewall(ABC):
         for website in hb_websites:
             self.hardblock_website(str(website))
         subprocess.call("/sbin/pfctl -E -f /etc/pf.conf", shell=True)
+        self.post_block()
