@@ -1,6 +1,6 @@
 import proxy
 import platform
-from lento.daemon import get_proxy
+from daemon import get_proxy
 
 
 def test_enable_system_proxy_windows(monkeypatch):
