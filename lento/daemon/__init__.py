@@ -11,6 +11,6 @@ PROXIES = {
 def get_proxy():
     """Returns the correct Proxy class for each platform."""
     try:
-        return PROXIES[str(platform.system)]()
+        return PROXIES[platform.system()]()
     except KeyError as e:
         raise KeyError(f'Platform "{platform.system}" not found!') from e

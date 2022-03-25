@@ -4,8 +4,8 @@ from lento.daemon import get_proxy
 
 
 def test_enable_system_proxy_darwin(monkeypatch):
-    monkeypatch.setattr(platform, "system", "Darwin")
+    monkeypatch.setattr(platform, "system", lambda: "Darwin")
     monkeypatch.setattr(proxy, "sleep_loop", lambda: "proxy started")
-    lib_proxy = get_proxy()
-    result = lib_proxy.init_proxy()
-    assert result.startswith("macOS proxy enable endpoint reached at ") is True
+    lento_proxy = get_proxy()
+    result = lento_proxy.enable_system_proxy(42)
+    assert result == "macOS proxy enable endpoint reached at 42!"

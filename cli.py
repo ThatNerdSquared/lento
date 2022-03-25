@@ -12,7 +12,6 @@ import platform
 from lento.common import cards_management as CardsManagement
 from lento import utils
 from tests import helpers
-from lento.daemon import get_firewall
 
 parser = argparse.ArgumentParser(
     description="Run backend functions to make sure they work."
@@ -220,15 +219,8 @@ elif f == "update_goal_list":
         "Conquer world": True,
         "Debug USACO problem": False,
     })
-elif f == "pre_block":
-    fw = get_firewall()
-    fw.pre_block()
-elif f == "block_websites":
-    fw = get_firewall()
-    fw.block_websites(param1)
-elif f == "unblock_websites":
-    fw = get_firewall()
-    fw.unblock_websites()
+elif f == "daemon":
+    result_options["message"] = "WARNING: run `python3 -m lento.daemon` for live-ammo testing of daemon and/or proxy"  # noqa: E501
 else:
     result_options["message"] = f"INVALID COMMAND: {f}"
 
