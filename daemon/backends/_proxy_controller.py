@@ -6,6 +6,10 @@ class ProxyController(ABC):
         super().__init__()
 
     @abstractmethod
+    def softblock_prompt(self, site):
+        """Will be implemented by children for each platform."""
+
+    @abstractmethod
     def enable_system_proxy(self, proxy_port):
         """Will be implemented by children for each platform."""
 

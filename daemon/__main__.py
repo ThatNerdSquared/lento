@@ -13,7 +13,9 @@ def entry(settings_path, card_to_use):
         "--plugins",
         "daemon.lento_blocker_plugin.LentoBlockerPlugin",
         "--hardblocked-sites",
-        lento_proxy.generate_hardblock_list(SETTINGS, card_to_use)
+        lento_proxy.generate_hardblock_list(SETTINGS, card_to_use),
+        "--softblocked-sites",
+        lento_proxy.generate_softblock_list(SETTINGS, card_to_use),
     ]) as lib_proxy:
         lento_proxy.enable_system_proxy(lib_proxy.flags.port)
         proxy.sleep_loop()

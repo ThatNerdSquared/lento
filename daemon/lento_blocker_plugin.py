@@ -4,6 +4,7 @@ from proxy.common.flag import flags
 from proxy.http.proxy import HttpProxyBasePlugin
 from proxy.http.parser import HttpParser
 from proxy.http.exception import HttpRequestRejected
+from daemon import get_proxy
 
 
 class LentoBlockerPlugin(HttpProxyBasePlugin):
@@ -18,17 +19,33 @@ class LentoBlockerPlugin(HttpProxyBasePlugin):
         type=str,
         help="List of domains to hard-block, seperated by commas.",
     )
+    flags.add_argument(
+        "--softblocked-sites",
+        type=str,
+        help="List of domains to soft-block, seperated by commas.",
+    )
 
     def before_upstream_connection(
         self, request: HttpParser
     ) -> Optional[HttpParser]:
 
         hb_websites = self.flags.hardblocked_sites.split(",")
+        sb_websites = self.flags.softblocked_sites.split(",")
 
         if request.host:
-            if bytes.decode(bytes(request.host)) in hb_websites:
+            host = request.host.decode("UTF-8")
+            if host in hb_websites:
                 raise HttpRequestRejected(
                     status_code=httpStatusCodes.I_AM_A_TEAPOT,
                     reason=b"I\'m a tea pot",
                 )
+            if host in sb_websites:
+                print(f"====SOFTBLOCKED SITE DETCTED:  {host}====")
+                lento_proxy = get_proxy()
+                choice = lento_proxy.softblock_prompt(host)
+                if not choice:
+                    raise HttpRequestRejected(
+                        status_code=httpStatusCodes.I_AM_A_TEAPOT,
+                        reason=b"I\'m a tea pot",
+                    )
         return request
