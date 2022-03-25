@@ -1036,10 +1036,12 @@ FileName
 {correct_trello_path}
 {correct_vivaldi_path}
 {correct_vivaldi_path}""",
-            "powershell \"(Get-AppxPackage -Name \"*Trello*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\"": os.path.join("assets", "Square310x310Logo.png"),
-            "powershell \"{Add-Type -AssemblyName System.Drawing\n[System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')command_string}\"": "",
-            "/sbin/pfctl -E -f /etc/pf.conf": "rules_activated",
-            "/sbin/pfctl -F rules": "flushed_rules"
+        "powershell \"(Get-AppxPackage -Name \"*Trello*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\"": os.path.join("assets", "Square310x310Logo.png"),
+        "powershell \"{Add-Type -AssemblyName System.Drawing\n[System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')command_string}\"": "",
+        "/sbin/pfctl -E -f /etc/pf.conf": "rules_activated",
+        "/sbin/pfctl -F rules": "flushed_rules",
+        "networksetup -setwebproxy wi-fi localhost 42": "macOS web proxy activated",
+        "networksetup -setsecurewebproxy wi-fi localhost 42": "macOS secure web proxy activated"
     }
     return cases[cmd]
 

@@ -1,6 +1,6 @@
 import platform
-from lento.daemon.backends import macos_proxy_controller
-from lento.daemon.backends import windows_proxy_controller
+from daemon.backends import macos_proxy_controller
+from daemon.backends import windows_proxy_controller
 
 PROXIES = {
     "Darwin": macos_proxy_controller.macOSProxyController,

@@ -1,4 +1,4 @@
-from lento.daemon.backends._proxy_controller import ProxyController
+from daemon.backends._proxy_controller import ProxyController
 
 
 class WindowsProxyController(ProxyController):
