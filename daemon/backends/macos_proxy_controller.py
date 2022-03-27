@@ -5,6 +5,9 @@ from daemon.backends._proxy_controller import ProxyController
 class macOSProxyController(ProxyController):
     """Lento proxy controller using `networksetup` on macOS."""
 
+    def __init__(self):
+        super().__init__()
+
     def softblock_prompt(self, site):
         choice = subprocess.check_output(" ".join([
             "osascript",

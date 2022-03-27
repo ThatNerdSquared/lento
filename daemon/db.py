@@ -19,6 +19,29 @@ class DBController:
     def __init__(self):
         db.create_tables([BlockTimer])
 
+    def create_main_timer(self, lasts_for):
+        data = {
+            "time_started": datetime.datetime.now(),
+            "lasts_for": float(lasts_for)
+        }
+        print(data)
+        BlockTimer.create(website="_main", data=pickle.dumps(data))
+
+    def check_if_block_is_over(self):
+        timer = BlockTimer.get(BlockTimer.website == "_main")
+        data = pickle.loads(timer.data)
+        if (
+            datetime.datetime.now() - data["time_started"]
+        ).total_seconds() >= float(data["lasts_for"]):
+            print((
+                datetime.datetime.now() - data["time_started"]
+            ).total_seconds())
+            print(datetime.datetime.now())
+            print(data["time_started"])
+            return True
+        else:
+            return False
+
     def create_host_timer(self, website, is_allowed):
         data = {
             "last_asked": datetime.datetime.now(),
@@ -72,5 +95,5 @@ class DBController:
         timer.save()
 
     def clear_db(self):
-        BlockTimer.delete().where(BlockTimer.website is not None)
+        BlockTimer.delete().where(BlockTimer.website is not None).execute()
         print("done")
