@@ -34,40 +34,62 @@ class LentoBlockerPlugin(HttpProxyBasePlugin):
         hb_websites = self.flags.hardblocked_sites.split(",")
         sb_websites = self.flags.softblocked_sites.split(",")
 
+        # there's a small possibility a request won't have a host for some
+        # reason but this is mostly here to appease the Python type checker
         if request.host:
             host = request.host.decode("UTF-8")
             if host in hb_websites:
+                # Block the site immediately if it's in the hard-blocked list.
                 raise HttpRequestRejected(
                     status_code=httpStatusCodes.I_AM_A_TEAPOT,
                     reason=b"I\'m a tea pot",
                 )
+            # TODO: refactor the below because it is super messy.
             if host in sb_websites:
-                print(f"====SOFTBLOCKED SITE DETCTED:  {host}====")
+                # Start a series of checks if the site is soft-blocked.
+                print(f"====SOFTBLOCKED SITE DETECTED: {host}====")
                 db = DBController()
-                is_blocked = db.check_if_site_blocked(host)
-                if is_blocked:
-                    raise HttpRequestRejected(
-                        status_code=httpStatusCodes.I_AM_A_TEAPOT,
-                        reason=b"I\'m a tea pot",
-                    )
-                else:
+                allowed = db.check_if_site_allowed(host)
+                if not allowed:
                     data = db.get_site_entry(host)
-                    if (
-                        datetime.datetime.now() - data.last_asked
-                    ).total_seconds() < 10:
-                        raise HttpRequestRejected(
-                            status_code=httpStatusCodes.I_AM_A_TEAPOT,
-                            reason=b"I\'m a tea pot",
-                        )
-                    else:
+                    if data is None:
+                        # Prompt the user if there's no existing record for the
+                        # site in the DB.
                         lento_proxy = get_proxy()
                         choice = lento_proxy.softblock_prompt(host)
                         if not choice:
+                            # Block the site if the user chooses No, and update
+                            # this in the DB for future connections to the site
                             db.update_site(host, False)
                             raise HttpRequestRejected(
                                 status_code=httpStatusCodes.I_AM_A_TEAPOT,
                                 reason=b"I\'m a tea pot",
                             )
                         else:
+                            # Allow the site to pass through if the user
+                            # chooses Yes, and update this in the DB
                             db.update_site(host, True)
+                    else:
+                        if (
+                            datetime.datetime.now() - data["last_asked"]
+                        ).total_seconds() < 10:
+                            # some sites send multiple requests to the host on
+                            # load, so this prevents spamming prompts.
+                            raise HttpRequestRejected(
+                                status_code=httpStatusCodes.I_AM_A_TEAPOT,
+                                reason=b"I\'m a tea pot",
+                            )
+                        else:
+                            # Prompt the user if the site isn't allowed and
+                            # it's been 10+ seconds since the last prompt.
+                            lento_proxy = get_proxy()
+                            choice = lento_proxy.softblock_prompt(host)
+                            if not choice:
+                                db.update_site(host, False)
+                                raise HttpRequestRejected(
+                                    status_code=httpStatusCodes.I_AM_A_TEAPOT,
+                                    reason=b"I\'m a tea pot",
+                                )
+                            else:
+                                db.update_site(host, True)
         return request

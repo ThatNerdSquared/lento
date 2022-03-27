@@ -17,7 +17,7 @@ class BlockTimer(Model):
 class DBController:
 
     def __init__(self):
-        db.create_tables(BlockTimer)
+        db.create_tables([BlockTimer])
 
     def create_host_timer(self, website, is_allowed):
         data = {
@@ -33,9 +33,9 @@ class DBController:
             return None
         return pickle.loads(timer.data)
 
-    def check_if_site_blocked(self, website):
+    def check_if_site_allowed(self, website):
         """
-        Check if a given website is blocked.
+        Check if a given website is allowed.
         Returns a bool corresponding to the block state.
         """
         try:
@@ -43,22 +43,34 @@ class DBController:
         except DoesNotExist:
             return False
         data = pickle.loads(timer.data)
-        if data.is_allowed:
+        if data["is_allowed"]:
             if (
-                datetime.datetime.now() - data.last_asked
+                datetime.datetime.now() - data["last_asked"]
             ).total_seconds() / 60.0 >= 15:
-                timer.is_allowed = False
+                data = pickle.loads(timer.data)
+                data["is_allowed"] = False
+                timer.data = pickle.dumps(data)
                 timer.save()
                 return False
+            else:
+                print(15 - (
+                    datetime.datetime.now() - data["last_asked"]
+                ).total_seconds() / 60.0)
+                return True
         else:
             return False
-        return True
 
     def update_site(self, website, is_allowed):
         try:
             timer = BlockTimer.get(BlockTimer.website == website)
         except DoesNotExist:
             return self.create_host_timer(website, is_allowed)
-        timer.is_allowed = is_allowed
-        timer.last_asked = datetime.datetime.now()
+        data = pickle.loads(timer.data)
+        data["is_allowed"] = is_allowed
+        data["last_asked"] = datetime.datetime.now()
+        timer.data = pickle.dumps(data)
         timer.save()
+
+    def clear_db(self):
+        BlockTimer.delete().where(BlockTimer.website is not None)
+        print("done")

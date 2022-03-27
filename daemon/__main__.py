@@ -3,6 +3,7 @@ from pathlib import Path
 import sys
 import proxy
 from daemon import get_proxy
+from daemon.db import DBController
 
 
 def entry(settings_path, card_to_use):
@@ -17,6 +18,8 @@ def entry(settings_path, card_to_use):
         "--softblocked-sites",
         lento_proxy.generate_softblock_list(SETTINGS, card_to_use),
     ]) as lib_proxy:
+        db = DBController()
+        db.clear_db()
         lento_proxy.enable_system_proxy(lib_proxy.flags.port)
         proxy.sleep_loop()
 
