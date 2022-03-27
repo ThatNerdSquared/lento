@@ -24,7 +24,6 @@ class DBController:
             "time_started": datetime.datetime.now(),
             "lasts_for": float(lasts_for)
         }
-        print(data)
         BlockTimer.create(website="_main", data=pickle.dumps(data))
 
     def check_if_block_is_over(self):
@@ -33,11 +32,6 @@ class DBController:
         if (
             datetime.datetime.now() - data["time_started"]
         ).total_seconds() >= float(data["lasts_for"]):
-            print((
-                datetime.datetime.now() - data["time_started"]
-            ).total_seconds())
-            print(datetime.datetime.now())
-            print(data["time_started"])
             return True
         else:
             return False
@@ -76,9 +70,6 @@ class DBController:
                 timer.save()
                 return False
             else:
-                print(15 - (
-                    datetime.datetime.now() - data["last_asked"]
-                ).total_seconds() / 60.0)
                 return True
         else:
             return False

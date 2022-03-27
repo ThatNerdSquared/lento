@@ -32,7 +32,6 @@ def entry(card_to_use, lasts_for):
 def time_check(MASTER_PID):
     db = DBController()
     is_block_over = db.check_if_block_is_over()
-    print(is_block_over)
     if not is_block_over:
         threading.Timer(1, time_check, [MASTER_PID]).start()
     else:
