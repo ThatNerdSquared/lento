@@ -1,3 +1,4 @@
+import datetime
 from typing import Optional
 from proxy.http import httpStatusCodes
 from proxy.common.flag import flags
@@ -5,6 +6,7 @@ from proxy.http.proxy import HttpProxyBasePlugin
 from proxy.http.parser import HttpParser
 from proxy.http.exception import HttpRequestRejected
 from daemon import get_proxy
+from daemon.db import DBController
 
 
 class LentoBlockerPlugin(HttpProxyBasePlugin):
@@ -41,11 +43,31 @@ class LentoBlockerPlugin(HttpProxyBasePlugin):
                 )
             if host in sb_websites:
                 print(f"====SOFTBLOCKED SITE DETCTED:  {host}====")
-                lento_proxy = get_proxy()
-                choice = lento_proxy.softblock_prompt(host)
-                if not choice:
+                db = DBController()
+                is_blocked = db.check_if_site_blocked(host)
+                if is_blocked:
                     raise HttpRequestRejected(
                         status_code=httpStatusCodes.I_AM_A_TEAPOT,
                         reason=b"I\'m a tea pot",
                     )
+                else:
+                    data = db.get_site_entry(host)
+                    if (
+                        datetime.datetime.now() - data.last_asked
+                    ).total_seconds() < 10:
+                        raise HttpRequestRejected(
+                            status_code=httpStatusCodes.I_AM_A_TEAPOT,
+                            reason=b"I\'m a tea pot",
+                        )
+                    else:
+                        lento_proxy = get_proxy()
+                        choice = lento_proxy.softblock_prompt(host)
+                        if not choice:
+                            db.update_site(host, False)
+                            raise HttpRequestRejected(
+                                status_code=httpStatusCodes.I_AM_A_TEAPOT,
+                                reason=b"I\'m a tea pot",
+                            )
+                        else:
+                            db.update_site(host, True)
         return request

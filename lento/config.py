@@ -1,4 +1,5 @@
 """App instance configuration."""
+from PySide6.QtCore import QStandardPaths
 import dotenv
 import os
 import sys
@@ -26,3 +27,7 @@ class Config:
     )) / "lentosettings.json"
     PF_ANCHOR_PATH = Path("/etc/pf.anchors/io.github.lento")
     PF_CONFIG_PATH = Path("/etc/pf.conf")
+    APPDATA_PATH = Path(
+        QStandardPaths.writableLocation(QStandardPaths.AppDataLocation)
+    ) / "Lento"
+    DB_PATH = APPDATA_PATH / "blocktimers.db"
