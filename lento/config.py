@@ -29,6 +29,6 @@ class Config:
     PF_ANCHOR_PATH = Path("/etc/pf.anchors/io.github.lento")
     PF_CONFIG_PATH = Path("/etc/pf.conf")
     APPDATA_PATH = Path(
-        QStandardPaths.writableLocation(QStandardPaths.AppDataLocation) if platform.system() != "Windows" else Path(os.getenv("USERPROFILE")) / "AppData" / "Local"
+        QStandardPaths.writableLocation(QStandardPaths.AppDataLocation) if platform.system() != "Windows" else Path(os.getenv("USERPROFILE")) / "AppData" / "Local"  # noqa: E501
     ) / "Lento"
     DB_PATH = APPDATA_PATH / "blocktimers.db"
