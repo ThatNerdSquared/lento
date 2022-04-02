@@ -12,13 +12,17 @@ class WindowsProxyController(ProxyController):
 
     def softblock_prompt(self, site):
         choice = ctypes.windll.user32.MessageBoxW(
-            None,
+            0,
             f"Do you still want to access {site}, or are you getting distracted?",  # noqa: E501
             "You tried to access a soft-blocked site!",
-            0
+            36
         )
-        print(choice)
-        return False
+        # the MessageBox foreign function returns 6 for OK, 7 for No.
+        if choice == 6:
+            return True
+        else:
+            return False
+
     
     def set_registry_key(self, key, value, type):
         # Open the key so that we can modify it
