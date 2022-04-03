@@ -22,8 +22,12 @@ class ProxyController(ABC):
         hb_websites = []
         for item in raw_hb_websites.keys():
             if raw_hb_websites[item]:
-                hb_websites.append(item)
-                hb_websites.append("www." + item)
+                if item[:4] == "www.":
+                    hb_websites.append(item)
+                    hb_websites.append(item[4:])
+                else:
+                    hb_websites.append(item)
+                    hb_websites.append("www." + item)
 
         return ",".join(hb_websites)
 
@@ -32,7 +36,11 @@ class ProxyController(ABC):
         sb_websites = []
         for item in raw_sb_websites.keys():
             if raw_sb_websites[item]:
-                sb_websites.append(item)
-                sb_websites.append("www." + item)
+                if item[:4] == "www.":
+                    sb_websites.append(item)
+                    sb_websites.append(item[4:])
+                else:
+                    sb_websites.append(item)
+                    sb_websites.append("www." + item)
 
         return ",".join(sb_websites)

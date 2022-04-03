@@ -43,4 +43,5 @@ def time_check(MASTER_PID):
 
 
 if __name__ == '__main__':
+    # name of card to use, time to run session in seconds
     entry(sys.argv[1], sys.argv[2])

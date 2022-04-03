@@ -1,6 +1,9 @@
 import ctypes
-import winreg
+import importlib
 from daemon.backends._proxy_controller import ProxyController
+winreg_exists = importlib.util.find_spec('winreg')
+if winreg_exists:
+    import winreg
 
 
 class WindowsProxyController(ProxyController):
