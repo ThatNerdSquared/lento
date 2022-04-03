@@ -13,6 +13,7 @@ def test_enable_system_proxy_windows(monkeypatch):
     result = lento_proxy.enable_system_proxy(42)
     assert result == ["proxyserver_command_run", "proxyenable_command_run"]
 
+
 def test_disable_system_proxy_windows(monkeypatch):
     monkeypatch.setattr(platform, "system", lambda: "Windows")
     monkeypatch.setattr(winreg, "SetValueEx", helpers.fake_SetValueEx_disable)

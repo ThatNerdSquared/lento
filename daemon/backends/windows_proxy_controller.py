@@ -23,7 +23,6 @@ class WindowsProxyController(ProxyController):
         else:
             return False
 
-    
     def set_registry_key(self, key, value, type):
         # Open the key so that we can modify it
         REGISTRY_SETTINGS = winreg.OpenKey(
@@ -36,12 +35,27 @@ class WindowsProxyController(ProxyController):
 
     def enable_system_proxy(self, proxy_port):
         value = f"http://localhost:{proxy_port}"
-        server_command = self.set_registry_key("ProxyServer", value, winreg.REG_SZ)
-        enable_command = self.set_registry_key("ProxyEnable", 1, winreg.REG_DWORD)
+        server_command = self.set_registry_key(
+            "ProxyServer",
+            value,
+            winreg.REG_SZ
+        )
+        enable_command = self.set_registry_key(
+            "ProxyEnable",
+            1,
+            winreg.REG_DWORD
+        )
         return [server_command, enable_command]
 
-
     def disable_system_proxy(self):
-        server_command = self.set_registry_key("ProxyServer", "", winreg.REG_SZ)
-        enable_command = self.set_registry_key("ProxyEnable", 0, winreg.REG_DWORD)
+        server_command = self.set_registry_key(
+            "ProxyServer",
+            "",
+            winreg.REG_SZ
+        )
+        enable_command = self.set_registry_key(
+            "ProxyEnable",
+            0,
+            winreg.REG_DWORD
+        )
         return [server_command, enable_command]
