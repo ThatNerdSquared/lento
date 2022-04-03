@@ -32,15 +32,16 @@ class WindowsProxyController(ProxyController):
             0,
             winreg.KEY_ALL_ACCESS
         )
-        winreg.SetValueEx(REGISTRY_SETTINGS, key, 0, type, value)
+        return winreg.SetValueEx(REGISTRY_SETTINGS, key, 0, type, value)
 
     def enable_system_proxy(self, proxy_port):
         value = f"http://localhost:{proxy_port}"
-        print(value)
-        self.set_registry_key("ProxyServer", value, winreg.REG_SZ)
-        self.set_registry_key("ProxyEnable", 1, winreg.REG_DWORD)
+        server_command = self.set_registry_key("ProxyServer", value, winreg.REG_SZ)
+        enable_command = self.set_registry_key("ProxyEnable", 1, winreg.REG_DWORD)
+        return [server_command, enable_command]
 
 
     def disable_system_proxy(self):
-        self.set_registry_key("ProxyServer", "", winreg.REG_SZ)
-        self.set_registry_key("ProxyEnable", 0, winreg.REG_DWORD)
+        server_command = self.set_registry_key("ProxyServer", "", winreg.REG_SZ)
+        enable_command = self.set_registry_key("ProxyEnable", 0, winreg.REG_DWORD)
+        return [server_command, enable_command]

@@ -1041,7 +1041,9 @@ FileName
         "/sbin/pfctl -E -f /etc/pf.conf": "rules_activated",
         "/sbin/pfctl -F rules": "flushed_rules",
         "networksetup -setwebproxy wi-fi localhost 42": "macOS web proxy activated",
-        "networksetup -setsecurewebproxy wi-fi localhost 42": "macOS secure web proxy activated"
+        "networksetup -setsecurewebproxy wi-fi localhost 42": "macOS secure web proxy activated",
+        "networksetup -setwebproxystate wi-fi off": "macOS web proxy deactivated",
+        "networksetup -setsecurewebproxystate wi-fi off": "macOS secure web proxy deactivated"
     }
     return cases[cmd]
 
@@ -1058,3 +1060,23 @@ def fake_gethost(domain):
             return "3.95.117.96"
         case _:
             raise Exception(f"Domain name '{domain}' not found in mock domains match statement!")
+
+
+def fake_SetValueEx_enable(reg, key, num, type, value):
+    match key:
+        case "ProxyServer":
+            return "proxyserver_command_run"
+        case "ProxyEnable":
+            return "proxyenable_command_run"
+        case _:
+            raise Exception(f"Mock return for {key} not found")
+
+
+def fake_SetValueEx_disable(reg, key, num, type, value):
+    match key:
+        case "ProxyServer":
+            return "proxyserver_removed"
+        case "ProxyEnable":
+            return "proxyenable_disabled"
+        case _:
+            raise Exception(f"Mock return for {key} not found")
