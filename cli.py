@@ -219,6 +219,8 @@ elif f == "update_goal_list":
         "Conquer world": True,
         "Debug USACO problem": False,
     })
+elif f == "daemon":
+    result_options["message"] = "WARNING: run `python3 -m lento.daemon` for live-ammo testing of daemon and/or proxy"  # noqa: E501
 else:
     result_options["message"] = f"INVALID COMMAND: {f}"
 

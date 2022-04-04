@@ -4,7 +4,7 @@ PYTHON := python3
 
 lint:
 	@echo Linting...
-	@${PYTHON} -m flake8 lento tests --exclude="tests/helpers.py"
+	@${PYTHON} -m flake8 lento daemon tests --exclude="tests/helpers.py"
 	@echo Done!
 
 test:
@@ -19,6 +19,9 @@ vtest:
 
 run: test lint
 	@${PYTHON} app.py
+
+run-daemon: test lint
+	@${PYTHON} -m daemon
 
 build-macos: test lint
 	@pyinstaller --name="Lento" \
