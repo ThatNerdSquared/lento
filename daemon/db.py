@@ -18,6 +18,7 @@ class DBController:
 
     def __init__(self):
         db.create_tables([BlockTimer])
+        db.close()
 
     def create_main_timer(self, lasts_for):
         data = {
@@ -25,9 +26,11 @@ class DBController:
             "lasts_for": float(lasts_for)
         }
         BlockTimer.create(website="_main", data=pickle.dumps(data))
+        db.close()
 
     def check_if_block_is_over(self):
         timer = BlockTimer.get(BlockTimer.website == "_main")
+        db.close()
         data = pickle.loads(timer.data)
         if (
             datetime.datetime.now() - data["time_started"]
@@ -42,10 +45,12 @@ class DBController:
             "is_allowed": is_allowed
         }
         BlockTimer.create(website=website, data=pickle.dumps(data))
+        db.close()
 
     def get_site_entry(self, website):
         try:
             timer = BlockTimer.get(BlockTimer.website == website)
+            db.close()
         except DoesNotExist:
             return None
         return pickle.loads(timer.data)
@@ -57,6 +62,7 @@ class DBController:
         """
         try:
             timer = BlockTimer.get(BlockTimer.website == website)
+            db.close()
         except DoesNotExist:
             return False
         data = pickle.loads(timer.data)
@@ -77,6 +83,7 @@ class DBController:
     def update_site(self, website, is_allowed):
         try:
             timer = BlockTimer.get(BlockTimer.website == website)
+            db.close()
         except DoesNotExist:
             return self.create_host_timer(website, is_allowed)
         data = pickle.loads(timer.data)
@@ -87,4 +94,5 @@ class DBController:
 
     def clear_db(self):
         BlockTimer.delete().where(BlockTimer.website is not None).execute()
-        print("done")
+        db.close()
+        print("Database cleared!")

@@ -6,6 +6,7 @@ import threading
 import proxy
 from daemon import get_proxy
 from daemon.db import DBController
+from daemon.lento_blocker_plugin import LentoBlockerPlugin  # noqa: F401
 from lento.config import Config
 
 
