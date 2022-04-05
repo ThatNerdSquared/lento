@@ -23,6 +23,9 @@ run: test lint
 run-daemon: test lint
 	@${PYTHON} -m daemon
 
+build-daemon: test lint
+	@pyinstaller --name="lentodaemon" --onefile daemon/__main__.py
+
 build-macos: test lint
 	@pyinstaller --name="Lento" \
 		--add-data "macos-style.qss:." \
@@ -41,7 +44,7 @@ build-windows: test lint
 		--windowed --onefile app.py
 
 remove-build-files:
-	@rm -rf Lento.spec build dist
+	@rm -rf Lento.spec build dist lentodaemon.spec
 
 iconset:
 	@echo "Generating macOS iconset..."

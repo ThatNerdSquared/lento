@@ -26,9 +26,16 @@ class Config:
     SETTINGS_PATH = Path(str(
         os.getenv("USERPROFILE" if platform.system() == "Windows" else "HOME")
     )) / "lentosettings.json"
-    PF_ANCHOR_PATH = Path("/etc/pf.anchors/io.github.lento")
+    PF_ANCHOR_PATH = Path("/etc/pf.anchors/io.github.lentoapp")
     PF_CONFIG_PATH = Path("/etc/pf.conf")
-    APPDATA_PATH = Path(
-        QStandardPaths.writableLocation(QStandardPaths.AppDataLocation) if platform.system() != "Windows" else Path(os.getenv("USERPROFILE")) / "AppData" / "Local"  # noqa: E501
-    ) / "Lento"
+    APPDATA_PATH = Path(str(
+        QStandardPaths.writableLocation(QStandardPaths.AppDataLocation) if platform.system() != "Windows" else Path(str(os.getenv("USERPROFILE"))) / "AppData" / "Local"  # noqa: E501
+    )) / "Lento"
     DB_PATH = APPDATA_PATH / "blocktimers.db"
+    REVERSED_DOMAIN = "io.github.lentoapp"
+    DAEMON_PLIST_PATH = Path(
+        "/Library/LaunchDaemons/"
+    ) / f"{REVERSED_DOMAIN}.plist"
+    DAEMON_BINARY_PATH = Path(str(
+        "/Library/LaunchDaemons/" if platform.system() == "Darwin" else os.getenv("USERPROFILE")  # noqa: E501
+    )) / "lentodaemon"
