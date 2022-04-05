@@ -5,14 +5,14 @@ from lento.config import Config
 
 data = {
     "initial_blank_config": {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {},
         "application_settings": {
             "theme": "automatic"
         }
     },
     "bare_config": {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {
             "Untitled Card": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
@@ -32,7 +32,7 @@ data = {
         }
     },
     "filled_config":  {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {
             "Untitled Card": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
@@ -88,7 +88,7 @@ data = {
         }
     },
     "updated_bare_config": {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {
             "World Domination": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
@@ -108,7 +108,7 @@ data = {
         }
     },
     "bare_config_with_blocked_sites": {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {
             "Untitled Card": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
@@ -131,7 +131,7 @@ data = {
         }
     },
     "bare_config_with_sb_sites": {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {
             "Untitled Card": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
@@ -154,7 +154,7 @@ data = {
         }
     },
     "bare_config_with_all_blocked_sites": {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {
             "Untitled Card": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
@@ -180,7 +180,7 @@ data = {
         }
     },
     "bare_config_with_apps": {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {
             "Untitled Card": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
@@ -211,7 +211,7 @@ data = {
         }
     },
     "bare_config_reordered_apps": {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {
             "Untitled Card": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
@@ -254,7 +254,7 @@ data = {
         }
     },
     "bare_config_with_notif": {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {
             "Untitled Card": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
@@ -294,7 +294,7 @@ data = {
         }
     },
     "bare_config_multiple_notif": {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {
             "Untitled Card": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
@@ -884,7 +884,7 @@ data = {
         }
     },
     "bare_config_with_goals": {
-        "is_block_running": False,
+        "activated_card": None,
         "cards": {
             "Untitled Card": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
@@ -982,7 +982,30 @@ data = {
         #io.github.lento
         anchor "io.github.lento"
         load anchor "io.github.lento" from "/etc/pf.anchors/io.github.lento\"
-    """).lstrip()
+    """).lstrip(),
+    "bare_config_with_activated_card": {
+        "activated_card": "Untitled Card",
+        "cards": {
+            "Untitled Card": {
+                "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
+                "name": "Untitled Card",
+                "emoji": "😃",
+                "time": 0,
+                "hard_blocked_sites": {
+                    "youtube.com": True,
+                    "twitter.com": True
+                },
+                "soft_blocked_sites": {},
+                "hard_blocked_apps": {},
+                "soft_blocked_apps": {},
+                "notifications": {},
+                "goals": {}
+            }
+        },
+        "application_settings": {
+            "theme": "automatic"
+        }
+    },
 }
 
 
