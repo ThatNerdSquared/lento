@@ -91,3 +91,19 @@ def remove_dupes_blanks_and_whitespace(list_to_process):
     no_dupes_list = list(dict.fromkeys(no_extra_whitespace_list))
 
     return no_dupes_list
+
+
+def write_to_root_file_macos(text, fp):
+    text = text.replace('"', '\\\\\\"')
+    try:
+        cmd = f"osascript -e 'do shell script \"echo \\\"{text}\\\" | tee -a {fp} > /dev/null\" with administrator privileges'"
+        subprocess.call(cmd, shell=True)
+    except FileNotFoundError:
+        commands = [
+            (f"osascript -e 'do shell script \"touch \"{fp}\"\""
+                " with administrator privileges'"),
+            (f"osascript -e 'do shell script \"{text}\""
+                f" | tee -a {fp} > /dev/null\" with administrator privileges'")
+        ]
+        for cmd in commands:
+            subprocess.call(cmd, shell=True)

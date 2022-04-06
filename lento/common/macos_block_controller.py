@@ -1,5 +1,6 @@
 import subprocess
 import textwrap
+from lento import utils
 from lento.common._block_controller import BlockController
 from lento.config import Config
 
@@ -13,7 +14,7 @@ class macOSBlockController(BlockController):
     def start_daemon(self, card_to_use: str, lasts_for: int):
         plist_contents = textwrap.dedent(f"""
             <?xml version="1.0" encoding="UTF-8"?>
-            <!DOCTYPE plist PUBLIC -//Apple Computer//DTD PLIST 1.0//EN http://www.apple.com/DTDs/PropertyList-1.0.dtd >
+            <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
             <plist version="1.0">
               <dict>
                 <key>Label</key>
@@ -24,14 +25,17 @@ class macOSBlockController(BlockController):
                 <true/>
                 <key>ProgramArguments</key>
                 <array>
-                    <string><CARD_TO_USE>{card_to_use}</string>
-                    <string><LASTS_FOR>{lasts_for}</string>
+                    <string>{card_to_use}</string>
+                    <string>{lasts_for}</string>
                 </array>
               </dict>
             </plist>
         """).lstrip()  # noqa: E501
 
-        Config.DAEMON_PLIST_PATH.write_text(plist_contents)
+        utils.write_to_root_file_macos(
+            plist_contents,
+            Config.DAEMON_PLIST_PATH
+        )
         commands = [
             f"sudo launchctl load {Config.DAEMON_PLIST_PATH}",
             f"sudo launchctl start {Config.REVERSED_DOMAIN}"
