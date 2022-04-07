@@ -1,4 +1,3 @@
-import subprocess
 import textwrap
 from lento import utils
 from lento.common._block_controller import BlockController
@@ -27,7 +26,6 @@ class macOSBlockController(BlockController):
                 <array>
                     <string>{card_to_use}</string>
                     <string>{lasts_for}</string>
-                    <string>{Config.HOME_FOLDER}</string>
                 </array>
                 <key>StandardErrorPath</key>
                 <string>/tmp/lentodaemon.err</string>
@@ -37,7 +35,7 @@ class macOSBlockController(BlockController):
             </plist>
         """).lstrip()  # noqa: E501
 
-        utils.write_to_root_file_macos(
+        utils.write_to_launchd_plist_macos(
             plist_contents,
             Config.DAEMON_PLIST_PATH
         )

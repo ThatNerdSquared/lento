@@ -93,7 +93,7 @@ def remove_dupes_blanks_and_whitespace(list_to_process):
     return no_dupes_list
 
 
-def write_to_root_file_macos(text, fp):
+def write_to_launchd_plist_macos(text, fp):
     text = text.replace('"', '\\\\\\"')
     try:
         cmd = f"osascript -e 'do shell script \"echo \\\"{text}\\\" | tee -a {fp} > /dev/null && launchctl load {Config.DAEMON_PLIST_PATH} && launchctl start {Config.REVERSED_DOMAIN}\" with administrator privileges'"  # noqa: E501

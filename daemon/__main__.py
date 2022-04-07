@@ -11,8 +11,7 @@ from daemon.lento_blocker_plugin import LentoBlockerPlugin  # noqa: F401
 from lento.config import Config
 
 
-def entry(card_to_use, lasts_for, home_folder):
-    Config.dynamically_update_home(home_folder)
+def entry(card_to_use, lasts_for):
     SETTINGS = json.loads(Config.SETTINGS_PATH.read_text())
     lento_proxy = get_proxy()
     db = DBController()
@@ -48,4 +47,4 @@ def time_check(MASTER_PID):
 if __name__ == '__main__':
     multiprocessing.freeze_support()
     # name of card to use, time to run session in seconds
-    entry(sys.argv[-3], sys.argv[-2], sys.argv[-1])
+    entry(sys.argv[-2], sys.argv[-1])
