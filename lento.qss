@@ -1,0 +1,4 @@
+#bob {
+    background: #FFFFFF;
+    border-radius: 40px;
+}

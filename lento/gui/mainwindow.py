@@ -1,48 +1,37 @@
-from PySide6.QtCore import QSize
-from PySide6.QtWidgets import QApplication, QFileDialog, QLabel, QMainWindow, QPushButton, QVBoxLayout, QWidget  # noqa: E501
+import sys
+from lento.gui.card import Card
+from lento import utils
+from pathlib import Path
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QPushButton  # noqa: E501
 
 
 class MainWindow(QMainWindow):
-    """The main window for the app."""
     def __init__(self):
         super().__init__()
-
-        self.setMinimumSize(QSize(450, 200))
-        self.set_up_window()
-
-    def set_up_window(self):
         self.setWindowTitle("Lento")
 
-        layout = QVBoxLayout()
-        text = QLabel("Hello World!")
-        button = QPushButton("Summon Llama")
-        button.setEnabled(True)
-        button.clicked.connect(self.add_item)
+        main = QWidget()
+        main_layout = QHBoxLayout()
+        main.setLayout(main_layout)
 
-        layout.addWidget(text)
-        layout.addWidget(button)
-        widget = QWidget()
-        widget.setLayout(layout)
+        self.left_button = QPushButton()
+        self.right_button = QPushButton()
+        _card = Card()
+        main_layout.addWidget(self.left_button)
+        main_layout.addWidget(_card.render_card())
+        main_layout.addWidget(self.right_button)
 
-        self.setCentralWidget(widget)
-
-    def add_item(self):
-        dialog = QFileDialog()
-        dialog.setFileMode(QFileDialog.ExistingFiles)
-        dialog.setDirectory("/Applications/")
-        dialog.setNameFilter(("Applications (*.app)"))
-        if dialog.exec():
-            fileNames = dialog.selectedFiles()
-            print(fileNames)
+        self.setCentralWidget(main)
 
 
 def main():
-    app = QApplication([])
-
+    app = QApplication(sys.argv)
+    stylesheet_path = Path(utils.get_data_file_path("lento.qss"))
+    app.setStyleSheet(stylesheet_path.read_text())
     window = MainWindow()
     window.show()
     app.exec()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

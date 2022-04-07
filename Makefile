@@ -25,7 +25,7 @@ run-daemon: test lint
 
 build-macos: test lint
 	@pyinstaller --name="Lento" \
-		--add-data "macos-style.qss:." \
+		--add-data "lento.qss:." \
 		--add-data "fonts/*.ttf:fonts/" \
 		--icon assets/Lento.icns \
 		--windowed --onefile app.py
