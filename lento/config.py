@@ -40,3 +40,17 @@ class Config:
     DAEMON_BINARY_PATH = Path(str(
         "/Library/LaunchDaemons/" if platform.system() == "Darwin" else os.getenv("USERPROFILE")  # noqa: E501
     )) / "lentodaemon"
+
+    @classmethod
+    def dynamically_update_home(cls, new_value):
+        n = Path(new_value)
+        setattr(cls, "HOME_FOLDER", n)
+        setattr(cls, "SETTINGS_PATH", n / "lentosettings.json")
+        setattr(cls, "APPDATA_PATH", Path(str(
+            n / "Library" / "Application Support" if
+            platform.system() != "Windows" else n / "AppData" / "Local"  # noqa: E501
+        )) / "Lento")
+        setattr(cls, "DB_PATH", Path(str(
+            n / "Library" / "Application Support" if
+            platform.system() != "Windows" else n / "AppData" / "Local"  # noqa: E501
+        )) / "Lento" / "blocktimers.db")

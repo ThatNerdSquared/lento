@@ -27,7 +27,12 @@ class macOSBlockController(BlockController):
                 <array>
                     <string>{card_to_use}</string>
                     <string>{lasts_for}</string>
+                    <string>{Config.HOME_FOLDER}</string>
                 </array>
+                <key>StandardErrorPath</key>
+                <string>/tmp/lentodaemon.err</string>
+                <key>StandardOutPath</key>
+                <string>/tmp/lentodaemon.out</string>
               </dict>
             </plist>
         """).lstrip()  # noqa: E501
@@ -36,11 +41,3 @@ class macOSBlockController(BlockController):
             plist_contents,
             Config.DAEMON_PLIST_PATH
         )
-        commands = [
-            f"sudo launchctl load {Config.DAEMON_PLIST_PATH}",
-            f"sudo launchctl start {Config.REVERSED_DOMAIN}"
-        ]
-        result = []
-        for cmd in commands:
-            result.append(subprocess.call(cmd, shell=True))
-        return result
