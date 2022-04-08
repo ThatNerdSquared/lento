@@ -9,3 +9,4 @@ dist/
 Lento.spec
 lentodaemon.spec
 **/lentodaemon
+**/lentodaemon.exe

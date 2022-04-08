@@ -1,10 +1,11 @@
 import datetime
-import subprocess
 import pickle
+from abc import ABC, abstractmethod
 from peewee import BlobField, CharField, DoesNotExist, Model, SqliteDatabase
 import lento.common.cards_management as CardsManagement
 from lento.config import Config
 from lento import utils
+
 
 db = SqliteDatabase(Config.DB_PATH)
 
@@ -17,35 +18,26 @@ class BlockTimer(Model):
         database = db
 
 
-class BlockController:
+class BlockController(ABC):
     def __init__(self):
         super().__init__()
+
+    @abstractmethod
+    def daemon_launch(self):
+        """Will be implemented by children for each platform."""
+
+    @abstractmethod
+    def daemon_takedown(self):
+        """Will be implemented by children for each platform."""
 
     def start_block(self, card_to_use: str, lasts_for: int):
         CardsManagement.activate_block_in_settings(card_to_use)
         bundled_binary_path = utils.get_data_file_path("lentodaemon")
-        commands = [
-            ("osascript -e 'do shell script"
-                f" \"cp \\\"{bundled_binary_path}\\\""
-                f" \\\"{Config.DAEMON_BINARY_PATH}\\\"\""
-                " with administrator privileges'"),
-            " ".join([
-                f"\"{str(Config.DAEMON_BINARY_PATH)}\"",
-                f"\"{card_to_use}\"",
-                str(lasts_for)
-            ])
-        ]
-        result = []
-        for cmd in commands:
-            result.append(subprocess.call(cmd, shell=True))
-        return result
+        return self.daemon_launch(bundled_binary_path, card_to_use, lasts_for)
 
     def end_block(self):
         CardsManagement.deactivate_block_in_settings()
-        cmd = ("osascript -e 'do shell script"
-               f" \"rm \\\"{Config.DAEMON_BINARY_PATH}\\\""
-               "\" with administrator privileges'")
-        return subprocess.call(cmd, shell=True)
+        return self.daemon_takedown()
 
     def get_remaining_block_time(self) -> tuple[int, int, int]:
         try:

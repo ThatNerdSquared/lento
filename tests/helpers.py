@@ -1070,7 +1070,7 @@ FileName
         ("osascript -e 'do shell script"
         f" \"cp \\\"lentodaemon\\\""
         f" \\\"{Config.DAEMON_BINARY_PATH}\\\"\""
-        " with administrator privileges'"): "daemon copied",
+        " with administrator privileges'"): "macOS daemon copied",
         " ".join([
             f"\"{str(Config.DAEMON_BINARY_PATH)}\"",
             f"\"Untitled Card\"",
@@ -1078,7 +1078,7 @@ FileName
         ]): "daemon launched",
         ("osascript -e 'do shell script"
          f" \"rm \\\"{Config.DAEMON_BINARY_PATH}\\\""
-         "\" with administrator privileges'"): "block cleanup finished"
+         "\" with administrator privileges'"): "macOS block cleanup finished"
 
     }
     return cases[cmd]
