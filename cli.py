@@ -225,6 +225,9 @@ elif f == "daemon":
 elif f == "start_block":
     block_controller = BlockController()
     block_controller.start_block(param1, param2)
+elif f == "end_block":
+    block_controller = BlockController()
+    block_controller.end_block()
 else:
     result_options["message"] = f"INVALID COMMAND: {f}"
 

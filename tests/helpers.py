@@ -1075,7 +1075,11 @@ FileName
             f"\"{str(Config.DAEMON_BINARY_PATH)}\"",
             f"\"Untitled Card\"",
             str(42)
-        ]): "daemon launched"
+        ]): "daemon launched",
+        ("osascript -e 'do shell script"
+         f" \"rm \\\"{Config.DAEMON_BINARY_PATH}\\\""
+         "\" with administrator privileges'"): "block cleanup finished"
+
     }
     return cases[cmd]
 

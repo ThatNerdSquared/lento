@@ -26,3 +26,10 @@ class BlockController():
         for cmd in commands:
             result.append(subprocess.call(cmd, shell=True))
         return result
+
+    def end_block(self):
+        CardsManagement.deactivate_block_in_settings()
+        cmd = ("osascript -e 'do shell script"
+               f" \"rm \\\"{Config.DAEMON_BINARY_PATH}\\\""
+               "\" with administrator privileges'")
+        return subprocess.call(cmd, shell=True)
