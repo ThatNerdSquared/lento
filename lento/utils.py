@@ -91,19 +91,3 @@ def remove_dupes_blanks_and_whitespace(list_to_process):
     no_dupes_list = list(dict.fromkeys(no_extra_whitespace_list))
 
     return no_dupes_list
-
-
-def write_to_launchd_plist_macos(text, fp):
-    text = text.replace('"', '\\\\\\"')
-    try:
-        cmd = f"osascript -e 'do shell script \"echo \\\"{text}\\\" | tee -a {fp} > /dev/null && launchctl load {Config.DAEMON_PLIST_PATH} && launchctl start {Config.REVERSED_DOMAIN}\" with administrator privileges'"  # noqa: E501
-        subprocess.call(cmd, shell=True)
-    except FileNotFoundError:
-        commands = [
-            (f"osascript -e 'do shell script \"touch \"{fp}\"\""
-                " with administrator privileges'"),
-            (f"osascript -e 'do shell script \"{text}\""
-                f" | tee -a {fp} > /dev/null\" with administrator privileges'")
-        ]
-        for cmd in commands:
-            subprocess.call(cmd, shell=True)

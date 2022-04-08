@@ -1066,7 +1066,16 @@ FileName
         "networksetup -setwebproxy wi-fi localhost 42": "macOS web proxy activated",
         "networksetup -setsecurewebproxy wi-fi localhost 42": "macOS secure web proxy activated",
         "networksetup -setwebproxystate wi-fi off": "macOS web proxy deactivated",
-        "networksetup -setsecurewebproxystate wi-fi off": "macOS secure web proxy deactivated"
+        "networksetup -setsecurewebproxystate wi-fi off": "macOS secure web proxy deactivated",
+        ("osascript -e 'do shell script"
+        f" \"cp \\\"lentodaemon\\\""
+        f" \\\"{Config.DAEMON_BINARY_PATH}\\\"\""
+        " with administrator privileges'"): "daemon copied",
+        " ".join([
+            f"\"{str(Config.DAEMON_BINARY_PATH)}\"",
+            f"\"Untitled Card\"",
+            str(42)
+        ]): "daemon launched"
     }
     return cases[cmd]
 

@@ -26,31 +26,12 @@ class Config:
         os.getenv("USERPROFILE" if platform.system() == "Windows" else "HOME")
     ))
     SETTINGS_PATH = HOME_FOLDER / "lentosettings.json"
-    PF_ANCHOR_PATH = Path("/etc/pf.anchors/io.github.lentoapp")
-    PF_CONFIG_PATH = Path("/etc/pf.conf")
     APPDATA_PATH = Path(str(
         HOME_FOLDER / "Library" / "Application Support" if
         platform.system() != "Windows" else HOME_FOLDER / "AppData" / "Local"  # noqa: E501
     )) / "Lento"
     DB_PATH = APPDATA_PATH / "blocktimers.db"
     REVERSED_DOMAIN = "io.github.lentoapp"
-    DAEMON_PLIST_PATH = Path(
-        "/Library/LaunchDaemons/"
-    ) / f"{REVERSED_DOMAIN}.plist"
     DAEMON_BINARY_PATH = Path(str(
-        "/Library/LaunchDaemons/" if platform.system() == "Darwin" else os.getenv("USERPROFILE")  # noqa: E501
+        "/Library/LaunchDaemons/" if platform.system() == "Darwin" else APPDATA_PATH  # noqa: E501
     )) / "lentodaemon"
-
-    @classmethod
-    def dynamically_update_home(cls, new_value):
-        n = Path(new_value)
-        setattr(cls, "HOME_FOLDER", n)
-        setattr(cls, "SETTINGS_PATH", n / "lentosettings.json")
-        setattr(cls, "APPDATA_PATH", Path(str(
-            n / "Library" / "Application Support" if
-            platform.system() != "Windows" else n / "AppData" / "Local"  # noqa: E501
-        )) / "Lento")
-        setattr(cls, "DB_PATH", Path(str(
-            n / "Library" / "Application Support" if
-            platform.system() != "Windows" else n / "AppData" / "Local"  # noqa: E501
-        )) / "Lento" / "blocktimers.db")
