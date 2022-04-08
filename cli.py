@@ -228,6 +228,9 @@ elif f == "start_block":
 elif f == "end_block":
     block_controller = BlockController()
     block_controller.end_block()
+elif f == "get_remaining_block_time":
+    block_controller = BlockController()
+    result_options["output"] = block_controller.get_remaining_block_time()
 else:
     result_options["message"] = f"INVALID COMMAND: {f}"
 
