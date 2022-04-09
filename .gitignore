@@ -10,3 +10,7 @@ Lento.spec
 lentodaemon.spec
 **/lentodaemon
 **/lentodaemon.exe
+**/*.bin
+**/*.build/
+**/*.dist/
+**/*.onefile-build/
