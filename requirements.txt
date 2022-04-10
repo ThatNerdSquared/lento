@@ -1,14 +1,17 @@
 # Prod
-PySide6>=6.2.2.1
+PySide6>=6.2.4
 # watchdog>=2.1.6
-# pyobjc>=8.1
 # psutil>=5.9.0
-python-dotenv>=0.19.2
-pillow>=9.0.0
+python-dotenv>=0.20.0
+
+# pyobjc>=8.4.1
+
+pillow>=9.1.0
 proxy.py>=2.4.1
 peewee>=3.14.10
 
 # Dev
 flake8>=4.0.1
-pytest>=6.2.5
-pyinstaller>=4.8
+pytest>=7.1.1
+pyinstaller>=4.10
+Nuitka>=0.7.7

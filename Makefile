@@ -23,10 +23,20 @@ run: test lint
 run-daemon: test lint
 	@${PYTHON} -m daemon
 
-build-macos: test lint
+build-daemon: test lint
+	@${PYTHON} -m nuitka daemon/__main__.py --onefile --standalone
+	@mv __main__.bin lentodaemon
+
+build-daemon-windows: test lint
+	@${PYTHON} -m nuitka daemon/__main__.py --onefile --standalone
+	@mv __main__.exe lentodaemon.lento.exe
+
+
+build-macos: test lint build-daemon
 	@pyinstaller --name="Lento" \
 		--add-data "lento.qss:." \
 		--add-data "fonts/*.ttf:fonts/" \
+		--add-data "lentodaemon" \
 		--icon assets/Lento.icns \
 		--windowed --onefile app.py
 		@#--add-data ".env:." \
@@ -36,12 +46,17 @@ build-windows: test lint
 	@${PYTHON} -m PyInstaller --name="Lento" \
 		--add-data "windows-style.qss;." \
 		--add-data "fonts/*.ttf;fonts/" \
+		--add-data "lentodaemon" \
 		--add-data "assets/lento-icon.png;." \
 		--icon assets/lento-icon.ico \
 		--windowed --onefile app.py
 
 remove-build-files:
-	@rm -rf Lento.spec build dist
+	@rm -rf Lento.spec build dist lentodaemon.spec __main__.bin __main__.build __main__.dist __main__.onefile-build/ lentodaemon
+
+remove-build-files-win:
+	@rm -Force Lento.spec, build, dist, lentodaemon.spec, __main__.bin, __main__.build, __main__.dist, __main__.onefile-build, app.build, app.dist, lentodaemon.exe
+
 
 iconset:
 	@echo "Generating macOS iconset..."

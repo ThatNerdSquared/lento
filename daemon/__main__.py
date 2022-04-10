@@ -1,4 +1,5 @@
 import json
+import multiprocessing
 import os
 import signal
 import sys
@@ -6,6 +7,7 @@ import threading
 import proxy
 from daemon import get_proxy
 from daemon.db import DBController
+from daemon.lento_blocker_plugin import LentoBlockerPlugin  # noqa: F401
 from lento.config import Config
 
 
@@ -43,5 +45,6 @@ def time_check(MASTER_PID):
 
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support()
     # name of card to use, time to run session in seconds
-    entry(sys.argv[1], sys.argv[2])
+    entry(sys.argv[-2], sys.argv[-1])
