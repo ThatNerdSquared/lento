@@ -1,5 +1,6 @@
 import datetime
 import pickle
+import platform
 from abc import ABC, abstractmethod
 from peewee import BlobField, CharField, DoesNotExist, Model, SqliteDatabase
 import lento.common.cards_management as CardsManagement
@@ -32,7 +33,9 @@ class BlockController(ABC):
 
     def start_block(self, card_to_use: str, lasts_for: int):
         CardsManagement.activate_block_in_settings(card_to_use)
-        bundled_binary_path = utils.get_data_file_path("lentodaemon")
+        bundled_binary_path = utils.get_data_file_path(
+            "lentodaemon" if platform.system() == "Darwin" else "lentodaemon.exe"  # noqa: E501
+        )
         return self.daemon_launch(bundled_binary_path, card_to_use, lasts_for)
 
     def end_block(self):

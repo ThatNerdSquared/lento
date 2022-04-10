@@ -1,4 +1,6 @@
+import subprocess
 from lento.common._block_controller import BlockController
+from lento.config import Config
 
 
 class WindowsBlockController(BlockController):
@@ -13,8 +15,20 @@ class WindowsBlockController(BlockController):
         card_to_use: str,
         lasts_for: int
     ):
-        return ("Windows daemon started with args:"
-                f"{bundled_binary_path}, {card_to_use}, {lasts_for}")
+        launch = " ".join([
+            f"\"{str(Config.DAEMON_BINARY_PATH)}\"",
+            f"\"{card_to_use}\"",
+            str(lasts_for)
+        ])
+        commands = [
+            f"powershell \"cp '{bundled_binary_path}' '{Config.DAEMON_BINARY_PATH}'\"",  # noqa: E501
+            f"powershell \"{launch}\""
+        ]
+        result = []
+        for cmd in commands:
+            result.append(subprocess.call(cmd, shell=True))
+        return result
 
     def daemon_takedown(self):
-        return "Windows daemon taken down"
+        cmd = f"powershell \"rm -Force '{Config.DAEMON_BINARY_PATH}'\""
+        return subprocess.call(cmd, shell=True)

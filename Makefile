@@ -27,6 +27,10 @@ build-daemon: test lint
 	@${PYTHON} -m nuitka daemon/__main__.py --onefile --standalone
 	@mv __main__.bin lentodaemon
 
+build-daemon-windows: test lint
+	@${PYTHON} -m nuitka daemon/__main__.py --onefile --standalone
+	@mv __main__.exe lentodaemon.lento.exe
+
 
 build-macos: test lint build-daemon
 	@pyinstaller --name="Lento" \
@@ -48,7 +52,10 @@ build-windows: test lint
 		--windowed --onefile app.py
 
 remove-build-files:
-	@rm -rf Lento.spec build dist lentodaemon.spec __main__.bin __main__.build __main__.dist __main__.onefile-build/ app.build app.dist
+	@rm -rf Lento.spec build dist lentodaemon.spec __main__.bin __main__.build __main__.dist __main__.onefile-build/ lentodaemon
+
+remove-build-files-win:
+	@rm -Force Lento.spec, build, dist, lentodaemon.spec, __main__.bin, __main__.build, __main__.dist, __main__.onefile-build, app.build, app.dist, lentodaemon.exe
 
 
 iconset:
