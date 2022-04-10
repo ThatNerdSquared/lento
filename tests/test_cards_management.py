@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+from pathlib import Path
 import platform
 import pytest
 import subprocess
@@ -1123,3 +1124,56 @@ def test_update_goal_list_rejects_flawed_data(monkeypatch, tmp_path):
             "Llama",
             helpers.data["reordered_goal_dict"]
         )
+
+
+def test_activate_block_in_settings_works_correctly(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config_with_blocked_sites"]
+    ))
+
+    CardsManagement.activate_block_in_settings("Untitled Card")
+    result = json.loads(Config.SETTINGS_PATH.read_text())
+    expected = helpers.data["bare_config_with_activated_card"]
+
+    assert result == expected
+    assert result["activated_card"] == expected["activated_card"]
+
+
+def test_activate_block_in_settings_rejects_flawed_data(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config_with_blocked_sites"]
+    ))
+
+    with pytest.raises(Exception, match="Cannot activate nonexistent card!"):
+        CardsManagement.activate_block_in_settings("Llama Taming")
+
+
+def test_deactivate_block_in_settings_works_correctly(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config_with_activated_card"]
+    ))
+
+    CardsManagement.deactivate_block_in_settings()
+
+    result = json.loads(Config.SETTINGS_PATH.read_text())
+    expected = helpers.data["bare_config_with_blocked_sites"]
+    assert result == expected
+    assert result["activated_card"] == expected["activated_card"]

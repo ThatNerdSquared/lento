@@ -11,6 +11,7 @@ import os
 import platform
 from lento.common import cards_management as CardsManagement
 from lento import utils
+from lento.common import get_block_controller
 from tests import helpers
 
 parser = argparse.ArgumentParser(
@@ -221,6 +222,15 @@ elif f == "update_goal_list":
     })
 elif f == "daemon":
     result_options["message"] = "WARNING: run `python3 -m lento.daemon` for live-ammo testing of daemon and/or proxy"  # noqa: E501
+elif f == "start_block":
+    block_controller = get_block_controller()
+    block_controller.start_block(param1, param2)
+elif f == "end_block":
+    block_controller = get_block_controller()
+    block_controller.end_block()
+elif f == "get_remaining_block_time":
+    block_controller = get_block_controller()
+    result_options["output"] = block_controller.get_remaining_block_time()
 else:
     result_options["message"] = f"INVALID COMMAND: {f}"
 

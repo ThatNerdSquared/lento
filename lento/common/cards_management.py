@@ -350,3 +350,19 @@ def update_goal_list(card_to_modify, new_goals_dict):
 
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(settings, settings_json)
+
+
+def activate_block_in_settings(card_to_activate: str):
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
+    if card_to_activate not in settings["cards"].keys():
+        raise Exception("Cannot activate nonexistent card!")
+
+    settings["activated_card"] = card_to_activate
+
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
+
+
+def deactivate_block_in_settings():
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
+    settings["activated_card"] = None
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
