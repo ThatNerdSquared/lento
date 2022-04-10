@@ -1,6 +1,6 @@
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import QFrame, QWidget, QVBoxLayout, QScrollArea  # noqa: E501
-from lento.gui.hard_block_list import HBWebsitesList
+from lento.gui.websitelist import WebsiteList
 
 
 class Card(QWidget):
@@ -21,12 +21,22 @@ class Card(QWidget):
 
         internal_card = QVBoxLayout()
 
-        hb_list = HBWebsitesList(
+        hb_list = WebsiteList(
             DATA["name"],
             DATA["hard_blocked_sites"],
+            "hard_blocked_sites",
+            "Hard-blocked Websites",
+            refresh_handler
+        )
+        sb_list = WebsiteList(
+            DATA["name"],
+            DATA["soft_blocked_sites"],
+            "soft_blocked_sites",
+            "Soft-blocked Websites",
             refresh_handler
         )
         internal_card.addWidget(hb_list)
+        internal_card.addWidget(sb_list)
 
         internal_card_widget = QWidget()
         internal_card_widget.setMinimumSize(250, 500)
