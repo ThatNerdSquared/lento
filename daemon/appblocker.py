@@ -10,22 +10,23 @@ class AppBlocker():
     def block_apps(self, hb_apps, sb_apps):
         for proc in psutil.process_iter(["pid", "name"]):
             try:
-                for hardblocked_app in hb_apps:
-                    if hardblocked_app in proc.name():
-                        print(
-                            f"==HARDBLOCKED APP DETECTED: {hardblocked_app}=="
-                        )
-                        proc.terminate()
-                for softblocked_app in sb_apps:
-                    if softblocked_app in proc.name():
-                        print(
-                            f"==SOFTBLOCKED APP DETECTED: {softblocked_app}=="
-                        )
-                        proc.terminate()
+                procname = proc.name()
             except psutil.NoSuchProcess:
                 continue
             except psutil.ZombieProcess:
                 continue
+            for hardblocked_app in hb_apps:
+                if hardblocked_app in procname:
+                    print(
+                        f"===HARDBLOCKED APP DETECTED: {hardblocked_app}==="
+                    )
+                    proc.terminate()
+            for softblocked_app in sb_apps:
+                if softblocked_app in procname:
+                    print(
+                        f"===SOFTBLOCKED APP DETECTED: {softblocked_app}==="
+                    )
+                    proc.terminate()
 
     def generate_hardblocked_apps_list(self, card_to_use):
         SETTINGS = json.loads(Config.SETTINGS_PATH.read_text())
