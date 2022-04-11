@@ -1,6 +1,8 @@
 from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QFrame, QWidget, QVBoxLayout, QScrollArea  # noqa: E501
+from PySide6.QtWidgets import QFrame, QScrollArea, QVBoxLayout, QWidget  # noqa: E501
+from lento.gui.title import Title
 from lento.gui.websitelist import WebsiteList
+from lento.gui.applist import AppList
 
 
 class Card(QWidget):
@@ -20,27 +22,48 @@ class Card(QWidget):
         body_rect.setMaximumSize(500, 800)
 
         internal_card = QVBoxLayout()
+        internal_card.setSpacing(20)
 
-        hb_list = WebsiteList(
+        title = Title(DATA["name"], refresh_handler)
+        whb_list = WebsiteList(
             DATA["name"],
             DATA["hard_blocked_sites"],
             "hard_blocked_sites",
             "Hard-blocked Websites",
             refresh_handler
         )
-        sb_list = WebsiteList(
+        wsb_list = WebsiteList(
             DATA["name"],
             DATA["soft_blocked_sites"],
             "soft_blocked_sites",
             "Soft-blocked Websites",
             refresh_handler
         )
-        internal_card.addWidget(hb_list)
-        internal_card.addWidget(sb_list)
+        ahb_list = AppList(
+            DATA["name"],
+            DATA["hard_blocked_apps"],
+            "hard_blocked_apps",
+            "Hard-blocked Apps",
+            refresh_handler
+        )
+        asb_list = AppList(
+            DATA["name"],
+            DATA["soft_blocked_apps"],
+            "soft_blocked_apps",
+            "Soft-blocked Apps",
+            refresh_handler
+        )
+
+        internal_card.addWidget(title)
+        internal_card.addWidget(whb_list)
+        internal_card.addWidget(wsb_list)
+        internal_card.addWidget(ahb_list)
+        internal_card.addWidget(asb_list)
 
         internal_card_widget = QWidget()
-        internal_card_widget.setMinimumSize(250, 500)
-        internal_card_widget.setMaximumSize(500, 800)
+        internal_card_widget.setObjectName("maincard")
+        internal_card_widget.setMinimumSize(250, 1200)
+        # internal_card_widget.setMaximumSize(500, 800)
         internal_card_widget.setLayout(internal_card)
 
         # Set the internal scroll area for the card.

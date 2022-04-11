@@ -2,6 +2,8 @@ import sys
 from lento.gui.card import Card
 from lento import utils
 from pathlib import Path
+from PySide6.QtCore import QDir
+from PySide6.QtGui import QFontDatabase
 from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QPushButton  # noqa: E501
 from lento.common import cards_management as CardsManagement
 
@@ -35,8 +37,13 @@ class MainWindow(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
+
+    fonts = utils.get_data_file_path('fonts')
+    for font in QDir(fonts).entryInfoList("*.ttf"):
+        QFontDatabase.addApplicationFont(font.absoluteFilePath())
     stylesheet_path = Path(utils.get_data_file_path("lento.qss"))
     app.setStyleSheet(stylesheet_path.read_text())
+
     window = MainWindow()
     window.show()
     app.exec()

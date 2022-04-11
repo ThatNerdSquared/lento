@@ -1,8 +1,9 @@
-from PySide6.QtWidgets import QLineEdit, QPushButton, QVBoxLayout, QWidget
+import platform
+from PySide6.QtWidgets import QFileDialog, QPushButton, QVBoxLayout, QWidget
 from lento.common import cards_management as CardsManagement
 
 
-class WebsiteList(QWidget):
+class AppList(QWidget):
     def __init__(
             self,
             current_card,
@@ -32,15 +33,16 @@ class WebsiteList(QWidget):
             new_button = QPushButton(item)
 
             new_button.setCheckable(True)
-            new_button.setChecked(self.INPUT_LIST[item])
+            # new_button.setChecked(self.INPUT_LIST[item])
             new_button.clicked.connect(self.toggle_site)
 
             inner_list_layout.addWidget(new_button)
 
-        self.entry_box = QLineEdit()
-        self.entry_box.returnPressed.connect(self.add_item)
+        add_button = QPushButton("+ Add an item")
+        add_button.setEnabled(True)
+        add_button.clicked.connect(self.prompt_user_for_apps)
+        inner_list_layout.addWidget(add_button)
 
-        inner_list_layout.addWidget(self.entry_box)
         self.inner_list.setLayout(inner_list_layout)
 
         main_layout.addWidget(toggle)
@@ -71,3 +73,20 @@ class WebsiteList(QWidget):
             self.CURRENT_LIST_KEY,
             self.INPUT_LIST
         )
+
+    def prompt_user_for_apps(self):
+        if platform.system() == "Darwin":
+            dialog = QFileDialog()
+            dialog.setFileMode(QFileDialog.ExistingFiles)
+            dialog.setDirectory("/Applications/")
+            dialog.setNameFilter(("Applications (*.app)"))
+            if dialog.exec():
+                file_names = dialog.selectedFiles()
+                CardsManagement.add_to_app_blocklists(
+                    self.CURRENT_CARD,
+                    self.CURRENT_LIST_KEY,
+                    file_names
+                )
+                self.refresh()
+        else:
+            print("ow")
