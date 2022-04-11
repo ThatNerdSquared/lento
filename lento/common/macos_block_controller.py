@@ -11,7 +11,7 @@ class macOSBlockController(BlockController):
         commands = [
             " ".join([
                 f"cp \"{bundled_binary_path}\"",
-                f" \"{Config.DAEMON_BINARY_PATH}\""
+                f"\"{Config.DAEMON_BINARY_PATH}\""
             ]),
             " ".join([
                 f"\"{str(Config.DAEMON_BINARY_PATH)}\"",
