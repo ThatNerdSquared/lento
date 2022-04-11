@@ -1,13 +1,28 @@
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import QFrame, QScrollArea, QVBoxLayout, QWidget  # noqa: E501
+from lento.common import get_block_controller
+from lento.gui.timer import TimerView
 from lento.gui.title import Title
 from lento.gui.websitelist import WebsiteList
 from lento.gui.applist import AppList
 
 
 class Card(QWidget):
-    def __init__(self, DATA, refresh_handler):
+    def __init__(self, DATA, activated_card, refresh_handler):
         super().__init__()
+
+        self.ACTIVATED_CARD = activated_card
+
+        if self.ACTIVATED_CARD is not None:
+            if self.ACTIVATED_CARD == DATA["name"]:
+                block_controller = get_block_controller()
+                self.TIME = block_controller.get_remaining_block_time()
+                if self.TIME == 0:
+                    block_controller.end_block()
+            else:
+                self.TIME = DATA["time"]
+        else:
+            self.TIME = DATA["time"]
 
         body_layout = QVBoxLayout()
 
@@ -25,6 +40,12 @@ class Card(QWidget):
         internal_card.setSpacing(20)
 
         title = Title(DATA["name"], refresh_handler)
+        timer = TimerView(
+            DATA["name"],
+            self.TIME,
+            self.ACTIVATED_CARD,
+            refresh_handler
+        )
         whb_list = WebsiteList(
             DATA["name"],
             DATA["hard_blocked_sites"],
@@ -55,6 +76,7 @@ class Card(QWidget):
         )
 
         internal_card.addWidget(title)
+        internal_card.addWidget(timer)
         internal_card.addWidget(whb_list)
         internal_card.addWidget(wsb_list)
         internal_card.addWidget(ahb_list)
