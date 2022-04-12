@@ -1,0 +1,26 @@
+#cardtitle {
+    font-family: Montserrat;
+    font-weight: 600px;
+    font-size: 24px;
+    border: 0px;
+    text-align: center;
+}
+
+#maincard {
+    background-color: #FFFFFF;
+}
+
+#toggle {
+    background-color: #E6E6E6;
+    color: #565656;
+    border: 0px;
+    border-radius: 8px;
+    font-family: Montserrat;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#innerlist {
+    background-color: #F4F4F4;
+    color: #565656;
+}

@@ -22,6 +22,8 @@ class BlockTimer(Model):
 class BlockController(ABC):
     def __init__(self):
         super().__init__()
+        db.create_tables([BlockTimer])
+        db.close()
 
     @abstractmethod
     def daemon_launch(self):
@@ -42,11 +44,12 @@ class BlockController(ABC):
         CardsManagement.deactivate_block_in_settings()
         return self.daemon_takedown()
 
-    def get_remaining_block_time(self) -> tuple[int, int, int]:
+
+    def get_remaining_block_time(self):
         try:
             timer = BlockTimer.get(BlockTimer.website == "_main")
         except DoesNotExist:
-            return (0, 0, 0)
+            return 0
         db.close()
 
         data = pickle.loads(timer.data)
@@ -55,8 +58,4 @@ class BlockController(ABC):
         ) - datetime.datetime.now()
 
         seconds = time_diff.total_seconds()
-        hours = seconds // 3600
-        minutes = (seconds % 3600) // 60
-        seconds = seconds % 60
-
-        return (int(hours), int(minutes), int(seconds))
+        return int(seconds)

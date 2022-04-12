@@ -366,3 +366,8 @@ def deactivate_block_in_settings():
     settings = json.loads(Config.SETTINGS_PATH.read_text())
     settings["activated_card"] = None
     Config.SETTINGS_PATH.write_text(json.dumps(settings))
+
+
+def get_block_in_settings():
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
+    return settings["activated_card"]
