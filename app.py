@@ -1,3 +1,3 @@
-from lento import gui
+from lento.gui import mainwindow
 
-gui.mainwindow.main()
+mainwindow.main()

@@ -33,5 +33,5 @@ class Config:
     DB_PATH = APPDATA_PATH / "blocktimers.db"
     REVERSED_DOMAIN = "io.github.lentoapp"
     DAEMON_BINARY_PATH = Path(str(
-        "/Library/LaunchDaemons/" if platform.system() == "Darwin" else HOME_FOLDER  # noqa: E501
+       APPDATA_PATH if platform.system() == "Darwin" else HOME_FOLDER  # noqa: E501
     )) / ("lentodaemon" if platform.system() == "Darwin" else "lentodaemon.exe")  # noqa: E501

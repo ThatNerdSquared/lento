@@ -34,9 +34,9 @@ build-daemon-windows: test lint
 
 build-macos: test lint build-daemon
 	@pyinstaller --name="Lento" \
-		--add-data "macos-style.qss:." \
+		--add-data "lento.qss:." \
 		--add-data "fonts/*.ttf:fonts/" \
-		--add-data "lentodaemon" \
+		--add-data "lentodaemon:." \
 		--icon assets/Lento.icns \
 		--windowed --onefile app.py
 		@#--add-data ".env:." \

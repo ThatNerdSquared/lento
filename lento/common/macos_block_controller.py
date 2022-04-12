@@ -9,10 +9,10 @@ class macOSBlockController(BlockController):
 
     def daemon_launch(self, bundled_binary_path, card_to_use, lasts_for):
         commands = [
-            ("osascript -e 'do shell script"
-                f" \"cp \\\"{bundled_binary_path}\\\""
-                f" \\\"{Config.DAEMON_BINARY_PATH}\\\"\""
-                " with administrator privileges'"),
+            " ".join([
+                f"cp \"{bundled_binary_path}\"",
+                f"\"{Config.DAEMON_BINARY_PATH}\""
+            ]),
             " ".join([
                 f"\"{str(Config.DAEMON_BINARY_PATH)}\"",
                 f"\"{card_to_use}\"",
@@ -25,7 +25,5 @@ class macOSBlockController(BlockController):
         return result
 
     def daemon_takedown(self):
-        cmd = ("osascript -e 'do shell script"
-               f" \"rm \\\"{Config.DAEMON_BINARY_PATH}\\\""
-               "\" with administrator privileges'")
+        cmd = (f"rm -f \"{Config.DAEMON_BINARY_PATH}\"")
         return subprocess.call(cmd, shell=True)
