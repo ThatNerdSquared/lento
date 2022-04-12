@@ -26,7 +26,7 @@ class BlockController(ABC):
         db.close()
 
     @abstractmethod
-    def daemon_launch(self):
+    def daemon_launch(self, bundled_binary_path, card_to_use, lasts_for):
         """Will be implemented by children for each platform."""
 
     @abstractmethod
@@ -43,7 +43,6 @@ class BlockController(ABC):
     def end_block(self):
         CardsManagement.deactivate_block_in_settings()
         return self.daemon_takedown()
-
 
     def get_remaining_block_time(self):
         try:
