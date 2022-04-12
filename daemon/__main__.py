@@ -6,6 +6,7 @@ import sys
 import threading
 import proxy
 from daemon import get_proxy
+from daemon.appblocker import AppBlocker
 from daemon.db import DBController
 from daemon.lento_blocker_plugin import LentoBlockerPlugin  # noqa: F401
 from lento.config import Config
@@ -17,7 +18,10 @@ def entry(card_to_use, lasts_for):
     db = DBController()
     db.clear_db()
     db.create_main_timer(lasts_for)
-    time_check(os.getpid())
+    app_blocker = AppBlocker()
+    hb_apps = app_blocker.generate_hardblocked_apps_list(card_to_use)
+    sb_apps = app_blocker.generate_softblocked_apps_list(card_to_use)
+    time_check(os.getpid(), hb_apps, sb_apps)
     with proxy.Proxy([
         "--port=0",
         "--plugins",
@@ -31,11 +35,13 @@ def entry(card_to_use, lasts_for):
         proxy.sleep_loop()
 
 
-def time_check(MASTER_PID):
+def time_check(MASTER_PID, hb_apps, sb_apps):
     db = DBController()
     is_block_over = db.check_if_block_is_over()
     if not is_block_over:
-        threading.Timer(1, time_check, [MASTER_PID]).start()
+        app_blocker = AppBlocker()
+        app_blocker.block_apps(hb_apps, sb_apps)
+        threading.Timer(1, time_check, [MASTER_PID, hb_apps, sb_apps]).start()
     else:
         lento_proxy = get_proxy()
         lento_proxy.disable_system_proxy()
