@@ -44,6 +44,7 @@ class BlockController(ABC):
         CardsManagement.deactivate_block_in_settings()
         return self.daemon_takedown()
 
+
     def get_remaining_block_time(self):
         try:
             timer = BlockTimer.get(BlockTimer.website == "_main")
