@@ -1029,6 +1029,8 @@ class fake_rgb:
         return True
 
 def fake_subprocess(cmd, shell=True):
+    if type(cmd) is list:
+        cmd = " ".join(cmd)
     correct_trello_path = "".join([
         str(os.path.join(
             Config.DRIVE_LETTER,
@@ -1068,12 +1070,8 @@ FileName
         "networksetup -setwebproxystate wi-fi off": "macOS web proxy deactivated",
         "networksetup -setsecurewebproxystate wi-fi off": "macOS secure web proxy deactivated",
         f"cp \"lentodaemon\" \"{Config.DAEMON_BINARY_PATH}\"": "macOS daemon copied",
-        " ".join([
-            f"\"{str(Config.DAEMON_BINARY_PATH)}\"",
-            f"\"Untitled Card\"",
-            str(42)
-        ]): "daemon launched",
-        f"rm -f \"{Config.DAEMON_BINARY_PATH}\"": "macOS block cleanup finished"
+        f"rm -f \"{Config.DAEMON_BINARY_PATH}\"": "macOS block cleanup finished",
+        "/tmp/lentodaemon Untitled Card 42": "daemon launched"
     }
     return cases[cmd]
 

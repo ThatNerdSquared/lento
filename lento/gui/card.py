@@ -1,6 +1,5 @@
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import QFrame, QScrollArea, QVBoxLayout, QWidget  # noqa: E501
-from lento.common import get_block_controller
 from lento.gui.timer import TimerView
 from lento.gui.title import Title
 from lento.gui.websitelist import WebsiteList
@@ -12,17 +11,7 @@ class Card(QWidget):
         super().__init__()
 
         self.ACTIVATED_CARD = activated_card
-
-        if self.ACTIVATED_CARD is not None:
-            if self.ACTIVATED_CARD == DATA["name"]:
-                block_controller = get_block_controller()
-                self.TIME = block_controller.get_remaining_block_time()
-                if self.TIME == 0:
-                    block_controller.end_block()
-            else:
-                self.TIME = DATA["time"]
-        else:
-            self.TIME = DATA["time"]
+        self.TIME = DATA["time"]
 
         body_layout = QVBoxLayout()
 
