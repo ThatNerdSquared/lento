@@ -1,5 +1,9 @@
+import datetime
 import json
 import psutil
+import subprocess
+from daemon.daemonprompt import DaemonPrompt
+from daemon.db import DBController
 from lento.config import Config
 
 
@@ -26,7 +30,39 @@ class AppBlocker():
                     print(
                         f"===SOFTBLOCKED APP DETECTED: {softblocked_app}==="
                     )
-                    proc.terminate()
+                    # TODO: refactor the below, it's not unbearable but there's
+                    # probably a better way to do this.
+                    db = DBController()
+                    record = db.get_app_record(procname)
+                    PROCESS_BINARY = proc.exe()
+                    if record is None:
+                        proc.terminate()
+                        prompt = DaemonPrompt()
+                        choice = prompt.display_prompt(
+                            "You tried to open a soft-blocked app!",
+                            f"Do you still want to open {procname}, or are you getting distracted?",  # noqa: E501
+                        )
+                        if choice:
+                            db.update_app_record(procname, True)
+                            subprocess.Popen(PROCESS_BINARY)
+                        else:
+                            db.update_app_record(procname, False)
+                    else:
+                        if not record["is_allowed"]:
+                            proc.terminate()
+                            if (
+                                datetime.datetime.now() - record["last_asked"]
+                            ).total_seconds() > 10:
+                                prompt = DaemonPrompt()
+                                choice = prompt.display_prompt(
+                                    "You tried to open a soft-blocked app!",
+                                    f"Do you still want to open {procname}, or are you getting distracted?",  # noqa: E501
+                                )
+                                if choice:
+                                    db.update_app_record(procname, True)
+                                    subprocess.Popen(PROCESS_BINARY)
+                                else:
+                                    db.update_app_record(procname, False)
 
     def generate_hardblocked_apps_list(self, card_to_use):
         SETTINGS = json.loads(Config.SETTINGS_PATH.read_text())
