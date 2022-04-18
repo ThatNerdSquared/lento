@@ -96,3 +96,31 @@ class DBController:
         BlockTimer.delete().where(BlockTimer.website is not None).execute()
         db.close()
         print("Database cleared!")
+
+    def create_app_record(self, app_name, is_allowed):
+        data = {
+            "last_asked": datetime.datetime.now(),
+            "is_allowed": is_allowed
+        }
+        BlockTimer.create(website=f"__{app_name}", data=pickle.dumps(data))
+        db.close()
+
+    def get_app_record(self, app_name):
+        try:
+            record = BlockTimer.get(BlockTimer.website == f"__{app_name}")
+            db.close()
+        except DoesNotExist:
+            return None
+        return pickle.loads(record.data)
+
+    def update_app_record(self, app_name, is_allowed):
+        try:
+            record = BlockTimer.get(BlockTimer.website == f"__{app_name}")
+            db.close()
+        except DoesNotExist:
+            return self.create_app_record(app_name, is_allowed)
+        data = pickle.loads(record.data)
+        data["is_allowed"] = is_allowed
+        data["last_asked"] = datetime.datetime.now()
+        record.data = pickle.dumps(data)
+        record.save()
