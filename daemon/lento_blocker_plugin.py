@@ -5,7 +5,7 @@ from proxy.common.flag import flags
 from proxy.http.proxy import HttpProxyBasePlugin
 from proxy.http.parser import HttpParser
 from proxy.http.exception import HttpRequestRejected
-from daemon import get_proxy
+from daemon.daemonprompt import DaemonPrompt
 from daemon.db import DBController
 
 
@@ -55,8 +55,11 @@ class LentoBlockerPlugin(HttpProxyBasePlugin):
                     if data is None:
                         # Prompt the user if there's no existing record for the
                         # site in the DB.
-                        lento_proxy = get_proxy()
-                        choice = lento_proxy.softblock_prompt(host)
+                        prompt = DaemonPrompt()
+                        choice = prompt.display_prompt(
+                            "You tried to access a soft-blocked site!",
+                            f"Do you still want to access {host}, or are you getting distracted?",  # noqa: E501
+                        )
                         if not choice:
                             # Block the site if the user chooses No, and update
                             # this in the DB for future connections to the site
@@ -82,8 +85,11 @@ class LentoBlockerPlugin(HttpProxyBasePlugin):
                         else:
                             # Prompt the user if the site isn't allowed and
                             # it's been 10+ seconds since the last prompt.
-                            lento_proxy = get_proxy()
-                            choice = lento_proxy.softblock_prompt(host)
+                            prompt = DaemonPrompt()
+                            choice = prompt.display_prompt(
+                                "You tried to access a soft-blocked site!",
+                                f"Do you still want to access {host}, or are you getting distracted?",  # noqa: E501
+                            )
                             if not choice:
                                 db.update_site(host, False)
                                 raise HttpRequestRejected(

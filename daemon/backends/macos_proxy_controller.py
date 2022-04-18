@@ -8,19 +8,6 @@ class macOSProxyController(ProxyController):
     def __init__(self):
         super().__init__()
 
-    def softblock_prompt(self, site):
-        choice = subprocess.check_output(" ".join([
-            "osascript",
-            "-e",
-            f"'display dialog \"You tried to access a soft-blocked site! Do you still want to access {site}, or are you getting distracted?\"",  # noqa: E501
-            "buttons {\"No\", \"Yes\"}'"
-        ]), shell=True)
-        match choice.decode("utf-8").strip():
-            case "button returned:Yes":
-                return True
-            case "button returned:No":
-                return False
-
     def enable_system_proxy(self, proxy_port):
         commands = [
             f"networksetup -setwebproxy wi-fi localhost {proxy_port}",
