@@ -44,11 +44,11 @@ class BlockController(ABC):
         CardsManagement.deactivate_block_in_settings()
         return self.daemon_takedown()
 
-    def get_remaining_block_time(self):
+    def get_remaining_block_time(self, time_preset):
         try:
             timer = BlockTimer.get(BlockTimer.website == "_main")
         except DoesNotExist:
-            return 0
+            return time_preset
         db.close()
 
         data = pickle.loads(timer.data)

@@ -135,7 +135,7 @@ class TimerView(QWidget):
 
     def reload_timer(self):
         block_controller = get_block_controller()
-        time = block_controller.get_remaining_block_time()
+        time = block_controller.get_remaining_block_time(self.TIME_PRESET)
         if time == 0:
             block_controller.end_block()
             return self.refresh()

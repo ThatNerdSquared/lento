@@ -1071,7 +1071,8 @@ FileName
         "networksetup -setsecurewebproxystate wi-fi off": "macOS secure web proxy deactivated",
         f"cp \"lentodaemon\" \"{Config.DAEMON_BINARY_PATH}\"": "macOS daemon copied",
         f"rm -f \"{Config.DAEMON_BINARY_PATH}\"": "macOS block cleanup finished",
-        "/tmp/lentodaemon Untitled Card 42": "daemon launched"
+        "/tmp/lentodaemon Untitled Card 42": "daemon launched",
+        "\\tmp\\lentodaemon Untitled Card 42": "daemon launched"
     }
     return cases[cmd]
 
