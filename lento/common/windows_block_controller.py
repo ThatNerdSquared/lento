@@ -15,19 +15,22 @@ class WindowsBlockController(BlockController):
         card_to_use: str,
         lasts_for: int
     ):
-        launch = " ".join([
-            f"\"{str(Config.DAEMON_BINARY_PATH)}\"",
-            f"\"{card_to_use}\"",
-            str(lasts_for)
+        copycmd = " ".join([
+            "cp",
+            f"\"{bundled_binary_path}\"",
+            f"\"{Config.DAEMON_BINARY_PATH}\""
         ])
-        commands = [
-            f"powershell \"cp '{bundled_binary_path}' '{Config.DAEMON_BINARY_PATH}'\"",  # noqa: E501
-            f"powershell \"{launch}\""
+        daemon_launch_cmd = [
+            str(Config.DAEMON_BINARY_PATH),
+            str(card_to_use),
+            str(lasts_for)
         ]
-        result = []
-        for cmd in commands:
-            result.append(subprocess.call(cmd, shell=True))
-        return result
+        results = []
+        results.append(
+            subprocess.call(f"powershell \"{copycmd}\"", shell=True)
+        )
+        results.append(subprocess.Popen(daemon_launch_cmd, shell=False))
+        return results
 
     def daemon_takedown(self):
         cmd = f"powershell \"rm -Force '{Config.DAEMON_BINARY_PATH}'\""

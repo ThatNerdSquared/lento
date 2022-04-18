@@ -8,21 +8,20 @@ class macOSBlockController(BlockController):
         super().__init__()
 
     def daemon_launch(self, bundled_binary_path, card_to_use, lasts_for):
-        commands = [
-            " ".join([
-                f"cp \"{bundled_binary_path}\"",
-                f"\"{Config.DAEMON_BINARY_PATH}\""
-            ]),
-            " ".join([
-                f"\"{str(Config.DAEMON_BINARY_PATH)}\"",
-                f"\"{card_to_use}\"",
-                str(lasts_for)
-            ])
+        copycmd = " ".join([
+            "cp",
+            f"\"{bundled_binary_path}\"",
+            f"\"{Config.DAEMON_BINARY_PATH}\""
+        ])
+        daemon_launch_cmd = [
+            str(Config.DAEMON_BINARY_PATH),
+            str(card_to_use),
+            str(lasts_for)
         ]
-        result = []
-        for cmd in commands:
-            result.append(subprocess.call(cmd, shell=True))
-        return result
+        results = []
+        results.append(subprocess.call(copycmd, shell=True))
+        results.append(subprocess.Popen(daemon_launch_cmd, shell=False))
+        return results
 
     def daemon_takedown(self):
         cmd = (f"rm -f \"{Config.DAEMON_BINARY_PATH}\"")

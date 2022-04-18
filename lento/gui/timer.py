@@ -16,7 +16,7 @@ class TimerView(QWidget):
         self.CURRENT_CARD = current_card
         self.TIME_PRESET = time_preset
         self.refresh = refresh_handler
-        self.TIMER = QTimer(self, interval=1000, timeout=self.refresh)
+        self.TIMER = QTimer(self, interval=1000, timeout=self.reload_timer)
 
         self.BLOCK_IS_RUNNING = activated_card is not None
         if self.BLOCK_IS_RUNNING:
@@ -63,11 +63,11 @@ class TimerView(QWidget):
                     item.setEnabled(False)
             timer_boxes.addWidget(item)
 
-        start_button = QPushButton("Start Block")
-        start_button.clicked.connect(self.start_block)
+        self.start_button = QPushButton("Start Block")
+        self.start_button.clicked.connect(self.start_block)
 
         main_layout.addLayout(timer_boxes)
-        main_layout.addWidget(start_button)
+        main_layout.addWidget(self.start_button)
 
         self.setLayout(main_layout)
 
@@ -129,4 +129,25 @@ class TimerView(QWidget):
         print(f"START BLOCK WITH CARD {self.CURRENT_CARD} AND TOTAL {total}")
         block_controller = get_block_controller()
         block_controller.start_block(self.CURRENT_CARD, int(total))
+        self.BLOCK_IS_RUNNING = True
+        self.start_button.setEnabled(False)
+        self.TIMER.start()
+
+    def reload_timer(self):
+        block_controller = get_block_controller()
+        time = block_controller.get_remaining_block_time(self.TIME_PRESET)
+        if time == 0:
+            block_controller.end_block()
+            return self.refresh()
+        self.TIME = self.split_seconds(time)
+        self.hour_box.setText(self.TIME["hour"])
+        self.mins_box1.setText(self.TIME["mins1"])
+        self.mins_box2.setText(self.TIME["mins2"])
+        self.secs_box1.setText(self.TIME["secs1"])
+        self.secs_box2.setText(self.TIME["secs2"])
+        for item in [
+            self.hour_box, self.mins_box1, self.mins_box2,
+            self.secs_box1, self.secs_box2
+        ]:
+            item.setEnabled(False)
         self.TIMER.start()
