@@ -1074,7 +1074,9 @@ FileName
         "/tmp/lentodaemon Untitled Card 42": "daemon launched",
         "\\tmp\\lentodaemon Untitled Card 42": "daemon launched",
         "powershell \"cp \"lentodaemon.exe\" \"/tmp/lentodaemon\"\"": "Windows daemon copied",
-        "powershell \"rm -Force \'/tmp/lentodaemon\'\"": "Windows block cleanup finished"
+        "powershell \"cp \"lentodaemon.exe\" \"\\tmp\\lentodaemon\"\"": "Windows daemon copied",
+        "powershell \"rm -Force \'/tmp/lentodaemon\'\"": "Windows block cleanup finished",
+        "powershell \"rm -Force \'\\tmp\\lentodaemon\'\"": "Windows block cleanup finished"
     }
     return cases[cmd]
 
