@@ -1072,7 +1072,9 @@ FileName
         f"cp \"lentodaemon\" \"{Config.DAEMON_BINARY_PATH}\"": "macOS daemon copied",
         f"rm -f \"{Config.DAEMON_BINARY_PATH}\"": "macOS block cleanup finished",
         "/tmp/lentodaemon Untitled Card 42": "daemon launched",
-        "\\tmp\\lentodaemon Untitled Card 42": "daemon launched"
+        "\\tmp\\lentodaemon Untitled Card 42": "daemon launched",
+        "powershell \"cp \"lentodaemon.exe\" \"/tmp/lentodaemon\"\"": "Windows daemon copied",
+        "powershell \"rm -Force \'/tmp/lentodaemon\'\"": "Windows block cleanup finished"
     }
     return cases[cmd]
 
