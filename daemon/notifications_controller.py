@@ -15,7 +15,7 @@ class Record(Model):
         database = db
 
 
-class NotificationsController:
+class NotifsController:
 
     def __init__(self):
         db.create_tables([Record])
@@ -29,7 +29,10 @@ class NotificationsController:
     def create_last_fired_record(self, notifs_dict):
         data = {}
         for item in notifs_dict.keys():
-            if notifs_dict[item]["enabled"] and notifs_dict[item]["time_interval_trigger"] is not None:
+            if (
+                notifs_dict[item]["enabled"] and
+                notifs_dict[item]["time_interval_trigger"] is not None
+            ):
                 data[item] = {
                     "last_fired": datetime.datetime.now(),
                     "interval": notifs_dict[item]["time_interval_trigger"]
@@ -42,9 +45,9 @@ class NotificationsController:
         for item in notifs_dict.keys():
             if notifs_dict[item]["enabled"]:
                 for trigger in notifs_dict[item]["blocked_visit_triggers"]:
-                    if data[trigger]:
+                    try:
                         data[trigger] = data[trigger].append(item)
-                    else:
+                    except KeyError:
                         data[trigger] = [item]
         Record.create(key="_visittriggers", data=pickle.dumps(data))
         db.close()
@@ -98,9 +101,12 @@ class NotificationsController:
         except DoesNotExist:
             return None
         data = pickle.loads(last_fired_record.data)
-        data[notif_id]["last_fired"] = datetime.datetime.now()
-        last_fired_record.data = pickle.dumps(data)
-        last_fired_record.save()
+        try:
+            data[notif_id]["last_fired"] = datetime.datetime.now()
+            last_fired_record.data = pickle.dumps(data)
+            last_fired_record.save()
+        except KeyError:
+            return
         db.close()
 
     def fire_notifs(self, notifs_to_fire):
@@ -114,3 +120,8 @@ class NotificationsController:
             print(f"TITLE {title} WITH BODY {body} OF TYPE {notif_type}")
             print(f"===END NOTIFICATION: {name}===")
             self.update_fire_date(item)
+
+    def clear_notifs(self):
+        Record.delete().where(Record.key is not None).execute()
+        db.close()
+        print("Notifs cleared!")

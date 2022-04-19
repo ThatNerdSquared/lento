@@ -4,6 +4,7 @@ import psutil
 import subprocess
 from daemon.daemonprompt import DaemonPrompt
 from daemon.db import DBController
+from daemon.notifications_controller import NotifsController
 from lento.config import Config
 
 
@@ -25,11 +26,23 @@ class AppBlocker():
                         f"===HARDBLOCKED APP DETECTED: {hardblocked_app}==="
                     )
                     proc.terminate()
+                    notifs_controller = NotifsController()
+                    triggered_notifs = notifs_controller.get_triggered_notifs(
+                        hardblocked_app
+                    )
+                    if triggered_notifs:
+                        notifs_controller.fire_notifs(triggered_notifs)
             for softblocked_app in sb_apps:
                 if softblocked_app in procname:
                     print(
                         f"===SOFTBLOCKED APP DETECTED: {softblocked_app}==="
                     )
+                    notifs_controller = NotifsController()
+                    triggered_notifs = notifs_controller.get_triggered_notifs(
+                        softblocked_app
+                    )
+                    if triggered_notifs:
+                        notifs_controller.fire_notifs(triggered_notifs)
                     # TODO: refactor the below, it's not unbearable but there's
                     # probably a better way to do this.
                     db = DBController()

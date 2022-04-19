@@ -7,6 +7,7 @@ from proxy.http.parser import HttpParser
 from proxy.http.exception import HttpRequestRejected
 from daemon.daemonprompt import DaemonPrompt
 from daemon.db import DBController
+from daemon.notifications_controller import NotifsController
 
 
 class LentoBlockerPlugin(HttpProxyBasePlugin):
@@ -39,6 +40,10 @@ class LentoBlockerPlugin(HttpProxyBasePlugin):
         if request.host:
             host = request.host.decode("UTF-8")
             if host in hb_websites:
+                notifs_controller = NotifsController()
+                triggered_notifs = notifs_controller.get_triggered_notifs(host)
+                if triggered_notifs:
+                    notifs_controller.fire_notifs(triggered_notifs)
                 # Block the site immediately if it's in the hard-blocked list.
                 raise HttpRequestRejected(
                     status_code=httpStatusCodes.I_AM_A_TEAPOT,
@@ -48,6 +53,10 @@ class LentoBlockerPlugin(HttpProxyBasePlugin):
             if host in sb_websites:
                 # Start a series of checks if the site is soft-blocked.
                 print(f"====SOFTBLOCKED SITE DETECTED: {host}====")
+                notifs_controller = NotifsController()
+                triggered_notifs = notifs_controller.get_triggered_notifs(host)
+                if triggered_notifs:
+                    notifs_controller.fire_notifs(triggered_notifs)
                 db = DBController()
                 allowed = db.check_if_site_allowed(host)
                 if not allowed:
