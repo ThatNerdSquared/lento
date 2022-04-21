@@ -24,11 +24,13 @@ run-daemon: test lint
 	@${PYTHON} -m daemon
 
 build-daemon: test lint
-	@${PYTHON} -m nuitka daemon/__main__.py --onefile --standalone
+	@${PYTHON} -m nuitka daemon/__main__.py \
+		--onefile --standalone
 	@mv __main__.bin lentodaemon
 
 build-daemon-windows: test lint
-	@${PYTHON} -m nuitka daemon/__main__.py --onefile --standalone
+	@${PYTHON} -m nuitka daemon/__main__.py \
+		--onefile --standalone
 	@mv __main__.exe lentodaemon.lento.exe
 
 

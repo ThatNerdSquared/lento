@@ -29,10 +29,7 @@ class NotifsController:
     def create_last_fired_record(self, notifs_dict):
         data = {}
         for item in notifs_dict.keys():
-            if (
-                notifs_dict[item]["enabled"] and
-                notifs_dict[item]["time_interval_trigger"] is not None
-            ):
+            if notifs_dict[item]["enabled"]:
                 data[item] = {
                     "last_fired": datetime.datetime.now(),
                     "interval": notifs_dict[item]["time_interval_trigger"]
@@ -66,13 +63,14 @@ class NotifsController:
             return None
 
         data = pickle.loads(visit_triggers.data)
-        if not data[trigger]:
-            return None
 
         triggered_notifs = {}
-        for item in data[trigger]:
-            notif_record = Record.get(Record.key == item)
-            triggered_notifs[item] = pickle.loads(notif_record.data)
+        try:
+            for item in data[trigger]:
+                notif_record = Record.get(Record.key == item)
+                triggered_notifs[item] = pickle.loads(notif_record.data)
+        except KeyError:
+            pass
         db.close()
         return triggered_notifs
 
@@ -111,15 +109,20 @@ class NotifsController:
 
     def fire_notifs(self, notifs_to_fire):
         for item in notifs_to_fire.keys():
-            notif = notifs_to_fire[item]
-            name = notif["name"]
-            title = notif["title"]
-            body = notif["body"]
-            notif_type = notif["type"]
-            print(f"===START NOTIFICATION: {name}===")
-            print(f"TITLE {title} WITH BODY {body} OF TYPE {notif_type}")
-            print(f"===END NOTIFICATION: {name}===")
-            self.update_fire_date(item)
+            current_notif = notifs_to_fire[item]
+            match current_notif["type"]:
+                case _:
+                    notif = notifs_to_fire[item]
+                    name = notif["name"]
+                    title = notif["title"]
+                    body = notif["body"]
+                    notif_type = notif["type"]
+                    print(f"===START NOTIFICATION: {name}===")
+                    print(
+                        f"TITLE {title} WITH BODY {body} OF TYPE {notif_type}"
+                    )
+                    print(f"===END NOTIFICATION: {name}===")
+                    self.update_fire_date(item)
 
     def clear_notifs(self):
         Record.delete().where(Record.key is not None).execute()
