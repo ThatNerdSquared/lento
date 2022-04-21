@@ -1,6 +1,7 @@
 import datetime
 import pickle
 from peewee import BlobField, CharField, DoesNotExist, Model, SqliteDatabase
+from daemon.lento_notif import LentoNotif
 from lento.config import Config
 
 
@@ -84,11 +85,14 @@ class NotifsController:
         last_fired = pickle.loads(last_fired_record.data)
         notifs_to_fire = {}
         for item in last_fired.keys():
-            if (
-                datetime.datetime.now() - last_fired[item]["last_fired"]
-            ).total_seconds() >= float(last_fired[item]["interval"]):
-                notif_record = Record.get(Record.key == item)
-                notifs_to_fire[item] = pickle.loads(notif_record.data)
+            try:
+                if (
+                    datetime.datetime.now() - last_fired[item]["last_fired"]
+                ).total_seconds() >= float(last_fired[item]["interval"]):
+                    notif_record = Record.get(Record.key == item)
+                    notifs_to_fire[item] = pickle.loads(notif_record.data)
+            except TypeError:
+                continue
         db.close()
         return notifs_to_fire
 
@@ -111,6 +115,8 @@ class NotifsController:
         for item in notifs_to_fire.keys():
             current_notif = notifs_to_fire[item]
             match current_notif["type"]:
+                case "banner":
+                    LentoNotif(current_notif).send()
                 case _:
                     notif = notifs_to_fire[item]
                     name = notif["name"]
