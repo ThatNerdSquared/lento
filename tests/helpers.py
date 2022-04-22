@@ -1113,3 +1113,14 @@ def fake_SetValueEx_disable(reg, key, num, type, value):
             return "proxyenable_disabled"
         case _:
             raise Exception(f"Mock return for {key} not found")
+
+
+class FakeSQLite:
+    def __init__(self, dbpath):
+        self.DBPATH = dbpath
+
+    def create_tables(self, tables):
+        return tables
+
+    def close(self):
+        return
