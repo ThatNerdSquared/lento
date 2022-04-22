@@ -1116,8 +1116,8 @@ def fake_SetValueEx_disable(reg, key, num, type, value):
 
 
 class FakeSQLite:
-    def __init__(self, dbpath):
-        self.DBPATH = dbpath
+    def __init__(self):
+        super().__init__()
 
     def create_tables(self, tables):
         return tables
