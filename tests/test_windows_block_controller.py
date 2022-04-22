@@ -1,9 +1,11 @@
 import json
+import peewee
 import platform
 import subprocess
 from pathlib import Path
 from lento import utils
 from lento.common import get_block_controller
+from lento.common import _block_controller
 from lento.config import Config
 from tests import helpers
 
@@ -13,6 +15,12 @@ def test_start_block_controller_works_properly(monkeypatch, tmp_path):
     monkeypatch.setattr(utils, "get_data_file_path", lambda x: x)
     monkeypatch.setattr(subprocess, "call", helpers.fake_subprocess)
     monkeypatch.setattr(subprocess, "Popen", helpers.fake_subprocess)
+    monkeypatch.setattr(peewee, "SqliteDatabase", helpers.FakeSQLite)
+    monkeypatch.setattr(
+        _block_controller,
+        "db",
+        helpers.FakeSQLite()
+    )
     monkeypatch.setattr(
         Config,
         "SETTINGS_PATH",
@@ -38,6 +46,11 @@ def test_end_block_controller_works_properly(monkeypatch, tmp_path):
     monkeypatch.setattr(platform, "system", lambda: "Windows")
     monkeypatch.setattr(utils, "get_data_file_path", lambda x: x)
     monkeypatch.setattr(subprocess, "call", helpers.fake_subprocess)
+    monkeypatch.setattr(
+        _block_controller,
+        "db",
+        helpers.FakeSQLite()
+    )
     monkeypatch.setattr(
         Config,
         "SETTINGS_PATH",
