@@ -5,7 +5,7 @@ python-dotenv>=0.20.0
 pillow>=9.1.0
 proxy.py>=2.4.1
 peewee>=3.14.10
-win10toast>=0.9
+# win10toast>=0.9
 
 # Dev
 flake8>=4.0.1
