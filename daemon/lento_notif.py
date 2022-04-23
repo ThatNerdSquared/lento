@@ -1,5 +1,6 @@
 import platform
 import subprocess
+from win10toast import ToastNotifier
 
 
 class LentoNotif():
@@ -17,9 +18,6 @@ class LentoNotif():
                 return self.windows_notif()
 
     def macos_notif(self):
-        print(
-            f"==\nMACOS NOTIF WITH TITLE {self.title} AND BODY {self.body}\n=="
-        )
         subprocess.Popen([
             "osascript",
             "-e",
@@ -29,4 +27,10 @@ class LentoNotif():
     def windows_notif(self):
         print(
             f"==\nWIN NOTIF WITH TITLE {self.title} AND BODY {self.body}\n=="
+        )
+        toaster = ToastNotifier()
+        toaster.show_toast(
+            self.title,
+            self.body,
+            duration=10
         )

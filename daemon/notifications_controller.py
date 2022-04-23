@@ -70,7 +70,7 @@ class NotifsController:
             for item in data[trigger]:
                 notif_record = Record.get(Record.key == item)
                 triggered_notifs[item] = pickle.loads(notif_record.data)
-        except KeyError:
+        except (KeyError, TypeError):
             pass
         db.close()
         return triggered_notifs
