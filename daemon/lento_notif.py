@@ -1,6 +1,6 @@
 import platform
 import subprocess
-from win10toast import ToastNotifier
+from plyer import notification
 
 
 class LentoNotif():
@@ -28,9 +28,9 @@ class LentoNotif():
         print(
             f"==\nWIN NOTIF WITH TITLE {self.title} AND BODY {self.body}\n=="
         )
-        toaster = ToastNotifier()
-        toaster.show_toast(
-            self.title,
-            self.body,
-            duration=10
+        notification.notify(
+            title=self.title,
+            message=self.body,
+            app_name="Lento",
+            timeout=10
         )
