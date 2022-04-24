@@ -68,11 +68,14 @@ def test_delete_card_works_correctly(monkeypatch, tmp_path):
 
 
 def test_delete_card_denies_incorrect_card_name(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(KeyError):
         CardsManagement.delete_card("Llama Taming")
@@ -239,11 +242,14 @@ def test_add_to_site_blocklists_denies_incorrect_card_or_list_name(
             monkeypatch,
             tmp_path
         ):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(KeyError):
         CardsManagement.add_to_site_blocklists(
@@ -264,11 +270,14 @@ def test_add_to_site_blocklists_denies_restricted_field_change(
             monkeypatch,
             tmp_path
         ):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(Exception, match="Card field is restricted!"):
         CardsManagement.add_to_site_blocklists(
