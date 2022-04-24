@@ -661,11 +661,14 @@ def test_update_app_blocklists_works_correctly(monkeypatch, tmp_path):
 
 
 def test_update_app_blocklists_rejects_incorrect(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(KeyError, match="Llama"):
         CardsManagement.update_app_blocklists(
@@ -1044,11 +1047,14 @@ def test_update_notification_list_deletes_correctly(monkeypatch, tmp_path):
 
 
 def test_update_notification_list_rejects_flawed_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config_multiple_notif"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(Exception, match="new_notifs_dict is not a dict!"):
         CardsManagement.update_notification_list(
@@ -1087,11 +1093,14 @@ def test_add_goal_works_correctly(monkeypatch, tmp_path):
 
 
 def test_add_goal_rejects_flawed_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(Exception, match="Goal to add is not string!"):
         CardsManagement.add_goal(
@@ -1152,11 +1161,14 @@ def test_update_goal_list_deletes_correctly(monkeypatch, tmp_path):
 
 
 def test_update_goal_list_rejects_flawed_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config_with_goals"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(Exception, match="new_goals_dict is not a dict!"):
         CardsManagement.update_goal_list(
