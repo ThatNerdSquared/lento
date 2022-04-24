@@ -1,11 +1,11 @@
 import json
-import os
 import platform
 import plistlib
 import subprocess
 import uuid
 from lento.config import Config
 from lento.utils import is_url
+from pathlib import Path
 from PIL import Image
 
 
@@ -110,7 +110,7 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
     current_os = platform.system()
     if current_os == "Darwin":
         for app in apps_to_add:
-            app_name = os.path.basename(app).replace(".app", "")
+            app_name = Path(app).stem
 
             if list_to_modify == "hard_blocked_apps":
                 if app_name in card["soft_blocked_apps"]:
@@ -128,23 +128,20 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
             ]).decode("utf-8")
 
             if app[:14] == "/Applications/":
-                app = os.path.join(
-                    Config.MACOS_APPLICATION_FOLDER,
-                    app_name + ".app"
-                )
-                plist_path = os.path.join(
+                app = Config.MACOS_APPLICATION_FOLDER / Path(app).name
+                plist_path = Path(
                     app,
                     "Contents",
                     "Info.plist"
                 )
             else:
-                plist_path = os.path.join(app, "Contents", "Info.plist")
+                plist_path = Path(app, "Contents", "Info.plist")
             with open(plist_path, "rb") as fp:
                 app_plist = plistlib.load(fp)
             icon_name = app_plist["CFBundleIconFile"]
             if icon_name[-5:] != ".icns":
                 icon_name = app_plist["CFBundleIconFile"] + ".icns"
-            original_icon_path = os.path.join(
+            original_icon_path = Path(
                 app,
                 "Contents",
                 "Resources",
@@ -153,10 +150,7 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
             im = Image.open(original_icon_path)
             rgb_im = im.convert("RGB")
 
-            path_to_save_at = os.path.join(
-                    os.path.expanduser("~"),
-                    "Library/Application Support/Lento/" + app_name + ".jpg"
-                )
+            path_to_save_at = str(Config.APPDATA_PATH / (app_name + ".jpg"))
             rgb_im.save(path_to_save_at)
 
             card[list_to_modify][app_name] = {

@@ -419,7 +419,7 @@ def test_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     monkeypatch.setattr(
         Config,
         "MACOS_APPLICATION_FOLDER",
-        os.path.join(tmp_path, folders["apps_folder"])
+        Path(tmp_path, folders["apps_folder"])
     )
     monkeypatch.setattr(Image, "open", lambda x: helpers.fake_image)
     monkeypatch.setattr(platform, "system", lambda: "Darwin")
