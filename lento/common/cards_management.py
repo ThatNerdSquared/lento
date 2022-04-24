@@ -40,9 +40,7 @@ def delete_card(card_to_delete):
 
 
 def update_metadata(card_to_modify, field_to_modify, new_value):
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
 
     if settings["cards"][card_to_modify][field_to_modify] is None:
         raise Exception("Card field is nonexistent!")
@@ -59,8 +57,7 @@ def update_metadata(card_to_modify, field_to_modify, new_value):
         }
         settings["cards"] = new_cards
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):

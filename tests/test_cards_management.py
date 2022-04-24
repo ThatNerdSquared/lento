@@ -82,50 +82,57 @@ def test_delete_card_denies_incorrect_card_name(monkeypatch, tmp_path):
 
 
 def test_update_metadata_changes_nonname_data_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     CardsManagement.update_metadata("Untitled Card", "time", 42)
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
+    result = json.loads(Config.SETTINGS_PATH.read_text())
 
     expected_result = copy.deepcopy(helpers.data["bare_config"])
     expected_result["cards"]["Untitled Card"]["time"] = 42
-    assert expected_result == new_settings
+    assert expected_result == result
 
 
 def test_update_metadata_changes_name_data_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     CardsManagement.update_metadata(
         "Untitled Card",
         "name",
         "World Domination"
     )
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
+    result = json.loads(Config.SETTINGS_PATH.read_text())
 
     expected_result = helpers.data["updated_bare_config"]
-    assert "World Domination" in new_settings["cards"]
-    assert expected_result == new_settings
+    assert "World Domination" in result["cards"]
+    assert expected_result == result
 
 
 def test_update_metdata_denies_incorrect_card_name_or_field(
             monkeypatch,
             tmp_path
         ):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(KeyError):
         CardsManagement.update_metadata(
@@ -158,11 +165,14 @@ def test_update_metadata_denies_restricted_field_change(monkeypatch, tmp_path):
 
 
 def test_update_metadata_validates_time_as_number(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(ValueError):
         CardsManagement.update_metadata(
