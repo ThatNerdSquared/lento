@@ -116,7 +116,9 @@ class NotifsController:
             current_notif = notifs_to_fire[item]
             match current_notif["type"]:
                 case "banner":
-                    LentoNotif(current_notif).send()
+                    LentoNotif(current_notif).send_banner()
+                case "audio":
+                    LentoNotif(current_notif).play_audio()
                 case _:
                     notif = notifs_to_fire[item]
                     name = notif["name"]
@@ -128,7 +130,7 @@ class NotifsController:
                         f"TITLE {title} WITH BODY {body} OF TYPE {notif_type}"
                     )
                     print(f"===END NOTIFICATION: {name}===")
-                    self.update_fire_date(item)
+            self.update_fire_date(item)
 
     def clear_notifs(self):
         Record.delete().where(Record.key is not None).execute()

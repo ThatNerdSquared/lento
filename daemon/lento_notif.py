@@ -1,5 +1,7 @@
 import platform
+import playsound
 import subprocess
+from pathlib import Path
 from plyer import notification
 
 
@@ -9,8 +11,9 @@ class LentoNotif():
         self.name = notif["name"]
         self.title = notif["title"]
         self.body = notif["body"]
+        self.audio_paths = notif["audio_paths"]
 
-    def send(self):
+    def send_banner(self):
         match platform.system():
             case "Darwin":
                 return self.macos_notif()
@@ -34,3 +37,12 @@ class LentoNotif():
             app_name="Lento",
             timeout=10
         )
+
+    def play_audio(self):
+        match platform.system():
+            case "Darwin":
+                for item in self.audio_paths.keys():
+                    subprocess.call(["afplay", Path(self.audio_paths[item])])
+            case "Windows":
+                for item in self.audio_paths.keys():
+                    playsound.playsound(Path(self.audio_paths[item]))
