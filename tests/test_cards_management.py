@@ -77,7 +77,7 @@ def test_delete_card_denies_incorrect_card_name(monkeypatch, tmp_path):
         helpers.data["bare_config"]
     ))
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="Llama Taming"):
         CardsManagement.delete_card("Llama Taming")
 
 
@@ -134,14 +134,14 @@ def test_update_metdata_denies_incorrect_card_name_or_field(
         helpers.data["bare_config"]
     ))
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="Llama Training"):
         CardsManagement.update_metadata(
             "Llama Training",
             "name",
             "World Domination"
         )
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="llamas_collected"):
         CardsManagement.update_metadata(
             "Untitled Card",
             "llamas_collected",
@@ -150,13 +150,16 @@ def test_update_metdata_denies_incorrect_card_name_or_field(
 
 
 def test_update_metadata_denies_restricted_field_change(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
-
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match="Card field is restricted!"):
         CardsManagement.update_metadata(
             "Untitled Card",
             "id",
@@ -174,11 +177,14 @@ def test_update_metadata_validates_time_as_number(monkeypatch, tmp_path):
         helpers.data["bare_config"]
     ))
 
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError,
+        match="could not convert string to float: 'Eternal Reign of the Llama'"
+    ):
         CardsManagement.update_metadata(
             "Untitled Card",
             "time",
-            "Eternal Reign of the Llama Lords"
+            "Eternal Reign of the Llama"
         )
 
 
@@ -261,14 +267,14 @@ def test_add_to_site_blocklists_denies_incorrect_card_or_list_name(
         helpers.data["bare_config"]
     ))
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="hard_blocked_NIGHTS"):
         CardsManagement.add_to_site_blocklists(
             "Untitled Card",
             "hard_blocked_NIGHTS",
             "https://youtube.com"
         )
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="Llama Taming"):
         CardsManagement.add_to_site_blocklists(
             "Llama Taming",
             "hard_blocked_sites",
@@ -346,7 +352,7 @@ def test_update_site_blocklists_rejects_flawed_data(monkeypatch, tmp_path):
             settings_json
         )
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="hard_blocked_NIGHTS"):
         CardsManagement.update_site_blocklists(
             "Untitled Card",
             "hard_blocked_NIGHTS",
@@ -658,7 +664,7 @@ def test_update_app_blocklists_rejects_incorrect(monkeypatch, tmp_path):
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(helpers.data["bare_config"], settings_json)
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="Llama"):
         CardsManagement.update_app_blocklists(
             "Llama",
             "hard_blocked_apps",
@@ -766,7 +772,7 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
                 "Frog": "/System/Library/Sounds/Frog.aiff"
             }
         )
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="Llama"):
         CardsManagement.add_notification(
             "Test Notif 1",
             True,
@@ -1084,7 +1090,7 @@ def test_add_goal_rejects_flawed_data(monkeypatch, tmp_path):
             "Untitled Card",
             42
         )
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="42"):
         CardsManagement.add_goal(
             42,
             "Conquer world"
@@ -1144,12 +1150,12 @@ def test_update_goal_list_rejects_flawed_data(monkeypatch, tmp_path):
     with open(path, "w", encoding="UTF-8") as settings_json:
         json.dump(helpers.data["bare_config_with_goals"], settings_json)
 
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match="new_goals_dict is not a dict!"):
         CardsManagement.update_goal_list(
             "Untitled Card",
             "Llama"
         )
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match="Llama"):
         CardsManagement.update_goal_list(
             "Llama",
             helpers.data["reordered_goal_dict"]
