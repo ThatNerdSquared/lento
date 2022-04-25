@@ -7,11 +7,20 @@
             "emoji": "💻",
             "time": 5400,
             "hard_blocked_sites": {
-                "twitter.com":  false,
-                "talk.macpowerusers.com": true
+                "twitter.com": {
+                    "enabled": false,
+                    "icon_path": "~/Library/Application Support/Lento/twitter.com.png"
+                },
+                "talk.macpowerusers.com": {
+                    "enabled": true,
+                    "icon_path": "~/Library/Application Support/Lento/talk.macpowerusers.com.png"
+                }
             },
             "soft_blocked_sites": {
-                "youtube.com": true
+                "youtube.com": {
+                    "enabled": true,
+                    "icon_path": "~/Library/Application Support/Lento/youtube.com.png"
+                }
             },
             "hard_blocked_apps": {
                 "GRIS": {

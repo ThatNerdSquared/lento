@@ -1124,3 +1124,13 @@ class FakeSQLite:
 
     def close(self):
         return
+
+
+class fakeFavicon:
+    def grab(self, url):
+        return [FakeIcon(url)]
+
+class FakeIcon:
+    def __init__(self, url):
+        self.data = f"{url}.bytes"
+        self.extension = "png"

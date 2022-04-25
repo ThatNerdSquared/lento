@@ -7,6 +7,7 @@ proxy.py>=2.4.1
 peewee>=3.14.10
 plyer>=2.0.0
 pygame>=2.1.2
+grabicon>=0.1.2
 
 # Dev
 flake8>=4.0.1
