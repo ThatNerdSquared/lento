@@ -3,7 +3,7 @@ import subprocess
 from daemon.daemonprompt import DaemonPrompt
 from pathlib import Path
 from plyer import notification
-from pygame import mixer
+from pygame import mixer, error as PygameError
 
 
 class LentoNotif():
@@ -49,7 +49,13 @@ class LentoNotif():
                     ])
             case "Windows":
                 for item in self.audio_paths.keys():
-                    mixer.init()
+                    try:
+                        mixer.init()
+                    except PygameError as e:
+                        if str(e) == "ALSA: Couldn't open audio device: No such file or directory":  # noqa: E501
+                            pass
+                        else:
+                            raise PygameError(e)
                     mixer.music.load(str(Path(self.audio_paths[item])))
                     mixer.music.play()
 
