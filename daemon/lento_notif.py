@@ -3,6 +3,7 @@ import playsound
 import subprocess
 from pathlib import Path
 from plyer import notification
+from daemon.daemonprompt import DaemonPrompt
 
 
 class LentoNotif():
@@ -46,3 +47,7 @@ class LentoNotif():
             case "Windows":
                 for item in self.audio_paths.keys():
                     playsound.playsound(Path(self.audio_paths[item]))
+
+    def show_notif_popup(self):
+        prompt = DaemonPrompt()
+        return prompt.show_notif_popup(self.title, self.body)

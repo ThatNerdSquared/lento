@@ -119,6 +119,8 @@ class NotifsController:
                     LentoNotif(current_notif).send_banner()
                 case "audio":
                     LentoNotif(current_notif).play_audio()
+                case "popup":
+                    LentoNotif(current_notif).show_notif_popup()
                 case _:
                     notif = notifs_to_fire[item]
                     name = notif["name"]
