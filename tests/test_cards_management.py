@@ -1,6 +1,5 @@
 import copy
 import json
-from pathlib import Path
 import platform
 import pytest
 import subprocess
@@ -8,7 +7,9 @@ import uuid
 import lento.common.cards_management as CardsManagement
 from lento.config import Config
 from tests import helpers
+from pathlib import Path
 from PIL import Image
+from unittest.mock import MagicMock
 
 
 def test_create_card_uses_correct_data(monkeypatch, tmp_path):
@@ -187,11 +188,38 @@ def test_update_metadata_validates_time_as_number(monkeypatch, tmp_path):
         )
 
 
+def test_get_favicon_works_correctly(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        Config,
+        "APPDATA_PATH",
+        tmp_path
+    )
+    mock_bytes = MagicMock()
+    monkeypatch.setattr(
+        CardsManagement,
+        "FaviconGrabber",
+        helpers.fakeFavicon
+    )
+    monkeypatch.setattr(
+        CardsManagement.Path,
+        "write_bytes",
+        mock_bytes
+    )
+    result = CardsManagement.get_favicon("https://youtube.com")
+    mock_bytes.assert_called_once_with("https://youtube.com.bytes")
+    assert result == Path(tmp_path) / "https:__youtube.com.png"
+
+
 def test_add_to_site_blocklists_adds_data(monkeypatch, tmp_path):
     monkeypatch.setattr(
         Config,
         "SETTINGS_PATH",
         Path(tmp_path) / "lentosettings.json"
+    )
+    monkeypatch.setattr(
+        CardsManagement,
+        "get_favicon",
+        lambda x: f"{x}.iconpath"
     )
     Config.SETTINGS_PATH.write_text(json.dumps(
         helpers.data["bare_config"]
@@ -200,13 +228,16 @@ def test_add_to_site_blocklists_adds_data(monkeypatch, tmp_path):
     CardsManagement.add_to_site_blocklists(
         "Untitled Card",
         "hard_blocked_sites",
-        "https://youtube.com"
+        "youtube.com"
     )
     result = json.loads(Config.SETTINGS_PATH.read_text())
 
     cards_dict = result["cards"]["Untitled Card"]
-    assert "https://youtube.com" in cards_dict["hard_blocked_sites"]
-    assert cards_dict["hard_blocked_sites"]["https://youtube.com"] is True
+    assert "youtube.com" in cards_dict["hard_blocked_sites"]
+    assert cards_dict["hard_blocked_sites"]["youtube.com"] == {
+        "enabled": True,
+        "icon_path": "youtube.com.iconpath"
+    }
 
 
 def test_add_to_site_blocklists_denies_malformed_data(monkeypatch, tmp_path):

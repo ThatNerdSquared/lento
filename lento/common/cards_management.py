@@ -3,6 +3,7 @@ import platform
 import plistlib
 import subprocess
 import uuid
+from grabicon import FaviconGrabber
 from lento.config import Config
 from lento.utils import is_url
 from pathlib import Path
@@ -60,6 +61,16 @@ def update_metadata(card_to_modify, field_to_modify, new_value):
     Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
+def get_favicon(url):
+    grabber = FaviconGrabber()
+    favicons = grabber.grab(url)
+    icon = favicons[0]
+    trimmed_url = url.replace("\\", "_").replace("/", "_")
+    saved_icon_path = Config.APPDATA_PATH / f"{trimmed_url}.{icon.extension}"
+    saved_icon_path.write_bytes(icon.data)
+    return saved_icon_path
+
+
 def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):
     """Add to either the `hard_blocked_sites` or `soft_blocked_sites` lists."""
     settings = json.loads(Config.SETTINGS_PATH.read_text())
@@ -81,7 +92,10 @@ def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):
         if new_value in card_to_mod["hard_blocked_sites"]:
             raise Exception(f"'{new_value}' already hard blocked!")
 
-    settings["cards"][card_to_modify][list_to_modify][new_value] = True
+    settings["cards"][card_to_modify][list_to_modify][new_value] = {
+        "enabled": True,
+        "icon_path": str(get_favicon(new_value))
+    }
     Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
