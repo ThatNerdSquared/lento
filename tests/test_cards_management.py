@@ -1,6 +1,5 @@
 import copy
 import json
-import os
 from pathlib import Path
 import platform
 import pytest
@@ -77,64 +76,71 @@ def test_delete_card_denies_incorrect_card_name(monkeypatch, tmp_path):
         helpers.data["bare_config"]
     ))
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="Llama Taming"):
         CardsManagement.delete_card("Llama Taming")
 
 
 def test_update_metadata_changes_nonname_data_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     CardsManagement.update_metadata("Untitled Card", "time", 42)
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
+    result = json.loads(Config.SETTINGS_PATH.read_text())
 
     expected_result = copy.deepcopy(helpers.data["bare_config"])
     expected_result["cards"]["Untitled Card"]["time"] = 42
-    assert expected_result == new_settings
+    assert expected_result == result
 
 
 def test_update_metadata_changes_name_data_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     CardsManagement.update_metadata(
         "Untitled Card",
         "name",
         "World Domination"
     )
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
+    result = json.loads(Config.SETTINGS_PATH.read_text())
 
     expected_result = helpers.data["updated_bare_config"]
-    assert "World Domination" in new_settings["cards"]
-    assert expected_result == new_settings
+    assert "World Domination" in result["cards"]
+    assert expected_result == result
 
 
 def test_update_metdata_denies_incorrect_card_name_or_field(
             monkeypatch,
             tmp_path
         ):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
-
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="Llama Training"):
         CardsManagement.update_metadata(
             "Llama Training",
             "name",
             "World Domination"
         )
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="llamas_collected"):
         CardsManagement.update_metadata(
             "Untitled Card",
             "llamas_collected",
@@ -143,13 +149,16 @@ def test_update_metdata_denies_incorrect_card_name_or_field(
 
 
 def test_update_metadata_denies_restricted_field_change(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
-
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match="Card field is restricted!"):
         CardsManagement.update_metadata(
             "Untitled Card",
             "id",
@@ -158,17 +167,23 @@ def test_update_metadata_denies_restricted_field_change(monkeypatch, tmp_path):
 
 
 def test_update_metadata_validates_time_as_number(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
-
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError,
+        match="could not convert string to float: 'Eternal Reign of the Llama'"
+    ):
         CardsManagement.update_metadata(
             "Untitled Card",
             "time",
-            "Eternal Reign of the Llama Lords"
+            "Eternal Reign of the Llama"
         )
 
 
@@ -251,14 +266,14 @@ def test_add_to_site_blocklists_denies_incorrect_card_or_list_name(
         helpers.data["bare_config"]
     ))
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="hard_blocked_NIGHTS"):
         CardsManagement.add_to_site_blocklists(
             "Untitled Card",
             "hard_blocked_NIGHTS",
             "https://youtube.com"
         )
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="Llama Taming"):
         CardsManagement.add_to_site_blocklists(
             "Llama Taming",
             "hard_blocked_sites",
@@ -288,14 +303,14 @@ def test_add_to_site_blocklists_denies_restricted_field_change(
 
 
 def test_update_site_blocklists_works_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(
-            helpers.data["bare_config_with_blocked_sites"],
-            settings_json
-        )
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config_with_blocked_sites"]
+    ))
 
     pretest_dict = helpers.data["bare_config_with_blocked_sites"]
     assert pretest_dict["cards"]["Untitled Card"]["hard_blocked_sites"] == {
@@ -311,10 +326,8 @@ def test_update_site_blocklists_works_correctly(monkeypatch, tmp_path):
             "twitter.com": False
         }
     )
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
-
-    cards_dict = new_settings["cards"]["Untitled Card"]
+    result = json.loads(Config.SETTINGS_PATH.read_text())
+    cards_dict = result["cards"]["Untitled Card"]
 
     assert "youtube.com" in cards_dict["hard_blocked_sites"]
     assert "twitter.com" in cards_dict["hard_blocked_sites"]
@@ -327,16 +340,16 @@ def test_update_site_blocklists_works_correctly(monkeypatch, tmp_path):
 
 
 def test_update_site_blocklists_rejects_flawed_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config_with_blocked_sites"]
+    ))
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(
-            helpers.data["bare_config_with_blocked_sites"],
-            settings_json
-        )
-
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="hard_blocked_NIGHTS"):
         CardsManagement.update_site_blocklists(
             "Untitled Card",
             "hard_blocked_NIGHTS",
@@ -363,53 +376,59 @@ def test_update_site_blocklists_rejects_flawed_data(monkeypatch, tmp_path):
 
 
 def test_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    monkeypatch.setattr(
+        Config,
+        "APPDATA_PATH",
+        Path(tmp_path, "Library", "Application Support", "Lento")
+    )
     folders = {
-        "application_support": os.path.join(
+        "application_support": Path(
             "Library",
             "Application Support",
             "Lento"
         ),
         "apps_folder": "Applications",
-        "gris_folders": os.path.join("Applications", "GRIS.app", "Contents"),
-        "scrivener_folder": os.path.join(
+        "gris_folders": Path("Applications", "GRIS.app", "Contents"),
+        "scrivener_folder": Path(
             "Applications",
             "Scrivener.app",
             "Contents"
         ),
-        "nnw_folder": os.path.join(
+        "nnw_folder": Path(
             "Applications",
             "NetNewsWire.app",
             "Contents"
         )
     }
     for f in folders.keys():
-        os.makedirs(os.path.join(tmp_path, folders[f]))
+        Path(tmp_path, folders[f]).mkdir(parents=True, exist_ok=True)
 
     for file in ["GRIS", "Scrivener", "NetNewsWire"]:
-        path = os.path.join(
+        plist_file = Path(
             tmp_path,
             "Applications",
             file + ".app",
             "Contents",
             "Info.plist"
         )
-        plist_file = open(path, "w", encoding="UTF-8")
-        plist_file.write(helpers.data[file])
-        plist_file.close()
+        plist_file.write_text(helpers.data[file])
 
     monkeypatch.setattr(
         Config,
         "MACOS_APPLICATION_FOLDER",
-        os.path.join(tmp_path, folders["apps_folder"])
+        Path(tmp_path, folders["apps_folder"])
     )
     monkeypatch.setattr(Image, "open", lambda x: helpers.fake_image)
     monkeypatch.setattr(platform, "system", lambda: "Darwin")
     monkeypatch.setattr(subprocess, "check_output", helpers.fake_bundle_id)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     CardsManagement.add_to_app_blocklists(
         "Untitled Card",
@@ -421,11 +440,8 @@ def test_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
         ]
     )
 
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
-
-    hb_list = new_settings["cards"]["Untitled Card"]["hard_blocked_apps"]
-
+    result = json.loads(Config.SETTINGS_PATH.read_text())
+    hb_list = result["cards"]["Untitled Card"]["hard_blocked_apps"]
     assert "GRIS" in hb_list
     assert "Scrivener" in hb_list
     assert "NetNewsWire" in hb_list
@@ -433,34 +449,37 @@ def test_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     assert hb_list["GRIS"] == {
         "enabled": True,
         "bundle_id": "unity.nomada studio.GRIS",
-        "app_icon_path": os.path.join(
-            os.path.expanduser("~"),
-            "Library/Application Support/Lento/GRIS.jpg"
-        )
+        "app_icon_path": str(Path(
+            Config.APPDATA_PATH,
+            "GRIS.jpg"
+        ))
     }
     assert hb_list["Scrivener"] == {
         "enabled": True,
         "bundle_id": "com.literatureandlatte.scrivener3",
-        "app_icon_path": os.path.join(
-            os.path.expanduser("~"),
-            "Library/Application Support/Lento/Scrivener.jpg"
-        )
+        "app_icon_path": str(Path(
+            Config.APPDATA_PATH,
+            "Scrivener.jpg"
+        ))
     }
     assert hb_list["NetNewsWire"] == {
         "enabled": True,
         "bundle_id": "com.ranchero.NetNewsWire-Evergreen",
-        "app_icon_path": os.path.join(
-            os.path.expanduser("~"),
-            "Library/Application Support/Lento/NetNewsWire.jpg"
-        )
+        "app_icon_path": str(Path(
+            Config.APPDATA_PATH,
+            "NetNewsWire.jpg"
+        ))
     }
     assert list(hb_list.keys()) == ["GRIS", "Scrivener", "NetNewsWire"]
 
 
 def test_add_to_app_blocklists_rejects_dupes_darwin(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     monkeypatch.setattr(platform, "system", lambda: "Darwin")
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
 
     cfg = copy.deepcopy(helpers.data["bare_config"])
     cfg["cards"]["Untitled Card"]["soft_blocked_apps"] = {
@@ -470,8 +489,7 @@ def test_add_to_app_blocklists_rejects_dupes_darwin(monkeypatch, tmp_path):
             "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"
         }
     }
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(cfg, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(cfg))
 
     with pytest.raises(Exception, match="'GRIS' already soft blocked!"):
         CardsManagement.add_to_app_blocklists(
@@ -492,8 +510,7 @@ def test_add_to_app_blocklists_rejects_dupes_darwin(monkeypatch, tmp_path):
             "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"
         }
     }
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(cfg, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(cfg))
 
     with pytest.raises(Exception, match="'GRIS' already hard blocked!"):
         CardsManagement.add_to_app_blocklists(
@@ -508,45 +525,48 @@ def test_add_to_app_blocklists_rejects_dupes_darwin(monkeypatch, tmp_path):
 
 
 def test_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     appdata_dict = copy.deepcopy(helpers.data["proper_apps_dict"])
-    appdata_dict["vivaldi"]["path"] = os.path.join(
-        os.path.expanduser("~"),
+    appdata_dict["vivaldi"]["path"] = str(Path(
+        tmp_path,
         "AppData",
         "Local",
         "Vivaldi",
         "Application",
         "vivaldi.exe"
-    )
-    appdata_dict["vivaldi"]["icon_path"] = os.path.join(
-        os.path.expanduser("~"),
+    ))
+    appdata_dict["vivaldi"]["icon_path"] = str(Path(
+        tmp_path,
         "AppData",
         "Local",
         "Lento",
         "vivaldi.bmp"
-    )
+    ))
     monkeypatch.setattr(platform, "system", lambda: "Windows")
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     apps_to_add = copy.deepcopy(helpers.data["apps_to_add"])
-    apps_to_add[1]["path"] = os.path.join(
-        os.path.expanduser("~"),
+    apps_to_add[1]["path"] = str(Path(
+        tmp_path,
         "AppData",
         "Local",
         "Vivaldi",
         "Application",
         "vivaldi.exe"
-    )
-    apps_to_add[1]["icon_path"] = os.path.join(
-        os.path.expanduser("~"),
+    ))
+    apps_to_add[1]["icon_path"] = str(Path(
+        tmp_path,
         "AppData",
         "Local",
         "Lento",
         "vivaldi.bmp"
-    )
+    ))
 
     CardsManagement.add_to_app_blocklists(
         "Untitled Card",
@@ -554,10 +574,8 @@ def test_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
         apps_to_add
     )
 
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
-
-    hb_list = new_settings["cards"]["Untitled Card"]["hard_blocked_apps"]
+    result = json.loads(Config.SETTINGS_PATH.read_text())
+    hb_list = result["cards"]["Untitled Card"]["hard_blocked_apps"]
 
     assert "Trello" in hb_list
     assert "vivaldi" in hb_list
@@ -577,9 +595,12 @@ def test_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
 
 
 def test_add_to_app_blocklists_rejects_dupes_windows(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
     monkeypatch.setattr(platform, "system", lambda: "Windows")
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
 
     appdata_dict = helpers.data["proper_apps_dict"]
     cfg = copy.deepcopy(helpers.data["bare_config"])
@@ -590,8 +611,7 @@ def test_add_to_app_blocklists_rejects_dupes_windows(monkeypatch, tmp_path):
             "app_icon_path": appdata_dict["Trello"]["icon_path"],
         },
     }
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(cfg, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(cfg))
 
     with pytest.raises(Exception, match="'Trello' already soft blocked!"):
         CardsManagement.add_to_app_blocklists(
@@ -608,8 +628,7 @@ def test_add_to_app_blocklists_rejects_dupes_windows(monkeypatch, tmp_path):
             "app_icon_path": appdata_dict["Trello"]["icon_path"],
         },
     }
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(cfg, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(cfg))
 
     with pytest.raises(Exception, match="'Trello' already hard blocked!"):
         CardsManagement.add_to_app_blocklists(
@@ -620,11 +639,14 @@ def test_add_to_app_blocklists_rejects_dupes_windows(monkeypatch, tmp_path):
 
 
 def test_update_app_blocklists_works_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config_with_apps"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config_with_apps"]
+    ))
 
     CardsManagement.update_app_blocklists(
         "Untitled Card",
@@ -632,23 +654,25 @@ def test_update_app_blocklists_works_correctly(monkeypatch, tmp_path):
         helpers.data["new_blocklist"]
     )
 
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
+    result = json.loads(Config.SETTINGS_PATH.read_text())
 
-    new_hblist = new_settings["cards"]["Untitled Card"]["hard_blocked_apps"]
+    new_hblist = result["cards"]["Untitled Card"]["hard_blocked_apps"]
     correct_hblist = helpers.data["bare_config_reordered_apps"]["cards"]["Untitled Card"]["hard_blocked_apps"]  # noqa: E501
     assert new_hblist == correct_hblist
     assert list(new_hblist.keys()) == list(correct_hblist.keys())
 
 
 def test_update_app_blocklists_rejects_incorrect(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
-
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="Llama"):
         CardsManagement.update_app_blocklists(
             "Llama",
             "hard_blocked_apps",
@@ -669,20 +693,22 @@ def test_update_app_blocklists_rejects_incorrect(monkeypatch, tmp_path):
 
 
 def test_add_notification_works_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
     monkeypatch.setattr(
         uuid.UUID,
         "hex",
         "a019868e-f43f-478f-8dcc-ba78c35525c4"
     )
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
 
     data = copy.deepcopy(helpers.data["bare_config"])
     data["cards"]["Untitled Card"]["hard_blocked_sites"]["youtube.com"] = True
     data["cards"]["Untitled Card"]["hard_blocked_sites"]["twitter.com"] = True
     data["cards"]["Untitled Card"]["goals"]["Debug USACO problem"] = True
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(data, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(data))
 
     CardsManagement.add_notification(
         "Test Notif 1",
@@ -700,29 +726,29 @@ def test_add_notification_works_correctly(monkeypatch, tmp_path):
         }
     )
 
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
-
-    new_notifs = new_settings["cards"]["Untitled Card"]["notifications"]
+    result = json.loads(Config.SETTINGS_PATH.read_text())
+    new_notifs = result["cards"]["Untitled Card"]["notifications"]
     correct_cards = helpers.data["bare_config_with_notif"]["cards"]
     assert new_notifs == correct_cards["Untitled Card"]["notifications"]
 
 
 def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
     monkeypatch.setattr(
         uuid.UUID,
         "hex",
         "a019868e-f43f-478f-8dcc-ba78c35525c4"
     )
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
 
     data = copy.deepcopy(helpers.data["bare_config"])
     data["cards"]["Untitled Card"]["hard_blocked_sites"]["youtube.com"] = True
     data["cards"]["Untitled Card"]["hard_blocked_sites"]["twitter.com"] = True
     data["cards"]["Untitled Card"]["goals"]["Debug USACO problem"] = True
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(data, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(data))
 
     with pytest.raises(Exception, match="Name must be a string!"):
         CardsManagement.add_notification(
@@ -756,7 +782,7 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
                 "Frog": "/System/Library/Sounds/Frog.aiff"
             }
         )
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="Llama"):
         CardsManagement.add_notification(
             "Test Notif 1",
             True,
@@ -921,21 +947,22 @@ def test_add_notification_rejects_incorrect_data(monkeypatch, tmp_path):
 
 
 def test_update_notification_list_reorders_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config_multiple_notif"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config_multiple_notif"]
+    ))
 
     CardsManagement.update_notification_list(
         "Untitled Card",
         helpers.data["reordered_notifs_dict"]
     )
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
 
-    card_notif_dict = new_settings["cards"]["Untitled Card"]["notifications"]
-
+    result = json.loads(Config.SETTINGS_PATH.read_text())
+    card_notif_dict = result["cards"]["Untitled Card"]["notifications"]
     assert "a019868e-f43f-478f-8dcc-ba78c35525c4" in card_notif_dict
     assert "2d189b37-6eaf-478f-a5ab-e19c9dab5738" in card_notif_dict
 
@@ -981,21 +1008,22 @@ def test_update_notification_list_reorders_correctly(monkeypatch, tmp_path):
 
 
 def test_update_notification_list_deletes_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config_multiple_notif"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config_multiple_notif"]
+    ))
 
     CardsManagement.update_notification_list(
         "Untitled Card",
         helpers.data["deleted_notifs_dict"]
     )
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
 
-    card_notif_dict = new_settings["cards"]["Untitled Card"]["notifications"]
-
+    result = json.loads(Config.SETTINGS_PATH.read_text())
+    card_notif_dict = result["cards"]["Untitled Card"]["notifications"]
     assert "a019868e-f43f-478f-8dcc-ba78c35525c4" not in card_notif_dict
     assert "2d189b37-6eaf-478f-a5ab-e19c9dab5738" in card_notif_dict
 
@@ -1021,11 +1049,14 @@ def test_update_notification_list_deletes_correctly(monkeypatch, tmp_path):
 
 
 def test_update_notification_list_rejects_flawed_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config_multiple_notif"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(Exception, match="new_notifs_dict is not a dict!"):
         CardsManagement.update_notification_list(
@@ -1043,38 +1074,42 @@ def test_update_notification_list_rejects_flawed_data(monkeypatch, tmp_path):
 
 
 def test_add_goal_works_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     CardsManagement.add_goal(
         "Untitled Card",
         "Conquer world"
     )
 
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
-
-    new_goals_dict = new_settings["cards"]["Untitled Card"]["goals"]
+    result = json.loads(Config.SETTINGS_PATH.read_text())
+    new_goals_dict = result["cards"]["Untitled Card"]["goals"]
     assert "Conquer world" in new_goals_dict
     assert new_goals_dict["Conquer world"] is False
 
 
 def test_add_goal_rejects_flawed_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(Exception, match="Goal to add is not string!"):
         CardsManagement.add_goal(
             "Untitled Card",
             42
         )
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError, match="42"):
         CardsManagement.add_goal(
             42,
             "Conquer world"
@@ -1082,22 +1117,22 @@ def test_add_goal_rejects_flawed_data(monkeypatch, tmp_path):
 
 
 def test_update_goal_list_reorders_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config_with_goals"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config_with_goals"]
+    ))
 
     CardsManagement.update_goal_list(
         "Untitled Card",
         helpers.data["reordered_goal_dict"]
     )
 
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
-
-    card_goals_dict = new_settings["cards"]["Untitled Card"]["goals"]
-
+    result = json.loads(Config.SETTINGS_PATH.read_text())
+    card_goals_dict = result["cards"]["Untitled Card"]["goals"]
     assert "Conquer world" in card_goals_dict
     assert "Debug USACO problem" in card_goals_dict
     assert card_goals_dict["Conquer world"] is False
@@ -1105,22 +1140,22 @@ def test_update_goal_list_reorders_correctly(monkeypatch, tmp_path):
 
 
 def test_update_goal_list_deletes_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config_with_goals"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config_with_goals"]
+    ))
 
     CardsManagement.update_goal_list(
         "Untitled Card",
         {"Conquer world": False}
     )
 
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
-
-    card_goals_dict = new_settings["cards"]["Untitled Card"]["goals"]
-
+    result = json.loads(Config.SETTINGS_PATH.read_text())
+    card_goals_dict = result["cards"]["Untitled Card"]["goals"]
     assert "Conquer world" in card_goals_dict
     assert "Debug USACO problem" not in card_goals_dict
     assert card_goals_dict["Conquer world"] is False
@@ -1128,18 +1163,21 @@ def test_update_goal_list_deletes_correctly(monkeypatch, tmp_path):
 
 
 def test_update_goal_list_rejects_flawed_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config_with_goals"], settings_json)
-
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match="new_goals_dict is not a dict!"):
         CardsManagement.update_goal_list(
             "Untitled Card",
             "Llama"
         )
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match="Llama"):
         CardsManagement.update_goal_list(
             "Llama",
             helpers.data["reordered_goal_dict"]
