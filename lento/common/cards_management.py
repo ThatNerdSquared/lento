@@ -136,8 +136,7 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
                 )
             else:
                 plist_path = Path(app, "Contents", "Info.plist")
-            with open(plist_path, "rb") as fp:
-                app_plist = plistlib.load(fp)
+            app_plist = plistlib.loads(plist_path.read_bytes())
             icon_name = app_plist["CFBundleIconFile"]
             if icon_name[-5:] != ".icns":
                 icon_name = app_plist["CFBundleIconFile"] + ".icns"
@@ -149,7 +148,6 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
             )
             im = Image.open(original_icon_path)
             rgb_im = im.convert("RGB")
-
             path_to_save_at = str(Config.APPDATA_PATH / (app_name + ".jpg"))
             rgb_im.save(path_to_save_at)
 

@@ -1,6 +1,5 @@
 import copy
 import json
-import os
 from pathlib import Path
 import platform
 import pytest
@@ -382,39 +381,42 @@ def test_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
         "SETTINGS_PATH",
         Path(tmp_path) / "lentosettings.json"
     )
+    monkeypatch.setattr(
+        Config,
+        "APPDATA_PATH",
+        Path(tmp_path, "Library", "Application Support", "Lento")
+    )
     folders = {
-        "application_support": os.path.join(
+        "application_support": Path(
             "Library",
             "Application Support",
             "Lento"
         ),
         "apps_folder": "Applications",
-        "gris_folders": os.path.join("Applications", "GRIS.app", "Contents"),
-        "scrivener_folder": os.path.join(
+        "gris_folders": Path("Applications", "GRIS.app", "Contents"),
+        "scrivener_folder": Path(
             "Applications",
             "Scrivener.app",
             "Contents"
         ),
-        "nnw_folder": os.path.join(
+        "nnw_folder": Path(
             "Applications",
             "NetNewsWire.app",
             "Contents"
         )
     }
     for f in folders.keys():
-        os.makedirs(Path(tmp_path, folders[f]))
+        Path(tmp_path, folders[f]).mkdir(parents=True, exist_ok=True)
 
     for file in ["GRIS", "Scrivener", "NetNewsWire"]:
-        path = os.path.join(
+        plist_file = Path(
             tmp_path,
             "Applications",
             file + ".app",
             "Contents",
             "Info.plist"
         )
-        plist_file = open(path, "w", encoding="UTF-8")
-        plist_file.write(helpers.data[file])
-        plist_file.close()
+        plist_file.write_text(helpers.data[file])
 
     monkeypatch.setattr(
         Config,
@@ -447,26 +449,26 @@ def test_add_to_app_blocklists_adds_data_darwin(monkeypatch, tmp_path):
     assert hb_list["GRIS"] == {
         "enabled": True,
         "bundle_id": "unity.nomada studio.GRIS",
-        "app_icon_path": os.path.join(
-            os.path.expanduser("~"),
-            "Library/Application Support/Lento/GRIS.jpg"
-        )
+        "app_icon_path": str(Path(
+            Config.APPDATA_PATH,
+            "GRIS.jpg"
+        ))
     }
     assert hb_list["Scrivener"] == {
         "enabled": True,
         "bundle_id": "com.literatureandlatte.scrivener3",
-        "app_icon_path": os.path.join(
-            os.path.expanduser("~"),
-            "Library/Application Support/Lento/Scrivener.jpg"
-        )
+        "app_icon_path": str(Path(
+            Config.APPDATA_PATH,
+            "Scrivener.jpg"
+        ))
     }
     assert hb_list["NetNewsWire"] == {
         "enabled": True,
         "bundle_id": "com.ranchero.NetNewsWire-Evergreen",
-        "app_icon_path": os.path.join(
-            os.path.expanduser("~"),
-            "Library/Application Support/Lento/NetNewsWire.jpg"
-        )
+        "app_icon_path": str(Path(
+            Config.APPDATA_PATH,
+            "NetNewsWire.jpg"
+        ))
     }
     assert list(hb_list.keys()) == ["GRIS", "Scrivener", "NetNewsWire"]
 
@@ -524,21 +526,21 @@ def test_add_to_app_blocklists_rejects_dupes_darwin(monkeypatch, tmp_path):
 
 def test_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
     appdata_dict = copy.deepcopy(helpers.data["proper_apps_dict"])
-    appdata_dict["vivaldi"]["path"] = os.path.join(
-        os.path.expanduser("~"),
+    appdata_dict["vivaldi"]["path"] = str(Path(
+        tmp_path,
         "AppData",
         "Local",
         "Vivaldi",
         "Application",
         "vivaldi.exe"
-    )
-    appdata_dict["vivaldi"]["icon_path"] = os.path.join(
-        os.path.expanduser("~"),
+    ))
+    appdata_dict["vivaldi"]["icon_path"] = str(Path(
+        tmp_path,
         "AppData",
         "Local",
         "Lento",
         "vivaldi.bmp"
-    )
+    ))
     monkeypatch.setattr(platform, "system", lambda: "Windows")
     monkeypatch.setattr(
         Config,
@@ -550,21 +552,21 @@ def test_add_to_app_blocklists_adds_data_windows(monkeypatch, tmp_path):
     ))
 
     apps_to_add = copy.deepcopy(helpers.data["apps_to_add"])
-    apps_to_add[1]["path"] = os.path.join(
-        os.path.expanduser("~"),
+    apps_to_add[1]["path"] = str(Path(
+        tmp_path,
         "AppData",
         "Local",
         "Vivaldi",
         "Application",
         "vivaldi.exe"
-    )
-    apps_to_add[1]["icon_path"] = os.path.join(
-        os.path.expanduser("~"),
+    ))
+    apps_to_add[1]["icon_path"] = str(Path(
+        tmp_path,
         "AppData",
         "Local",
         "Lento",
         "vivaldi.bmp"
-    )
+    ))
 
     CardsManagement.add_to_app_blocklists(
         "Untitled Card",
