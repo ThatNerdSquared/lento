@@ -13,32 +13,37 @@ from PIL import Image
 
 
 def test_create_card_uses_correct_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
     monkeypatch.setattr(
         uuid.UUID,
         "hex",
         "b0244f7e-8369-49f9-89b4-73811eba3a0e"
     )
 
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["initial_blank_config"], settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["initial_blank_config"]
+    ))
 
     CardsManagement.create_card()
 
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    result = json.loads(Config.SETTINGS_PATH.read_text())
 
-    assert settings == helpers.data["bare_config"]
+    assert result == helpers.data["bare_config"]
 
 
 def test_read_cards_returns_correct_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["filled_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["filled_config"]
+    ))
 
     expected_result = helpers.data["filled_config"]["cards"]
     cards = CardsManagement.read_cards()
@@ -46,26 +51,31 @@ def test_read_cards_returns_correct_data(monkeypatch, tmp_path):
 
 
 def test_delete_card_works_correctly(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["filled_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["filled_config"]
+    ))
 
     CardsManagement.delete_card("Llama Taming")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
+    result = json.loads(Config.SETTINGS_PATH.read_text())
 
     expected_result = helpers.data["bare_config"]
-    assert expected_result == new_settings
+    assert expected_result == result
 
 
 def test_delete_card_denies_incorrect_card_name(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(KeyError):
         CardsManagement.delete_card("Llama Taming")
@@ -163,33 +173,35 @@ def test_update_metadata_validates_time_as_number(monkeypatch, tmp_path):
 
 
 def test_add_to_site_blocklists_adds_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     CardsManagement.add_to_site_blocklists(
         "Untitled Card",
         "hard_blocked_sites",
         "https://youtube.com"
     )
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        new_settings = json.load(settings_json)
+    result = json.loads(Config.SETTINGS_PATH.read_text())
 
-    cards_dict = new_settings["cards"]["Untitled Card"]
-
+    cards_dict = result["cards"]["Untitled Card"]
     assert "https://youtube.com" in cards_dict["hard_blocked_sites"]
     assert cards_dict["hard_blocked_sites"]["https://youtube.com"] is True
 
 
 def test_add_to_site_blocklists_denies_malformed_data(monkeypatch, tmp_path):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
     cfg = copy.deepcopy(helpers.data["bare_config"])
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(cfg, settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(cfg))
 
     with pytest.raises(Exception, match="URL not valid!"):
         CardsManagement.add_to_site_blocklists(
@@ -201,8 +213,9 @@ def test_add_to_site_blocklists_denies_malformed_data(monkeypatch, tmp_path):
     cfg["cards"]["Untitled Card"]["soft_blocked_sites"] = {
         "youtube.com": True
     }
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(cfg, settings_json)
+
+    Config.SETTINGS_PATH.write_text(json.dumps(cfg))
+
     with pytest.raises(Exception, match="'youtube.com' already soft blocked!"):
         CardsManagement.add_to_site_blocklists(
             "Untitled Card",
@@ -214,8 +227,9 @@ def test_add_to_site_blocklists_denies_malformed_data(monkeypatch, tmp_path):
     cfg["cards"]["Untitled Card"]["hard_blocked_sites"] = {
         "youtube.com": True
     }
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(cfg, settings_json)
+
+    Config.SETTINGS_PATH.write_text(json.dumps(cfg))
+
     with pytest.raises(Exception, match="'youtube.com' already hard blocked!"):
         CardsManagement.add_to_site_blocklists(
             "Untitled Card",
@@ -228,11 +242,14 @@ def test_add_to_site_blocklists_denies_incorrect_card_or_list_name(
             monkeypatch,
             tmp_path
         ):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(KeyError):
         CardsManagement.add_to_site_blocklists(
@@ -253,11 +270,14 @@ def test_add_to_site_blocklists_denies_restricted_field_change(
             monkeypatch,
             tmp_path
         ):
-    monkeypatch.setattr(os.path, "expanduser", lambda x: tmp_path)
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(helpers.data["bare_config"], settings_json)
+    monkeypatch.setattr(
+        Config,
+        "SETTINGS_PATH",
+        Path(tmp_path) / "lentosettings.json"
+    )
+    Config.SETTINGS_PATH.write_text(json.dumps(
+        helpers.data["bare_config"]
+    ))
 
     with pytest.raises(Exception, match="Card field is restricted!"):
         CardsManagement.add_to_site_blocklists(

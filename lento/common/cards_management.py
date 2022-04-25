@@ -23,31 +23,20 @@ def create_card():
         "goals": {}
     }
 
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
-
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
     settings["cards"][new_card["name"]] = new_card
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def read_cards():
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
     return settings["cards"]
 
 
 def delete_card(card_to_delete):
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
     del settings["cards"][card_to_delete]
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def update_metadata(card_to_modify, field_to_modify, new_value):
@@ -76,9 +65,7 @@ def update_metadata(card_to_modify, field_to_modify, new_value):
 
 def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):
     """Add to either the `hard_blocked_sites` or `soft_blocked_sites` lists."""
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
 
     card_to_mod = settings["cards"][card_to_modify]
     if card_to_mod[list_to_modify] is None:
@@ -98,8 +85,7 @@ def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):
             raise Exception(f"'{new_value}' already hard blocked!")
 
     settings["cards"][card_to_modify][list_to_modify][new_value] = True
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def update_site_blocklists(card_to_modify, list_to_modify, new_sites_dict):
