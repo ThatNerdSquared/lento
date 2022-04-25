@@ -1,6 +1,9 @@
 import platform
-import playsound
 import subprocess
+try:
+    import winsound
+except ImportError:
+    pass
 from pathlib import Path
 from plyer import notification
 from daemon.daemonprompt import DaemonPrompt
@@ -43,10 +46,16 @@ class LentoNotif():
         match platform.system():
             case "Darwin":
                 for item in self.audio_paths.keys():
-                    subprocess.call(["afplay", Path(self.audio_paths[item])])
+                    subprocess.Popen([
+                        "afplay",
+                        str(Path(self.audio_paths[item]))
+                    ])
             case "Windows":
                 for item in self.audio_paths.keys():
-                    playsound.playsound(Path(self.audio_paths[item]))
+                    winsound.PlaySound(
+                        str(Path(self.audio_paths[item])),
+                        winsound.SND_ASYNC
+                    )
 
     def show_notif_popup(self):
         prompt = DaemonPrompt()
