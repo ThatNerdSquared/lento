@@ -1,11 +1,11 @@
 import json
-import os
 import platform
 import plistlib
 import subprocess
 import uuid
 from lento.config import Config
 from lento.utils import is_url
+from pathlib import Path
 from PIL import Image
 
 
@@ -40,9 +40,7 @@ def delete_card(card_to_delete):
 
 
 def update_metadata(card_to_modify, field_to_modify, new_value):
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
 
     if settings["cards"][card_to_modify][field_to_modify] is None:
         raise Exception("Card field is nonexistent!")
@@ -59,8 +57,7 @@ def update_metadata(card_to_modify, field_to_modify, new_value):
         }
         settings["cards"] = new_cards
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):
@@ -90,9 +87,7 @@ def add_to_site_blocklists(card_to_modify, list_to_modify, new_value):
 
 def update_site_blocklists(card_to_modify, list_to_modify, new_sites_dict):
     """Update one of the blocked_sites lists. Minimal validation."""
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
 
     if settings["cards"][card_to_modify][list_to_modify] is None:
         raise Exception("List is nonexistent!")
@@ -105,21 +100,17 @@ def update_site_blocklists(card_to_modify, list_to_modify, new_sites_dict):
         raise Exception("new_sites_dict is not a dict!")
 
     settings["cards"][card_to_modify][list_to_modify] = new_sites_dict
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
-
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
     card = settings["cards"][card_to_modify]
 
     current_os = platform.system()
     if current_os == "Darwin":
         for app in apps_to_add:
-            app_name = os.path.basename(app).replace(".app", "")
+            app_name = Path(app).stem
 
             if list_to_modify == "hard_blocked_apps":
                 if app_name in card["soft_blocked_apps"]:
@@ -137,23 +128,19 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
             ]).decode("utf-8")
 
             if app[:14] == "/Applications/":
-                app = os.path.join(
-                    Config.MACOS_APPLICATION_FOLDER,
-                    app_name + ".app"
-                )
-                plist_path = os.path.join(
+                app = Config.MACOS_APPLICATION_FOLDER / Path(app).name
+                plist_path = Path(
                     app,
                     "Contents",
                     "Info.plist"
                 )
             else:
-                plist_path = os.path.join(app, "Contents", "Info.plist")
-            with open(plist_path, "rb") as fp:
-                app_plist = plistlib.load(fp)
+                plist_path = Path(app, "Contents", "Info.plist")
+            app_plist = plistlib.loads(plist_path.read_bytes())
             icon_name = app_plist["CFBundleIconFile"]
             if icon_name[-5:] != ".icns":
                 icon_name = app_plist["CFBundleIconFile"] + ".icns"
-            original_icon_path = os.path.join(
+            original_icon_path = Path(
                 app,
                 "Contents",
                 "Resources",
@@ -161,11 +148,7 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
             )
             im = Image.open(original_icon_path)
             rgb_im = im.convert("RGB")
-
-            path_to_save_at = os.path.join(
-                    os.path.expanduser("~"),
-                    "Library/Application Support/Lento/" + app_name + ".jpg"
-                )
+            path_to_save_at = str(Config.APPDATA_PATH / (app_name + ".jpg"))
             rgb_im.save(path_to_save_at)
 
             card[list_to_modify][app_name] = {
@@ -190,14 +173,11 @@ def add_to_app_blocklists(card_to_modify, list_to_modify, apps_to_add):
     else:
         raise Exception("OS name invalid or not found!")
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def update_app_blocklists(card_to_modify, list_to_modify, new_list_structure):
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
 
     if list_to_modify not in [
                 "hard_blocked_apps",
@@ -207,8 +187,7 @@ def update_app_blocklists(card_to_modify, list_to_modify, new_list_structure):
 
     settings["cards"][card_to_modify][list_to_modify] = new_list_structure
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def add_notification(
@@ -223,9 +202,7 @@ def add_notification(
             body,
             audio_paths
         ):
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
 
     if not isinstance(name, str):
         raise Exception("Name must be a string!")
@@ -271,15 +248,12 @@ def add_notification(
     card = settings["cards"][card_to_modify]
     card["notifications"][str(uuid.uuid4().hex)] = new_notif
 
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def update_notification_list(card_to_modify, new_notifs_dict):
     """Update notifications for a card. Minimal validation."""
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
 
     if not isinstance(new_notifs_dict, dict):
         raise Exception("new_notifs_dict is not a dict!")
@@ -299,32 +273,23 @@ def update_notification_list(card_to_modify, new_notifs_dict):
             raise Exception(f"Notif {item} had invalid structure!")
 
     settings["cards"][card_to_modify]["notifications"] = new_notifs_dict
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def add_goal(card_to_modify: str, goal_to_add: str) -> None:
     """Add a goal to a card. Automatically adds as disabled."""
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
 
     if not isinstance(goal_to_add, str):
         raise Exception("Goal to add is not string!")
 
     settings["cards"][card_to_modify]["goals"][goal_to_add] = False
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def update_goal_list(card_to_modify, new_goals_dict):
     """Update goals for a card. Minimal validation."""
-    path = os.path.join(os.path.expanduser("~"), "lentosettings.json")
-    with open(path, "r", encoding="UTF-8") as settings_json:
-        settings = json.load(settings_json)
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
 
     if not isinstance(new_goals_dict, dict):
         raise Exception("new_goals_dict is not a dict!")
@@ -333,9 +298,7 @@ def update_goal_list(card_to_modify, new_goals_dict):
             raise Exception(f"Goal '{item}' has invalid structure!")
 
     settings["cards"][card_to_modify]["goals"] = new_goals_dict
-
-    with open(path, "w", encoding="UTF-8") as settings_json:
-        json.dump(settings, settings_json)
+    Config.SETTINGS_PATH.write_text(json.dumps(settings))
 
 
 def activate_block_in_settings(card_to_activate: str):
