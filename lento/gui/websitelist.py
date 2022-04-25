@@ -32,7 +32,7 @@ class WebsiteList(QWidget):
             new_button = QPushButton(item)
 
             new_button.setCheckable(True)
-            new_button.setChecked(self.INPUT_LIST[item])
+            new_button.setChecked(self.INPUT_LIST[item]["enabled"])
             new_button.clicked.connect(self.toggle_site)
 
             inner_list_layout.addWidget(new_button)
@@ -65,7 +65,7 @@ class WebsiteList(QWidget):
 
     def toggle_site(self, checked):
         item = self.sender().text()
-        self.INPUT_LIST[item] = checked
+        self.INPUT_LIST[item]["enabled"] = checked
         CardsManagement.update_site_blocklists(
             self.CURRENT_CARD,
             self.CURRENT_LIST_KEY,
