@@ -1,12 +1,9 @@
 import platform
 import subprocess
-try:
-    import winsound
-except ImportError:
-    pass
+from daemon.daemonprompt import DaemonPrompt
 from pathlib import Path
 from plyer import notification
-from daemon.daemonprompt import DaemonPrompt
+from pygame import mixer
 
 
 class LentoNotif():
@@ -52,10 +49,9 @@ class LentoNotif():
                     ])
             case "Windows":
                 for item in self.audio_paths.keys():
-                    winsound.PlaySound(
-                        str(Path(self.audio_paths[item])),
-                        winsound.SND_ASYNC
-                    )
+                    mixer.init()
+                    mixer.music.load(str(Path(self.audio_paths[item])))
+                    mixer.music.play()
 
     def show_notif_popup(self):
         prompt = DaemonPrompt()

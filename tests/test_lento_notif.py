@@ -1,17 +1,12 @@
 import platform
-import pytest
 import subprocess
-try:
-    import winsound
-except ImportError:
-    pass
 from daemon import lento_notif
-from daemon.lento_notif import LentoNotif
+from pathlib import Path
 from unittest.mock import MagicMock
 
 
 def test_init_notif_works_properly():
-    notif = LentoNotif({
+    notif = lento_notif.LentoNotif({
         "name": "LlamaName",
         "title": "LlamaTitle",
         "body": "LlamaBody",
@@ -27,7 +22,7 @@ def test_send_banner_works_properly_darwin(monkeypatch):
     monkeypatch.setattr(platform, "system", lambda: "Darwin")
     mock_subprocess = MagicMock()
     monkeypatch.setattr(subprocess, "Popen", mock_subprocess)
-    LentoNotif({
+    lento_notif.LentoNotif({
         "name": "LlamaName",
         "title": "LlamaTitle",
         "body": "LlamaBody",
@@ -44,7 +39,7 @@ def test_send_banner_works_properly_windows(monkeypatch):
     monkeypatch.setattr(platform, "system", lambda: "Windows")
     mock_notification = MagicMock()
     monkeypatch.setattr(lento_notif.notification, "notify", mock_notification)
-    LentoNotif({
+    lento_notif.LentoNotif({
         "name": "LlamaName",
         "title": "LlamaTitle",
         "body": "LlamaBody",
@@ -62,52 +57,65 @@ def test_play_audio_works_properly_darwin(monkeypatch):
     monkeypatch.setattr(platform, "system", lambda: "Darwin")
     mock_subprocess = MagicMock()
     monkeypatch.setattr(subprocess, "Popen", mock_subprocess)
-    LentoNotif({
+    lento_notif.LentoNotif({
         "name": "LlamaName",
         "title": "LlamaTitle",
         "body": "LlamaBody",
         "audio_paths": {
-            "llama_theme": "/Users/LlamaLords/llama_theme.mp3",
-            "Daydream": "/Users/marika_takeuchi/daydream.mp3"
+            "llama_theme": str(
+                Path("Users") / "LlamaLords" / "llama_theme.mp3"
+            ),
+            "Daydream": str(
+                Path("Users") / "marika_takeuchi" / "daydream.mp3"
+            )
         }
     }).play_audio()
     mock_subprocess.assert_any_call([
         "afplay",
-        "/Users/LlamaLords/llama_theme.mp3"
+        str(Path("Users") / "LlamaLords" / "llama_theme.mp3")
     ])
     mock_subprocess.assert_any_call([
         "afplay",
-        "/Users/marika_takeuchi/daydream.mp3"
+        str(Path("Users") / "marika_takeuchi" / "daydream.mp3")
     ])
     assert mock_subprocess.call_count == 2
 
 
-@pytest.mark.skipif(
-    platform.system() != "Windows",
-    reason="`winsound` cannot be tested on non-Windows platforms"
-)
 def test_play_audio_works_properly_windows(monkeypatch):
     monkeypatch.setattr(platform, "system", lambda: "Windows")
-    mock_winsound = MagicMock()
-    monkeypatch.setattr(lento_notif.winsound, "PlaySound", mock_winsound)
-    LentoNotif({
+    mock_pygame_load = MagicMock()
+    mock_pygame_play = MagicMock()
+    monkeypatch.setattr(
+        lento_notif.mixer.music,
+        "load",
+        mock_pygame_load
+    )
+    monkeypatch.setattr(
+        lento_notif.mixer.music,
+        "play",
+        mock_pygame_play
+    )
+    lento_notif.LentoNotif({
         "name": "LlamaName",
         "title": "LlamaTitle",
         "body": "LlamaBody",
         "audio_paths": {
-            "llama_theme": "/Users/LlamaLords/llama_theme.mp3",
-            "Daydream": "/Users/marika_takeuchi/daydream.mp3"
+            "llama_theme": str(
+                Path("Users") / "LlamaLords" / "llama_theme.mp3"
+            ),
+            "Daydream": str(
+                Path("Users") / "marika_takeuchi" / "daydream.mp3"
+            )
         }
     }).play_audio()
-    mock_winsound.assert_any_call([
-        "/Users/LlamaLords/llama_theme.mp3",
-        winsound.SND_ASYNC
-    ])
-    mock_winsound.assert_any_call([
-        "/Users/marika_takeuchi/daydream.mp3",
-        winsound.SND_ASYNC
-    ])
-    assert mock_winsound.call_count == 2
+    mock_pygame_load.assert_any_call(
+        str(Path("Users") / "LlamaLords" / "llama_theme.mp3")
+    )
+    mock_pygame_load.assert_any_call(
+        str(Path("Users") / "marika_takeuchi" / "daydream.mp3")
+    )
+    assert mock_pygame_load.call_count == 2
+    assert mock_pygame_play.call_count == 2
 
 
 def test_show_popup_works_properly(monkeypatch):
@@ -117,7 +125,7 @@ def test_show_popup_works_properly(monkeypatch):
         "show_notif_popup",
         mock_popup
     )
-    LentoNotif({
+    lento_notif.LentoNotif({
         "name": "LlamaName",
         "title": "LlamaTitle",
         "body": "LlamaBody",

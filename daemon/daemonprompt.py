@@ -27,11 +27,14 @@ class DaemonPrompt():
                 return False
 
     def windows_softblock_prompt(self, title, message):
+        MB_YESNO = 0x04
+        MB_ICONWARNING = 0x30
+        MB_SYSTEMMODAL = 0x1000
         choice = ctypes.windll.user32.MessageBoxW(
             0,
             message,
             title,
-            36
+            MB_YESNO | MB_ICONWARNING | MB_SYSTEMMODAL
         )
         # the MessageBox foreign function returns 6 for OK, 7 for No.
         if choice == 6:
@@ -54,9 +57,11 @@ class DaemonPrompt():
         ])
 
     def windows_notif_prompt(self, title, message):
-        return ctypes.windll.user32.MessageBoxW(
+        MB_SYSTEMMODAL = 0x1000
+        MB_OK = 0x00
+        ctypes.windll.user32.MessageBoxW(
             0,
             message,
             title,
-            0
+            MB_SYSTEMMODAL | MB_OK
         )
