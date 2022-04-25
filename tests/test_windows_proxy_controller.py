@@ -1,10 +1,18 @@
-from tests import helpers
-import proxy
 import platform
-import winreg
+import proxy
+import pytest
+try:
+    import winreg
+except ImportError:
+    pass
 from daemon import get_proxy
+from tests import helpers
 
 
+@pytest.mark.skipif(
+    platform.system() != "Windows",
+    reason="`winreg` cannot be tested on non-Windows platforms"
+)
 def test_enable_system_proxy_windows(monkeypatch):
     monkeypatch.setattr(platform, "system", lambda: "Windows")
     monkeypatch.setattr(winreg, "SetValueEx", helpers.fake_SetValueEx_enable)
@@ -14,6 +22,10 @@ def test_enable_system_proxy_windows(monkeypatch):
     assert result == ["proxyserver_command_run", "proxyenable_command_run"]
 
 
+@pytest.mark.skipif(
+    platform.system() != "Windows",
+    reason="`winreg` cannot be tested on non-Windows platforms"
+)
 def test_disable_system_proxy_windows(monkeypatch):
     monkeypatch.setattr(platform, "system", lambda: "Windows")
     monkeypatch.setattr(winreg, "SetValueEx", helpers.fake_SetValueEx_disable)
