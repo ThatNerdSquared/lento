@@ -1,4 +1,5 @@
 import sys
+from lento.common.init_sequence import init_sequence
 from lento.gui.card import Card
 from lento import utils
 from pathlib import Path
@@ -74,6 +75,8 @@ def main():
         QFontDatabase.addApplicationFont(font.absoluteFilePath())
     stylesheet_path = Path(utils.get_data_file_path("lento.qss"))
     app.setStyleSheet(stylesheet_path.read_text())
+
+    init_sequence()
 
     window = MainWindow()
     window.show()
