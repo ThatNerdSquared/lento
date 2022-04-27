@@ -4,7 +4,7 @@ PYTHON := python3
 
 lint:
 	@echo Linting...
-	@${PYTHON} -m flake8 lento daemon tests --exclude="tests/helpers.py"
+	@${PYTHON} -m flake8 ./app.py lento daemon tests --exclude="tests/helpers.py"
 	@echo Done!
 
 test:

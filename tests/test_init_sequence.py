@@ -1,4 +1,3 @@
-import platform
 from lento.common.init_sequence import init_sequence
 from lento.config import Config
 
