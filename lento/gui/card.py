@@ -26,7 +26,6 @@ class Card(QWidget):
         body_rect.setMaximumSize(500, 800)
 
         internal_card = QVBoxLayout()
-        internal_card.setSpacing(20)
 
         title = Title(DATA["name"], refresh_handler)
         timer = TimerView(
@@ -73,12 +72,11 @@ class Card(QWidget):
 
         internal_card_widget = QWidget()
         internal_card_widget.setObjectName("maincard")
-        internal_card_widget.setMinimumSize(250, 1200)
-        # internal_card_widget.setMaximumSize(500, 800)
         internal_card_widget.setLayout(internal_card)
 
         # Set the internal scroll area for the card.
         scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
         scroll_area.setWidget(internal_card_widget)
         scroll_area.setFrameShape(QFrame.NoFrame)
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
