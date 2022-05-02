@@ -16,7 +16,7 @@ data = {
         "cards": {
             "Untitled Card 1": {
                 "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
-                "name": "Untitled Card",
+                "name": "Untitled Card 1",
                 "emoji": "😃",
                 "time": 0,
                 "hard_blocked_sites": {},

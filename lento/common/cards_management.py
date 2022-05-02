@@ -11,9 +11,15 @@ from PIL import Image
 
 
 def create_card(current_position):
+    settings = json.loads(Config.SETTINGS_PATH.read_text())
+
+    cards = list(settings["cards"].items())
+    cardnames = list(settings["cards"].keys())
+    number_of_untitled = len([i for i in cardnames if "Untitled Card" in i])
+    new_name = f"Untitled Card {number_of_untitled + 1}"
     new_card = {
         "id": str(uuid.uuid4().hex),
-        "name": "Untitled Card",
+        "name": new_name,
         "emoji": "😃",
         "time": 0,
         "hard_blocked_sites": {},
@@ -23,12 +29,6 @@ def create_card(current_position):
         "notifications": {},
         "goals": {}
     }
-    settings = json.loads(Config.SETTINGS_PATH.read_text())
-
-    cards = list(settings["cards"].items())
-    cardnames = list(settings["cards"].keys())
-    number_of_untitled = len([i for i in cardnames if "Untitled Card" in i])
-    new_name = f"Untitled Card {number_of_untitled + 1}"
     cards.insert(
         int(current_position) + 1,
         (new_name, new_card)
