@@ -1,5 +1,4 @@
 """App instance configuration."""
-import dotenv
 import os
 import sys
 import platform
@@ -13,9 +12,6 @@ def get_data_file_path(relative_path):
         base = os.path.abspath('.')
 
     return os.path.join(base, relative_path)
-
-
-dotenv.load_dotenv(dotenv_path=get_data_file_path('.env'), override=True)  # noqa: E501
 
 
 class Config:
