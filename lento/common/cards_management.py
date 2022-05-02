@@ -10,7 +10,7 @@ from pathlib import Path
 from PIL import Image
 
 
-def create_card(current_card):
+def create_card(current_position):
     new_card = {
         "id": str(uuid.uuid4().hex),
         "name": "Untitled Card",
@@ -25,9 +25,11 @@ def create_card(current_card):
     }
     settings = json.loads(Config.SETTINGS_PATH.read_text())
 
-    position = list(settings["cards"].keys()).index(current_card)
     cards = list(settings["cards"].items())
-    cards.insert(position + 1, ("Untitled Card", new_card))
+    cards.insert(
+        current_position + 1,
+        ("Untitled Card", new_card)
+    )
     cards_dict = dict(cards)
 
     settings["cards"] = cards_dict
