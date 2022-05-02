@@ -28,11 +28,12 @@ def test_create_card_uses_correct_data(monkeypatch, tmp_path):
         helpers.data["initial_blank_config"]
     ))
 
-    CardsManagement.create_card(0)
+    return_val = CardsManagement.create_card(0)
 
     result = json.loads(Config.SETTINGS_PATH.read_text())
 
-    assert result == helpers.data["bare_config"]
+    assert result == helpers.data["config_after_add"]
+    assert return_val == "Untitled Card 1"
 
 
 def test_read_cards_returns_correct_data(monkeypatch, tmp_path):
