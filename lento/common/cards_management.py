@@ -26,9 +26,15 @@ def create_card(current_position):
     settings = json.loads(Config.SETTINGS_PATH.read_text())
 
     cards = list(settings["cards"].items())
+    cardnames = list(settings["cards"].keys())
+    number_of_untitled = len([i for i in cardnames if "Untitled Card" in i])
+    if number_of_untitled > 0:
+        new_name = f"Untitled Card {number_of_untitled + 1}"
+    else:
+        new_name = "Untitled Card"
     cards.insert(
-        current_position + 1,
-        ("Untitled Card", new_card)
+        int(current_position) + 1,
+        (new_name, new_card)
     )
     cards_dict = dict(cards)
 
