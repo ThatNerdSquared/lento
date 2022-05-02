@@ -11,6 +11,58 @@ data = {
             "theme": "automatic"
         }
     },
+    "init_config": {
+        "activated_card": None,
+        "cards": {
+            "Llama": {
+                "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
+                "name": "Llama",
+                "emoji": "😃",
+                "time": 0,
+                "hard_blocked_sites": {},
+                "soft_blocked_sites": {},
+                "hard_blocked_apps": {},
+                "soft_blocked_apps": {},
+                "notifications": {},
+                "goals": {}
+            }
+        },
+        "application_settings": {
+            "theme": "automatic"
+        }
+    },
+    "config_after_add": {
+        "activated_card": None,
+        "cards": {
+            "Llama": {
+                "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
+                "name": "Llama",
+                "emoji": "😃",
+                "time": 0,
+                "hard_blocked_sites": {},
+                "soft_blocked_sites": {},
+                "hard_blocked_apps": {},
+                "soft_blocked_apps": {},
+                "notifications": {},
+                "goals": {}
+            },
+            "Untitled Card": {
+                "id": "b0244f7e-8369-49f9-89b4-73811eba3a0e",
+                "name": "Untitled Card",
+                "emoji": "😃",
+                "time": 0,
+                "hard_blocked_sites": {},
+                "soft_blocked_sites": {},
+                "hard_blocked_apps": {},
+                "soft_blocked_apps": {},
+                "notifications": {},
+                "goals": {}
+            }
+        },
+        "application_settings": {
+            "theme": "automatic"
+        }
+    },
     "bare_config": {
         "activated_card": None,
         "cards": {

@@ -52,7 +52,7 @@ result_options = {
 }
 
 if f == "create_card":
-    CardsManagement.create_card()
+    CardsManagement.create_card(param1)
     result_options["output"] = CardsManagement.read_cards()
 elif f == "read_cards":
     result_options["output"] = CardsManagement.read_cards()

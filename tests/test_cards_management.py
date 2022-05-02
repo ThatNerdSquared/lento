@@ -25,14 +25,14 @@ def test_create_card_uses_correct_data(monkeypatch, tmp_path):
     )
 
     Config.SETTINGS_PATH.write_text(json.dumps(
-        helpers.data["initial_blank_config"]
+        helpers.data["init_config"]
     ))
 
-    CardsManagement.create_card()
+    CardsManagement.create_card("Llama")
 
     result = json.loads(Config.SETTINGS_PATH.read_text())
 
-    assert result == helpers.data["bare_config"]
+    assert result == helpers.data["config_after_add"]
 
 
 def test_read_cards_returns_correct_data(monkeypatch, tmp_path):
