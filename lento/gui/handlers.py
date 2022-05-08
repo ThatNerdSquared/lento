@@ -76,8 +76,9 @@ class Handlers():
             case "GoalList":
                 CardsManagement.update_goal_list(
                     self.CURRENT_CARD,
-                    self.INPUT_LIST
+                    new_list
                 )
+                sender.clearFocus()
 
     def delete_item_handler(self, sender):
         item = sender.text()

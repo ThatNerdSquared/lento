@@ -16,10 +16,16 @@ class TimerView(QWidget):
         self.CURRENT_CARD = current_card
         self.TIME_PRESET = time_preset
         self.refresh = refresh_handler
+
+        self.current_time = time_preset
         self.TIMER = QTimer(self, interval=1000, timeout=self.reload_timer)
 
         self.BLOCK_IS_RUNNING = activated_card is not None
         if self.BLOCK_IS_RUNNING:
+            block_controller = get_block_controller()
+            self.current_time = block_controller.get_remaining_block_time(
+                self.TIME_PRESET
+            )
             self.TIMER.start()
 
         main_layout = QVBoxLayout()
@@ -107,7 +113,7 @@ class TimerView(QWidget):
             "mins1": minutes[0],
             "mins2": minutes[1],
             "secs1": seconds[0],
-            "secs2": seconds[0],
+            "secs2": seconds[1],
         }
         return total
 
@@ -134,17 +140,17 @@ class TimerView(QWidget):
         self.TIMER.start()
 
     def reload_timer(self):
-        block_controller = get_block_controller()
-        time = block_controller.get_remaining_block_time(self.TIME_PRESET)
-        if time == 0:
+        self.current_time -= 1
+        if self.current_time == 0:
+            block_controller = get_block_controller()
             block_controller.end_block()
             return self.refresh()
-        self.TIME = self.split_seconds(time)
-        self.hour_box.setText(self.TIME["hour"])
-        self.mins_box1.setText(self.TIME["mins1"])
-        self.mins_box2.setText(self.TIME["mins2"])
-        self.secs_box1.setText(self.TIME["secs1"])
-        self.secs_box2.setText(self.TIME["secs2"])
+        split_time = self.split_seconds(self.current_time)
+        self.hour_box.setText(split_time["hour"])
+        self.mins_box1.setText(split_time["mins1"])
+        self.mins_box2.setText(split_time["mins2"])
+        self.secs_box1.setText(split_time["secs1"])
+        self.secs_box2.setText(split_time["secs2"])
         for item in [
             self.hour_box, self.mins_box1, self.mins_box2,
             self.secs_box1, self.secs_box2
