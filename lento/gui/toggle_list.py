@@ -56,13 +56,17 @@ class ToggleList(QWidget):
                     list_item = LauncherListItem(
                         item,
                         self.INPUT_LIST[item]["enabled"],
-                        handlers.toggle_item
+                        handlers.toggle_item,
+                        handlers.delete_item_handler,
+                        False
                     )
                 case "AppList":
                     list_item = LauncherListItem(
                         item,
                         self.INPUT_LIST[item]["enabled"],
-                        handlers.toggle_item
+                        handlers.toggle_item,
+                        handlers.delete_item_handler,
+                        False
                     )
                 case _:
                     list_item = QLabel("An error occured: no list type found")
@@ -71,9 +75,15 @@ class ToggleList(QWidget):
 
         match self.LIST_TYPE:
             case "GoalList":
-                adder_item = TextEntryAdder(handlers.add_text_item)
+                adder_item = TextEntryAdder(
+                    "Add a goal...",
+                    handlers.add_text_item
+                )
             case "WebsiteList":
-                adder_item = TextEntryAdder(handlers.add_text_item)
+                adder_item = TextEntryAdder(
+                    "Add a site...",
+                    handlers.add_text_item
+                )
             case "AppList":
                 adder_item = AppPicker(
                     self.CURRENT_CARD,

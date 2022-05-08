@@ -3,19 +3,39 @@ from PySide6.QtWidgets import QCheckBox, QFileDialog, QHBoxLayout, QLineEdit, QP
 
 
 class LauncherListItem(QWidget):
-    def __init__(self, item_text, is_checked, toggle_handler):
+    def __init__(
+        self,
+        item_text,
+        is_checked,
+        toggle_handler,
+        delete_item_handler,
+        isEnabled
+    ):
         super().__init__()
 
         main_layout = QHBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
 
         core_button = QPushButton(item_text)
-
-        core_button.setCheckable(True)
-        core_button.setChecked(is_checked)
+        core_button.setEnabled(isEnabled)
         core_button.clicked.connect(lambda: toggle_handler(core_button))
 
+        toggle_cbox = QCheckBox()
+        toggle_cbox.setChecked(is_checked)
+        toggle_cbox.stateChanged.connect(
+            lambda: toggle_handler(toggle_cbox, entrybox=core_button)
+        )
+        toggle_cbox.setMaximumWidth(20)
+
+        delete_button = QPushButton("🗑")
+        delete_button.clicked.connect(
+            lambda: delete_item_handler(core_button)
+        )
+        delete_button.setMaximumWidth(40)
+
+        main_layout.addWidget(toggle_cbox)
         main_layout.addWidget(core_button)
+        main_layout.addWidget(delete_button)
         self.setLayout(main_layout)
 
 
@@ -44,11 +64,13 @@ class EditableListItem(QWidget):
         toggle_cbox.stateChanged.connect(
             lambda: toggle_handler(toggle_cbox, entrybox=core_entry_box)
         )
+        toggle_cbox.setMaximumWidth(20)
 
         delete_button = QPushButton("🗑")
         delete_button.clicked.connect(
             lambda: delete_item_handler(core_entry_box)
         )
+        delete_button.setMaximumWidth(40)
 
         main_layout.addWidget(toggle_cbox)
         main_layout.addWidget(core_entry_box)
@@ -57,13 +79,13 @@ class EditableListItem(QWidget):
 
 
 class TextEntryAdder(QWidget):
-    def __init__(self, item_add_handler):
+    def __init__(self, placeholder, item_add_handler):
         super().__init__()
 
         main_layout = QHBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
         entry_box = QLineEdit()
-        entry_box.setPlaceholderText("Add a site...")
+        entry_box.setPlaceholderText(placeholder)
         entry_box.returnPressed.connect(lambda: item_add_handler(entry_box))
 
         main_layout.addWidget(entry_box)
