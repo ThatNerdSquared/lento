@@ -34,11 +34,12 @@ build-daemon-windows: test lint
 	@mv __main__.exe lentodaemon.lento.exe
 
 
-build-macos: test lint build-daemon
+build-macos: test lint
 	@pyinstaller --name="Lento" \
 		--add-data "lento.qss:." \
 		--add-data "fonts/*.ttf:fonts/" \
 		--add-data "lentodaemon:." \
+		--add-data ".venv/lib/python3.10/site-packages/fleep/data.json:fleep/." \
 		--icon assets/Lento.icns \
 		--windowed --onefile app.py
 		@#--add-data ".env:." \
@@ -49,6 +50,7 @@ build-windows: test lint
 		--add-data "windows-style.qss;." \
 		--add-data "fonts/*.ttf;fonts/" \
 		--add-data "lentodaemon" \
+		--add-data ".venv/lib/python3.10/site-packages/fleep/data.json:fleep/." \
 		--add-data "assets/lento-icon.png;." \
 		--icon assets/lento-icon.ico \
 		--windowed --onefile app.py

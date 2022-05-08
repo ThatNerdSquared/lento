@@ -2,8 +2,8 @@ from PySide6.QtGui import Qt
 from PySide6.QtWidgets import QFrame, QScrollArea, QVBoxLayout, QWidget  # noqa: E501
 from lento.gui.timer import TimerView
 from lento.gui.title import Title
-from lento.gui.websitelist import WebsiteList
-from lento.gui.applist import AppList
+from lento.gui.websitelist import ToggleList
+# from lento.gui.applist import AppList
 
 
 class Card(QWidget):
@@ -34,32 +34,36 @@ class Card(QWidget):
             self.ACTIVATED_CARD,
             refresh_handler
         )
-        whb_list = WebsiteList(
+        whb_list = ToggleList(
             DATA["name"],
             DATA["hard_blocked_sites"],
             "hard_blocked_sites",
             "Hard-blocked Websites",
+            "WebsiteList",
             refresh_handler
         )
-        wsb_list = WebsiteList(
+        wsb_list = ToggleList(
             DATA["name"],
             DATA["soft_blocked_sites"],
             "soft_blocked_sites",
             "Soft-blocked Websites",
+            "WebsiteList",
             refresh_handler
         )
-        ahb_list = AppList(
+        ahb_list = ToggleList(
             DATA["name"],
             DATA["hard_blocked_apps"],
             "hard_blocked_apps",
             "Hard-blocked Apps",
+            "AppList",
             refresh_handler
         )
-        asb_list = AppList(
+        asb_list = ToggleList(
             DATA["name"],
             DATA["soft_blocked_apps"],
             "soft_blocked_apps",
             "Soft-blocked Apps",
+            "AppList",
             refresh_handler
         )
 
