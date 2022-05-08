@@ -2,7 +2,7 @@ from PySide6.QtGui import Qt
 from PySide6.QtWidgets import QFrame, QScrollArea, QVBoxLayout, QWidget  # noqa: E501
 from lento.gui.timer import TimerView
 from lento.gui.title import Title
-from lento.gui.websitelist import ToggleList
+from lento.gui.toggle_list import ToggleList
 # from lento.gui.applist import AppList
 
 
