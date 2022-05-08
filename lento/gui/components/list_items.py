@@ -1,8 +1,8 @@
 import platform
-from PySide6.QtWidgets import QFileDialog, QHBoxLayout, QLineEdit, QPushButton, QWidget  # noqa: E501
+from PySide6.QtWidgets import QCheckBox, QFileDialog, QHBoxLayout, QLineEdit, QPushButton, QWidget  # noqa: E501
 
 
-class ToggledListItem(QWidget):
+class LauncherListItem(QWidget):
     def __init__(self, item_text, is_checked, toggle_handler):
         super().__init__()
 
@@ -16,6 +16,43 @@ class ToggledListItem(QWidget):
         core_button.clicked.connect(lambda: toggle_handler(core_button))
 
         main_layout.addWidget(core_button)
+        self.setLayout(main_layout)
+
+
+class EditableListItem(QWidget):
+    def __init__(
+        self,
+        item_text,
+        is_checked,
+        update_editable_handler,
+        toggle_handler,
+        delete_item_handler,
+        item_index
+    ):
+        super().__init__()
+
+        main_layout = QHBoxLayout()
+        main_layout.setContentsMargins(0, 0, 0, 0)
+
+        core_entry_box = QLineEdit(item_text)
+        core_entry_box.returnPressed.connect(
+            lambda: update_editable_handler(core_entry_box, item_index)
+        )
+
+        toggle_cbox = QCheckBox()
+        toggle_cbox.setChecked(is_checked)
+        toggle_cbox.stateChanged.connect(
+            lambda: toggle_handler(toggle_cbox, entrybox=core_entry_box)
+        )
+
+        delete_button = QPushButton("🗑")
+        delete_button.clicked.connect(
+            lambda: delete_item_handler(core_entry_box)
+        )
+
+        main_layout.addWidget(toggle_cbox)
+        main_layout.addWidget(core_entry_box)
+        main_layout.addWidget(delete_button)
         self.setLayout(main_layout)
 
 
@@ -43,11 +80,11 @@ class AppPicker(QWidget):
         main_layout = QHBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
 
-        core_button = QPushButton("+ Add an app")
-        core_button.setEnabled(True)
-        core_button.clicked.connect(self.show_app_picker)
+        core_entry_box = QPushButton("+ Add an app")
+        core_entry_box.setEnabled(True)
+        core_entry_box.clicked.connect(self.show_app_picker)
 
-        main_layout.addWidget(core_button)
+        main_layout.addWidget(core_entry_box)
         self.setLayout(main_layout)
 
     def show_app_picker(self):

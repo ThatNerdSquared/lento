@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
-from lento.gui.components.list_items import AppPicker, TextEntryAdder, ToggledListItem  # noqa: E501
+from lento.gui.components.list_items import AppPicker, EditableListItem, TextEntryAdder, LauncherListItem  # noqa: E501
 from lento.gui.handlers import Handlers
 
 
@@ -40,17 +40,40 @@ class ToggleList(QWidget):
         self.inner_list.setObjectName("innerlist")
         inner_list_layout = QVBoxLayout()
         inner_list_layout.setSpacing(0)
+        i = 0
         for item in self.INPUT_LIST.keys():
-            list_item = ToggledListItem(
-                item,
-                self.INPUT_LIST[item]["enabled"],
-                handlers.toggle_item
-            )
+            match self.LIST_TYPE:
+                case "GoalList":
+                    list_item = EditableListItem(
+                        item,
+                        self.INPUT_LIST[item],
+                        handlers.update_editable_item,
+                        handlers.toggle_item,
+                        handlers.delete_item_handler,
+                        i
+                    )
+                case "WebsiteList":
+                    list_item = LauncherListItem(
+                        item,
+                        self.INPUT_LIST[item]["enabled"],
+                        handlers.toggle_item
+                    )
+                case "AppList":
+                    list_item = LauncherListItem(
+                        item,
+                        self.INPUT_LIST[item]["enabled"],
+                        handlers.toggle_item
+                    )
+                case _:
+                    list_item = QLabel("An error occured: no list type found")
             inner_list_layout.addWidget(list_item)
+            i += 1
 
         match self.LIST_TYPE:
+            case "GoalList":
+                adder_item = TextEntryAdder(handlers.add_text_item)
             case "WebsiteList":
-                adder_item = TextEntryAdder(handlers.add_site)
+                adder_item = TextEntryAdder(handlers.add_text_item)
             case "AppList":
                 adder_item = AppPicker(
                     self.CURRENT_CARD,

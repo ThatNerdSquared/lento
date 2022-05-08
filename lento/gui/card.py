@@ -3,7 +3,6 @@ from PySide6.QtWidgets import QFrame, QScrollArea, QVBoxLayout, QWidget  # noqa:
 from lento.gui.timer import TimerView
 from lento.gui.title import Title
 from lento.gui.toggle_list import ToggleList
-# from lento.gui.applist import AppList
 
 
 class Card(QWidget):
@@ -32,6 +31,14 @@ class Card(QWidget):
             DATA["name"],
             self.TIME,
             self.ACTIVATED_CARD,
+            refresh_handler
+        )
+        goal_list = ToggleList(
+            DATA["name"],
+            DATA["goals"],
+            "goals",
+            "Goals",
+            "GoalList",
             refresh_handler
         )
         whb_list = ToggleList(
@@ -69,6 +76,7 @@ class Card(QWidget):
 
         internal_card.addWidget(title)
         internal_card.addWidget(timer)
+        internal_card.addWidget(goal_list)
         internal_card.addWidget(whb_list)
         internal_card.addWidget(wsb_list)
         internal_card.addWidget(ahb_list)
