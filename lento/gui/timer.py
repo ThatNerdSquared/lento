@@ -1,4 +1,4 @@
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, Qt
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget  # noqa: E501
 from lento.common import cards_management as CardsManagement
 from lento.common import get_block_controller
@@ -62,19 +62,26 @@ class TimerView(QWidget):
             mins_letter, self.secs_box1, self.secs_box2, secs_letter
         ]:
             if isinstance(item, QLineEdit):
+                item.setObjectName("timertext")
                 item.setMaxLength(1)
-                item.setMaximumWidth(20)
+                item.setMaximumWidth(30)
+                item.setMinimumHeight(30)
                 item.returnPressed.connect(self.update_timer_data)
                 if self.BLOCK_IS_RUNNING:
                     item.setEnabled(False)
+            if isinstance(item, QLabel):
+                item.setObjectName("timerlabel")
             timer_boxes.addWidget(item)
 
         self.start_button = QPushButton("Start Block")
         self.start_button.clicked.connect(self.start_block)
+        self.start_button.setObjectName("startbutton")
 
         main_layout.addLayout(timer_boxes)
         main_layout.addWidget(self.start_button)
-
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setObjectName("timerbox")
+        self.setContentsMargins(10, 10, 10, 10)
         self.setLayout(main_layout)
 
     def replace_empty_with_zero(self, item):
@@ -137,6 +144,8 @@ class TimerView(QWidget):
         block_controller.start_block(self.CURRENT_CARD, int(total))
         self.BLOCK_IS_RUNNING = True
         self.start_button.setEnabled(False)
+        self.start_button.setObjectName("disabled_startbutton")
+        self.start_button.setText("Session is running!")
         self.TIMER.start()
 
     def reload_timer(self):

@@ -3,9 +3,9 @@ from lento.common.init_sequence import init_sequence
 from lento.gui.card import Card
 from lento import utils
 from pathlib import Path
-from PySide6.QtCore import QDir
-from PySide6.QtGui import QFontDatabase
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QStackedWidget  # noqa: E501
+from PySide6.QtCore import QDir, QSize
+from PySide6.QtGui import QFontDatabase, QIcon
+from PySide6.QtWidgets import QApplication, QMainWindow, QToolButton, QWidget, QHBoxLayout, QVBoxLayout, QStackedWidget  # noqa: E501
 from lento.common import cards_management as CardsManagement
 
 
@@ -20,7 +20,12 @@ class MainWindow(QMainWindow):
         main_layout = QHBoxLayout()
         main_stack = QStackedWidget()
 
-        left_button = QPushButton("⬅️")
+        left_button = QToolButton()
+        left_button.setIcon(QIcon(
+            utils.get_data_file_path("assets/arrow-left.svg")
+        ))
+        left_button.setIconSize(QSize(70, 70))
+        left_button.setObjectName("emojibutton")
         main_layout.addWidget(left_button)
 
         cards = CardsManagement.read_cards()
@@ -33,8 +38,20 @@ class MainWindow(QMainWindow):
             menu_buttons = QWidget()
             menu_buttons_layout = QHBoxLayout()
 
-            add_card = QPushButton("➕")
-            delete_card = QPushButton("🗑")
+            add_card = QToolButton()
+            add_card.setIcon(QIcon(
+                utils.get_data_file_path("assets/add-twemoji.svg")
+            ))
+            add_card.setIconSize(QSize(30, 30))
+            add_card.setObjectName("emojibutton")
+
+            delete_card = QToolButton()
+            delete_card.setIcon(QIcon(
+                utils.get_data_file_path("assets/delete-twemoji.svg")
+            ))
+            delete_card.setIconSize(QSize(30, 30))
+            delete_card.setObjectName("emojibutton")
+
             menu_buttons_layout.addWidget(add_card)
             menu_buttons_layout.addWidget(delete_card)
             menu_buttons.setLayout(menu_buttons_layout)
@@ -49,18 +66,22 @@ class MainWindow(QMainWindow):
 
         main_layout.addWidget(main_stack)
 
-        right_button = QPushButton("➡️")
+        right_button = QToolButton()
+        right_button.setIcon(QIcon(
+            utils.get_data_file_path("assets/arrow-right.svg")
+        ))
+        right_button.setIconSize(QSize(70, 70))
+        right_button.setObjectName("emojibutton")
         main_layout.addWidget(right_button)
 
         main.setLayout(main_layout)
         self.setCentralWidget(main)
 
-        # i = 0
         right_button.clicked.connect(
-            lambda: self.main_stack.setCurrentIndex(1)
+            lambda: main_stack.setCurrentIndex(1)
         )
         left_button.clicked.connect(
-            lambda: self.main_stack.setCurrentIndex(-1)
+            lambda: main_stack.setCurrentIndex(0)
         )
 
     def refresh_event(self):

@@ -1,5 +1,9 @@
 import platform
-from PySide6.QtWidgets import QCheckBox, QFileDialog, QHBoxLayout, QLineEdit, QPushButton, QWidget  # noqa: E501
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QCheckBox, QFileDialog, QHBoxLayout, QLineEdit, QPushButton, QToolButton, QWidget  # noqa: E501
+
+from lento import utils  # noqa: E501
 
 
 class LauncherListItem(QWidget):
@@ -19,6 +23,7 @@ class LauncherListItem(QWidget):
         core_button = QPushButton(item_text)
         core_button.setEnabled(isEnabled)
         core_button.clicked.connect(lambda: toggle_handler(core_button))
+        core_button.setObjectName("entrytext")
 
         toggle_cbox = QCheckBox()
         toggle_cbox.setChecked(is_checked)
@@ -27,11 +32,15 @@ class LauncherListItem(QWidget):
         )
         toggle_cbox.setMaximumWidth(20)
 
-        delete_button = QPushButton("🗑")
+        delete_button = QToolButton()
+        delete_button.setIcon(QIcon(
+            utils.get_data_file_path("assets/delete-twemoji.svg")
+        ))
+        delete_button.setIconSize(QSize(20, 20))
+        delete_button.setObjectName("emojibutton")
         delete_button.clicked.connect(
             lambda: delete_item_handler(core_button)
         )
-        delete_button.setMaximumWidth(40)
 
         main_layout.addWidget(toggle_cbox)
         main_layout.addWidget(core_button)
@@ -58,6 +67,7 @@ class EditableListItem(QWidget):
         core_entry_box.returnPressed.connect(
             lambda: update_editable_handler(core_entry_box, item_index)
         )
+        core_entry_box.setObjectName("entrytext")
 
         toggle_cbox = QCheckBox()
         toggle_cbox.setChecked(is_checked)
@@ -66,11 +76,15 @@ class EditableListItem(QWidget):
         )
         toggle_cbox.setMaximumWidth(20)
 
-        delete_button = QPushButton("🗑")
+        delete_button = QToolButton()
+        delete_button.setIcon(QIcon(
+            utils.get_data_file_path("assets/delete-twemoji.svg")
+        ))
+        delete_button.setIconSize(QSize(20, 20))
+        delete_button.setObjectName("emojibutton")
         delete_button.clicked.connect(
             lambda: delete_item_handler(core_entry_box)
         )
-        delete_button.setMaximumWidth(40)
 
         main_layout.addWidget(toggle_cbox)
         main_layout.addWidget(core_entry_box)
@@ -87,6 +101,7 @@ class TextEntryAdder(QWidget):
         entry_box = QLineEdit()
         entry_box.setPlaceholderText(placeholder)
         entry_box.returnPressed.connect(lambda: item_add_handler(entry_box))
+        entry_box.setObjectName("addertext")
 
         main_layout.addWidget(entry_box)
         self.setLayout(main_layout)
@@ -105,6 +120,7 @@ class AppPicker(QWidget):
         core_entry_box = QPushButton("+ Add an app")
         core_entry_box.setEnabled(True)
         core_entry_box.clicked.connect(self.show_app_picker)
+        core_entry_box.setObjectName("addertext")
 
         main_layout.addWidget(core_entry_box)
         self.setLayout(main_layout)

@@ -37,7 +37,7 @@ class Card(QWidget):
             DATA["name"],
             DATA["goals"],
             "goals",
-            "Goals",
+            "    Goals",
             "GoalList",
             refresh_handler
         )
@@ -45,7 +45,7 @@ class Card(QWidget):
             DATA["name"],
             DATA["hard_blocked_sites"],
             "hard_blocked_sites",
-            "Hard-blocked Websites",
+            "    Hard-blocked Websites",
             "WebsiteList",
             refresh_handler
         )
@@ -53,7 +53,7 @@ class Card(QWidget):
             DATA["name"],
             DATA["soft_blocked_sites"],
             "soft_blocked_sites",
-            "Soft-blocked Websites",
+            "    Soft-blocked Websites",
             "WebsiteList",
             refresh_handler
         )
@@ -61,7 +61,7 @@ class Card(QWidget):
             DATA["name"],
             DATA["hard_blocked_apps"],
             "hard_blocked_apps",
-            "Hard-blocked Apps",
+            "    Hard-blocked Apps",
             "AppList",
             refresh_handler
         )
@@ -69,7 +69,7 @@ class Card(QWidget):
             DATA["name"],
             DATA["soft_blocked_apps"],
             "soft_blocked_apps",
-            "Soft-blocked Apps",
+            "    Soft-blocked Apps",
             "AppList",
             refresh_handler
         )

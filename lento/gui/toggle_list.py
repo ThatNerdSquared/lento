@@ -1,4 +1,6 @@
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
+from lento import utils
 from lento.gui.components.list_items import AppPicker, EditableListItem, TextEntryAdder, LauncherListItem  # noqa: E501
 from lento.gui.handlers import Handlers
 
@@ -23,10 +25,14 @@ class ToggleList(QWidget):
 
         main_layout = QVBoxLayout()
 
-        toggle = QPushButton(current_list_title)
-        toggle.setObjectName("toggle")
-        toggle.setCheckable(True)
-        toggle.clicked.connect(self.toggle_sublist)
+        self.toggle = QPushButton(current_list_title)
+        self.toggle.setObjectName("toggle")
+        self.toggle.setCheckable(True)
+        self.toggle.clicked.connect(self.toggle_sublist)
+        self.toggle.setMinimumHeight(40)
+        self.toggle.setIcon(QIcon(
+            utils.get_data_file_path("assets/toggle-unfolded.svg")
+        ))
 
         handlers = Handlers(
             self.CURRENT_CARD,
@@ -95,12 +101,18 @@ class ToggleList(QWidget):
         inner_list_layout.addWidget(adder_item)
         self.inner_list.setLayout(inner_list_layout)
 
-        main_layout.addWidget(toggle)
+        main_layout.addWidget(self.toggle)
         main_layout.addWidget(self.inner_list)
         self.setLayout(main_layout)
 
     def toggle_sublist(self, checked):
         if checked:
             self.inner_list.show()
+            self.toggle.setIcon(QIcon(
+                utils.get_data_file_path("assets/toggle-unfolded.svg")
+            ))
         else:
             self.inner_list.hide()
+            self.toggle.setIcon(QIcon(
+                utils.get_data_file_path("assets/toggle-folded.svg")
+            ))

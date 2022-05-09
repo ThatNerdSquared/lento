@@ -1,7 +1,7 @@
 #cardtitle {
     font-family: Montserrat;
-    font-weight: 600px;
-    font-size: 24px;
+    font-weight: 500px;
+    font-size: 36px;
     border: 0px;
     text-align: center;
 }
@@ -16,11 +16,72 @@
     border: 0px;
     border-radius: 8px;
     font-family: Montserrat;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    font-size: 16px;
+    text-align: left;
+    padding-left: 20px;
 }
 
 #innerlist {
     background-color: #F4F4F4;
     color: #565656;
+    border: 0px;
+    border-radius: 8px;
+}
+
+#timerbox {
+    background-color: #F7F7F7;
+    border: 0px;
+    border-radius: 20px;
+}
+
+#startbutton {
+    background-color: #7DBB2D;
+    color: #FFFFFF;
+    font-family: Montserrat;
+    font-size: 18px;
+    border: 0px;
+    border-radius: 5px;
+}
+
+#disabled_startbutton {
+    background-color: #ff8e9d;
+    color: #FFFFFF;
+    font-family: Montserrat;
+    font-size: 18px;
+    border: 0px;
+    border-radius: 5px;
+}
+
+#timertext {
+    font-family: Montserrat;
+    font-size: 24px;
+    color: #565656;
+}
+
+#timerlabel {
+    background-color: #000000;
+    color: #565656;
+    font-family: Montserrat;
+    font-size: 24px;
+}
+
+#entrytext {
+    font-family: Montserrat;
+    font-size: 12px;
+    color: #565656;
+}
+
+#addertext {
+    font-family: Montserrat;
+    font-size: 12px;
+    color: #8D8D8D;
+}
+
+#emojibutton {
+    border: 0;
+    border-radius: 8px;
+}
+
+#mainwindow {
+    background-color: #FFFFFF;
 }
