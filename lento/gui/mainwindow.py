@@ -75,6 +75,7 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(right_button)
 
         main.setLayout(main_layout)
+        main.setObjectName("mainwindow")
         self.setCentralWidget(main)
 
         right_button.clicked.connect(

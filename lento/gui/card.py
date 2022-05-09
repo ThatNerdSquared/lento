@@ -1,5 +1,5 @@
-from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QFrame, QScrollArea, QVBoxLayout, QWidget  # noqa: E501
+from PySide6.QtGui import QColor, Qt
+from PySide6.QtWidgets import QFrame, QGraphicsDropShadowEffect, QScrollArea, QVBoxLayout, QWidget  # noqa: E501
 from lento.gui.timer import TimerView
 from lento.gui.title import Title
 from lento.gui.toggle_list import ToggleList
@@ -12,18 +12,16 @@ class Card(QWidget):
         self.ACTIVATED_CARD = activated_card
         self.TIME = DATA["time"]
 
+        drop_shadow = QGraphicsDropShadowEffect(self)
+        drop_shadow.setBlurRadius(20)
+        drop_shadow.setOffset(0)
+        drop_shadow.setYOffset(4)
+        drop_shadow.setColor(QColor(0, 0, 0, 100))
+        self.setGraphicsEffect(drop_shadow)
+
+        body_rect = QWidget()
+        body_rect.setObjectName("outercard")
         body_layout = QVBoxLayout()
-
-        # Draw the card rect.
-        body_rect = QFrame()
-        body_rect.setFrameShape(QFrame.Panel)
-        body_rect.setFrameShadow(QFrame.Raised)
-        body_rect.setLineWidth(3)
-        body_rect.setMidLineWidth(3)
-        body_rect.setStyleSheet("QFrame { background-color: #FFFFFF; }")  # noqa: E501
-        body_rect.setMinimumSize(300, 500)
-        body_rect.setMaximumSize(500, 800)
-
         internal_card = QVBoxLayout()
 
         title = Title(DATA["name"], refresh_handler)
@@ -88,6 +86,7 @@ class Card(QWidget):
 
         # Set the internal scroll area for the card.
         scroll_area = QScrollArea()
+        scroll_area.setAutoFillBackground(True)
         scroll_area.setWidgetResizable(True)
         scroll_area.setWidget(internal_card_widget)
         scroll_area.setFrameShape(QFrame.NoFrame)

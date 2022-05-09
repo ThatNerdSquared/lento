@@ -10,6 +10,12 @@
     background-color: #FFFFFF;
 }
 
+#outercard {
+    background-color: #FFFFFF;
+    border: 0px;
+    border-radius: 30px;
+}
+
 #toggle {
     background-color: #E6E6E6;
     color: #565656;
@@ -59,7 +65,7 @@
 }
 
 #timerlabel {
-    background-color: #000000;
+    background-color: #F7F7F7;
     color: #565656;
     font-family: Montserrat;
     font-size: 24px;
