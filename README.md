@@ -1,3 +1,6 @@
+## [CWSF judges and visitors — here's a direct link to our logbook.](https://github.com/lentoapp/lento/blob/main/docs/lento-log.md)
+
+
 # Lento: Goal-Based Productivity
 
 Lento is a goal-based productivity app for Windows and macOS, incorporating
