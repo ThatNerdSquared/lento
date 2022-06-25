@@ -1,8 +1,8 @@
 # Prod
 PySide6>=6.2.4
-psutil>=5.9.0
-pillow>=9.1.0
-proxy.py>=2.4.1
+psutil>=5.9.1
+pillow>=9.1.1
+proxy.py>=2.4.2
 peewee>=3.14.10
 plyer>=2.0.0
 pygame>=2.1.2
@@ -11,5 +11,5 @@ grabicon>=0.1.2
 # Dev
 flake8>=4.0.1
 pytest>=7.1.1
-pyinstaller>=4.10
-Nuitka>=0.7.7
+pyinstaller>=5.1
+Nuitka>=0.8.1

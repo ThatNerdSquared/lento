@@ -25,6 +25,7 @@ def entry(card_to_use, lasts_for):
     sb_apps = app_blocker.generate_softblocked_apps_list(card_to_use)
 
     notifs_controller = NotifsController()
+    notifs_controller.clear_notifs()
     notifs_dict = SETTINGS["cards"][card_to_use]["notifications"]
     for item in notifs_dict.keys():
         if not notifs_dict[item]["enabled"]:
