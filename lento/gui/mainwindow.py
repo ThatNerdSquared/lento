@@ -7,18 +7,32 @@ from PySide6.QtCore import QDir, QSize
 from PySide6.QtGui import QFontDatabase, QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QToolButton, QWidget, QHBoxLayout, QVBoxLayout, QStackedWidget  # noqa: E501
 from lento.common import cards_management as CardsManagement
+# from lento.gui.notifications import NotifWindow
+from lento.common.cards_management import create_card
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Lento")
+
         self.set_up_window()
 
     def set_up_window(self):
         main = QWidget()
+        self.deck = QStackedWidget()
+
         main_layout = QHBoxLayout()
-        main_stack = QStackedWidget()
+        main.setLayout(main_layout)
+        main.setObjectName("mainwindow")
+
+        notif_window = QWidget()
+        self.SYSTEMS_WIDGETS = {
+            "notif_window": notif_window
+        }
+
+        for item in self.SYSTEMS_WIDGETS.keys():
+            self.deck.addWidget(self.SYSTEMS_WIDGETS[item])
 
         left_button = QToolButton()
         left_button.setIcon(QIcon(
@@ -26,10 +40,14 @@ class MainWindow(QMainWindow):
         ))
         left_button.setIconSize(QSize(70, 70))
         left_button.setObjectName("emojibutton")
+        left_button.clicked.connect(self.left_button_click)
         main_layout.addWidget(left_button)
 
         cards = CardsManagement.read_cards()
         ACTIVATED_CARD = CardsManagement.get_block_in_settings()
+
+        if len(cards) == 0:
+            create_card(0)
 
         for item in cards.keys():
             card_buttons = QWidget()
@@ -62,9 +80,9 @@ class MainWindow(QMainWindow):
             card_buttons_layout.addWidget(menu_buttons)
             card_buttons.setLayout(card_buttons_layout)
 
-            main_stack.addWidget(card_buttons)
+            self.deck.addWidget(card_buttons)
 
-        main_layout.addWidget(main_stack)
+        main_layout.addWidget(self.deck)
 
         right_button = QToolButton()
         right_button.setIcon(QIcon(
@@ -72,18 +90,41 @@ class MainWindow(QMainWindow):
         ))
         right_button.setIconSize(QSize(70, 70))
         right_button.setObjectName("emojibutton")
+        right_button.clicked.connect(self.right_button_click)
         main_layout.addWidget(right_button)
 
-        main.setLayout(main_layout)
-        main.setObjectName("mainwindow")
+        self.deck.setCurrentIndex(len(self.SYSTEMS_WIDGETS))
+
         self.setCentralWidget(main)
 
-        right_button.clicked.connect(
-            lambda: main_stack.setCurrentIndex(1)
-        )
-        left_button.clicked.connect(
-            lambda: main_stack.setCurrentIndex(0)
-        )
+    def left_button_click(self):
+        sys_windows = len(self.SYSTEMS_WIDGETS)
+        deck_len = self.deck.count()
+        index = self.deck.currentIndex()
+
+        if index != 0:
+            index -= 1
+            self.deck.setCurrentIndex(index)
+        else:
+            self.deck.setCurrentIndex(index + deck_len - 1 - sys_windows)
+
+        print(index, "left")
+
+    def right_button_click(self):
+        sys_windows = len(self.SYSTEMS_WIDGETS)
+        deck_len = self.deck.count()
+        index = self.deck.currentIndex()
+
+        if index + 1 + sys_windows != deck_len:
+            index += 1
+            self.deck.setCurrentIndex(index)
+        else:
+            self.deck.setCurrentIndex(0)
+
+        print(index, "right")
+
+    def flipper(self):
+        self.deck.setCurrentIndex(0)
 
     def refresh_event(self):
         self.set_up_window()
