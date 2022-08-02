@@ -47,16 +47,22 @@ build-macos: test lint
 		--add-data "assets/add-twemoji.svg:assets/." \
 		--add-data "assets/delete-twemoji.svg:assets/." \
 		--icon assets/Lento.icns \
-		--windowed --onefile app.py
+		--windowed app.py
 		@#--add-data ".env:." \
 		@# --osx-bundle-identifier io.github.lentoapp.lento
 
 build-windows: test lint
 	@${PYTHON} -m PyInstaller --name="Lento" \
-		--add-data "windows-style.qss;." \
+		--add-data "lento.qss;." \
 		--add-data "fonts/*.ttf;fonts/" \
-		--add-data "lentodaemon" \
-		--add-data ".venv/lib/python3.10/site-packages/fleep/data.json:fleep/." \
+		--add-data "lentodaemon;." \
+		--add-data ".venv/Lib/site-packages/fleep/data.json;fleep/." \
+		--add-data "assets/toggle-unfolded.svg;assets/." \
+		--add-data "assets/toggle-folded.svg;assets/." \
+		--add-data "assets/arrow-left.svg;assets/." \
+		--add-data "assets/arrow-right.svg;assets/." \
+		--add-data "assets/add-twemoji.svg;assets/." \
+		--add-data "assets/delete-twemoji.svg;assets/." \
 		--add-data "assets/lento-icon.png;." \
 		--icon assets/lento-icon.ico \
 		--windowed --onefile app.py
