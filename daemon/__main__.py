@@ -36,6 +36,7 @@ def entry(card_to_use, lasts_for):
 
     with proxy.Proxy([
         "--port=0",
+        "--num-acceptors=1",
         "--plugins",
         "daemon.lento_blocker_plugin.LentoBlockerPlugin",
         "--hardblocked-sites",

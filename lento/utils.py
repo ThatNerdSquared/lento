@@ -80,7 +80,7 @@ def get_apps():
             "Something went wrong and the OS name could not be found."
         )
 
-    return(apps)
+    return apps
 
 
 def remove_dupes_blanks_and_whitespace(list_to_process):

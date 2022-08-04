@@ -1,6 +1,10 @@
 PYTHON := python3
 
 .PHONY = lint test run build_macos build_windows remove-build-files
+DAEMON_DIRS = $(shell find ./daemon/ -type d)
+DAEMON_FILES = $(shell find ./daemon/ -type f -name '*')
+APP_DIRS = $(shell find ./lento/ -type d)
+APP_FILES = $(shell find ./lento/ -type f -name '*')
 
 lint:
 	@echo Linting...
@@ -23,18 +27,22 @@ run: test lint
 run-daemon: test lint
 	@${PYTHON} -m daemon
 
-build-daemon: test lint
+build-daemon: $(DAEMON_DIRS) $(DAEMON_FILES)
+	make test
+	make lint
 	@${PYTHON} -m nuitka daemon/__main__.py \
 		--onefile --standalone
 	@mv __main__.bin lentodaemon
 
-build-daemon-windows: test lint
+build-daemon-windows: test lint daemon/
 	@${PYTHON} -m nuitka daemon/__main__.py \
 		--onefile --standalone
 	@mv __main__.exe lentodaemon.lento.exe
 
 
-build-macos: test lint
+build-macos: build-daemon $(APP_DIRS) $(APP_FILES)
+	make test
+	make lint
 	@pyinstaller --name="Lento" \
 		--add-data "lento.qss:." \
 		--add-data "fonts/*.ttf:fonts/" \
@@ -47,16 +55,22 @@ build-macos: test lint
 		--add-data "assets/add-twemoji.svg:assets/." \
 		--add-data "assets/delete-twemoji.svg:assets/." \
 		--icon assets/Lento.icns \
-		--windowed --onefile app.py
+		--windowed app.py
 		@#--add-data ".env:." \
 		@# --osx-bundle-identifier io.github.lentoapp.lento
 
-build-windows: test lint
+build-windows: test lint build-daemon-windows
 	@${PYTHON} -m PyInstaller --name="Lento" \
-		--add-data "windows-style.qss;." \
+		--add-data "lento.qss;." \
 		--add-data "fonts/*.ttf;fonts/" \
-		--add-data "lentodaemon" \
-		--add-data ".venv/lib/python3.10/site-packages/fleep/data.json:fleep/." \
+		--add-data "lentodaemon;." \
+		--add-data ".venv/Lib/site-packages/fleep/data.json;fleep/." \
+		--add-data "assets/toggle-unfolded.svg;assets/." \
+		--add-data "assets/toggle-folded.svg;assets/." \
+		--add-data "assets/arrow-left.svg;assets/." \
+		--add-data "assets/arrow-right.svg;assets/." \
+		--add-data "assets/add-twemoji.svg;assets/." \
+		--add-data "assets/delete-twemoji.svg;assets/." \
 		--add-data "assets/lento-icon.png;." \
 		--icon assets/lento-icon.ico \
 		--windowed --onefile app.py
