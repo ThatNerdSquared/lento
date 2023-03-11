@@ -21,12 +21,19 @@ run: test lint
 	@${PYTHON} app.py
 
 run-daemon: test lint
-	@${PYTHON} -m daemon
+	@${PYTHON} -m daemon 1
 
-build-daemon: test lint
+build-daemon:
 	@${PYTHON} -m nuitka daemon/__main__.py \
-		--onefile --standalone
-	@mv __main__.bin lentodaemon
+		--standalone
+	@mv __main__.dist/__main__ __main__.dist/lentodaemon
+	@sudo rm -rf __lentodaemon__.dist
+	@sudo cp -r __main__.dist __lentodaemon__.dist
+	@sudo rm -rf __main__.dist
+	@sudo rm -rf /usr/local/bin/__lentodaemon__.dist
+	@sudo cp -r __lentodaemon__.dist /usr/local/bin
+	@mkdir -p ~/Library/LaunchAgents
+	@sudo cp daemon/supporting_files/com.lento.lentodaemon.plist ~/Library/LaunchAgents
 
 build-daemon-windows: test lint
 	@${PYTHON} -m nuitka daemon/__main__.py \
@@ -34,11 +41,10 @@ build-daemon-windows: test lint
 	@mv __main__.exe lentodaemon.lento.exe
 
 
-build-macos: test lint
+build-macos:
 	@pyinstaller --name="Lento" \
 		--add-data "lento.qss:." \
 		--add-data "fonts/*.ttf:fonts/" \
-		--add-data "lentodaemon:." \
 		--add-data ".venv/lib/python3.10/site-packages/fleep/data.json:fleep/." \
 		--add-data "assets/toggle-unfolded.svg:assets/." \
 		--add-data "assets/toggle-folded.svg:assets/." \
@@ -46,12 +52,24 @@ build-macos: test lint
 		--add-data "assets/arrow-right.svg:assets/." \
 		--add-data "assets/add-twemoji.svg:assets/." \
 		--add-data "assets/delete-twemoji.svg:assets/." \
+		--add-data "assets/help.svg:assets/." \
+		--add-data "assets/checkbox_normal.svg:assets/." \
+		--add-data "assets/checkbox_checked.svg:assets/." \
+		--add-data "assets/checkbox_hover.svg:assets/." \
+		--add-data "assets/checkbox_disabled.svg:assets/." \
+		--add-data "assets/edit.svg:assets/." \
+		--add-data "assets/edit_hover.svg:assets/." \
+		--add-data "assets/delete.svg:assets/." \
+		--add-data "assets/check.svg:assets/." \
+		--add-data "assets/error.svg:assets/." \
+		--add-data "assets/warning.svg:assets/." \
 		--icon assets/Lento.icns \
-		--windowed --onefile app.py
+		--noconfirm \
+		--windowed --onedir app.py
 		@#--add-data ".env:." \
 		@# --osx-bundle-identifier io.github.lentoapp.lento
 
-build-windows: test lint
+build-windows:
 	@${PYTHON} -m PyInstaller --name="Lento" \
 		--add-data "windows-style.qss;." \
 		--add-data "fonts/*.ttf;fonts/" \

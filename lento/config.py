@@ -26,8 +26,12 @@ class Config:
         HOME_FOLDER / "Library" / "Application Support" if
         platform.system() != "Windows" else HOME_FOLDER / "AppData" / "Local"  # noqa: E501
     )) / "Lento"
+    ICON_PATH = APPDATA_PATH / "icons"
     DB_PATH = APPDATA_PATH / "blocktimers.db"
     REVERSED_DOMAIN = "io.github.lentoapp"
+    DAEMON_PLIST_PATH = Path(str(
+        HOME_FOLDER / "Library" / "LaunchAgents" / "com.lento.lentodaemon.plist"  # noqa: E501
+    ))
     DAEMON_BINARY_PATH = Path(str(
        APPDATA_PATH if platform.system() == "Darwin" else HOME_FOLDER  # noqa: E501
     )) / ("lentodaemon" if platform.system() == "Darwin" else "lentodaemon.exe")  # noqa: E501
