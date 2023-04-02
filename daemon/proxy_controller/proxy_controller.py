@@ -5,12 +5,11 @@ import daemon.lento_blocker_plugin  # noqa # pylint: disable=unused-import
 from daemon.util.util import format_website
 from lento.config import Config
 from daemon.proxy_controller.macos_proxy_controller import macOSProxyController
-from daemon.proxy_controller.windows_proxy_controller import WindowsProxyController  # noqa: E501
+from daemon.proxy_controller.windows_proxy_controller import (
+    WindowsProxyController,
+)  # noqa: E501
 
-PROXIES = {
-    "Darwin": macOSProxyController,
-    "Windows": WindowsProxyController
-}
+PROXIES = {"Darwin": macOSProxyController, "Windows": WindowsProxyController}
 
 
 class ProxyController:
@@ -27,8 +26,7 @@ class ProxyController:
         # to a list of [WebsiteBlockItem.website_url, ...] according to
         # softblock/hardblock
         self.hardblocked_websites = self._parse_websites(websites_dict)
-        self.softblocked_websites = self._parse_websites(websites_dict,
-                                                         softblock=True)
+        self.softblocked_websites = self._parse_websites(websites_dict, softblock=True)
 
     def enable_system_proxy(self, proxy_port):
         """
@@ -56,37 +54,43 @@ class ProxyController:
         num_acceptors: number of acceptors to launch the proxy with
         """
 
-        logging.info(f"Initializing proxy server with \
-                     {num_acceptors} acceptor(s)")
+        logging.info(
+            f"Initializing proxy server with \
+                     {num_acceptors} acceptor(s)"
+        )
 
         # make proxy log also part of daemon logs
         logging.info("Hello")
         log_file_path = str(Config.APPDATA_PATH) + "/lentodaemon_proxy.log"
         logging.info("logging proxy to: {}".format(log_file_path))
 
-        self.proxy_server = proxy.Proxy([
-            "--port=0",
-            "--num-acceptors",
-            str(num_acceptors),
-            "--plugins",
-            "daemon.lento_blocker_plugin.LentoBlockerPlugin",
-            "--hardblocked-sites",
-            self.hardblocked_websites,
-            "--softblocked-sites",
-            self.softblocked_websites,
-            "--task-name",
-            task_name,
-            "--log-file",
-            log_file_path
-        ])
+        self.proxy_server = proxy.Proxy(
+            [
+                "--port=0",
+                "--num-acceptors",
+                str(num_acceptors),
+                "--plugins",
+                "daemon.lento_blocker_plugin.LentoBlockerPlugin",
+                "--hardblocked-sites",
+                self.hardblocked_websites,
+                "--softblocked-sites",
+                self.softblocked_websites,
+                "--task-name",
+                task_name,
+                "--log-file",
+                log_file_path,
+            ]
+        )
 
         logging.info("Setting up proxy server")
         self.proxy_server.setup()
 
         proxy_port = self.proxy_server.flags.port
 
-        logging.info(f"Enabling system proxy for proxy \
-                     server at port {proxy_port}")
+        logging.info(
+            f"Enabling system proxy for proxy \
+                     server at port {proxy_port}"
+        )
         self.enable_system_proxy(proxy_port)
 
     def cleanup(self):

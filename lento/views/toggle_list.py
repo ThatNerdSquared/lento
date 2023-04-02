@@ -10,11 +10,14 @@ class LentoToggleList(QWidget):
     Widget displaying a list of items that can be expanded
     or strinked
     """
-    def __init__(self, 
-                 title, 
-                 item_edited_handler=None,
-                 item_removed_handler=None,
-                 resize_handler=None):
+
+    def __init__(
+        self,
+        title,
+        item_edited_handler=None,
+        item_removed_handler=None,
+        resize_handler=None,
+    ):
         """
         Parameters:
         title: title of the list
@@ -30,7 +33,7 @@ class LentoToggleList(QWidget):
 
         self.main_layout = QVBoxLayout()
         self.main_layout.setSpacing(5)
-        self.main_layout.setContentsMargins(0,0,0,10)
+        self.main_layout.setContentsMargins(0, 0, 0, 10)
 
         # set up the button to expand and shrink the list
         self.toggle = QPushButton(title)
@@ -38,15 +41,15 @@ class LentoToggleList(QWidget):
         self.toggle.setCheckable(True)
         self.toggle.clicked.connect(self._toggle_sublist)
         self.toggle.setMinimumHeight(30)
-        self.toggle.setIcon(QIcon(
-            utils.get_data_file_path("assets/toggle-unfolded.svg")
-        ))
+        self.toggle.setIcon(
+            QIcon(utils.get_data_file_path("assets/toggle-unfolded.svg"))
+        )
 
         # set up the inner list with items
         self.inner_list = QWidget()
         self.inner_list.setObjectName("widgetbox")
         self.inner_list_layout = QVBoxLayout()
-        self.inner_list_layout.setContentsMargins(0,5,0,5)
+        self.inner_list_layout.setContentsMargins(0, 5, 0, 5)
         self.inner_list_layout.setSpacing(0)
         self.inner_list.setLayout(self.inner_list_layout)
 
@@ -88,7 +91,7 @@ class LentoToggleList(QWidget):
         """
         if not self.isVisibleTo(parent_widget):
             return 0
-        
+
         return int(self.sizeHint().height())
 
     def add_to_list(self, block_item):
@@ -98,7 +101,7 @@ class LentoToggleList(QWidget):
         list_item = LentoListItem(
             block_item,
             edit_handler=self._on_list_item_edited,
-            remove_handler=self._on_list_item_removed
+            remove_handler=self._on_list_item_removed,
         )
         self.inner_list_layout.addWidget(list_item)
 
@@ -111,18 +114,20 @@ class LentoToggleList(QWidget):
 
             if widget is not None and isinstance(widget, LentoListItem):
                 if widget.block_item.label == block_item.label:
-                    # if the widget's block item label 
+                    # if the widget's block item label
                     # matches the block item label to delete,
                     # remove it from list
-                    logging.info("Removing toggle list item" \
-                        " with label {}".format(block_item.label))
+                    logging.info(
+                        "Removing toggle list item"
+                        " with label {}".format(block_item.label)
+                    )
                     widget.deleteLater()
                     widget.setParent(None)
 
                     if self.onItemRemoved:
                         self.onItemRemoved(self, block_item)
 
-                    # must break out of loop and not let 
+                    # must break out of loop and not let
                     # the loop continue because after deletion
                     # the number of widget in inner list layout
                     # has changed
@@ -135,20 +140,16 @@ class LentoToggleList(QWidget):
         if checked:
             # if toggle button is checked, show inner list
             self.inner_list.show()
-            self.toggle.setIcon(QIcon(
-                utils.get_data_file_path(
-                    "assets/toggle-unfolded.svg"
-                )
-            ))
+            self.toggle.setIcon(
+                QIcon(utils.get_data_file_path("assets/toggle-unfolded.svg"))
+            )
         else:
             # if toggle button is unchecked, hide inner list
             self.inner_list.hide()
-            self.toggle.setIcon(QIcon(
-                utils.get_data_file_path(
-                    "assets/toggle-folded.svg"
-                )
-            ))
-        
+            self.toggle.setIcon(
+                QIcon(utils.get_data_file_path("assets/toggle-folded.svg"))
+            )
+
         if self.onSizeChange is not None:
             self.onSizeChange(self)
 

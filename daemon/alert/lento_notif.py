@@ -3,7 +3,7 @@ import subprocess
 from plyer import notification
 
 
-class LentoNotif():
+class LentoNotif:
     """
     Class handling banner notification display
     """
@@ -29,19 +29,16 @@ class LentoNotif():
                 return self._windows_notif()
 
     def _macos_notif(self):
-        subprocess.Popen([
-            "osascript",
-            "-e",
-            f"""display notification "{self.body}" with title "{self.title}\""""  # noqa: E501
-        ])
+        subprocess.Popen(
+            [
+                "osascript",
+                "-e",
+                f"""display notification "{self.body}" with title "{self.title}\"""",  # noqa: E501
+            ]
+        )
 
     def _windows_notif(self):
-        print(
-            f"==\nWIN NOTIF WITH TITLE {self.title} AND BODY {self.body}\n=="
-        )
+        print(f"==\nWIN NOTIF WITH TITLE {self.title} AND BODY {self.body}\n==")
         notification.notify(
-            title=self.title,
-            message=self.body,
-            app_name="Lento",
-            timeout=10
+            title=self.title, message=self.body, app_name="Lento", timeout=10
         )

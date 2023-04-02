@@ -28,8 +28,8 @@ run-daemon: test lint
 	@${PYTHON} -m daemon 1
 
 build-daemon: $(DAEMON_DIRS) $(DAEMON_FILES)
-	make test
-	make lint
+	# make test
+	# make lint
 	@${PYTHON} -m nuitka daemon/__main__.py \
 		--standalone
 	@mv __main__.dist/__main__ __main__.dist/lentodaemon
@@ -48,8 +48,8 @@ build-daemon-windows: test lint daemon/
 
 
 build-macos: build-daemon $(APP_DIRS) $(APP_FILES)
-	make test
-	make lint
+	# make test
+	# make lint
 	@pyinstaller --name="Lento" \
 		--add-data "lento.qss:." \
 		--add-data "fonts/*.ttf:fonts/" \

@@ -8,6 +8,7 @@ class LentoTextEdit(QTextEdit):
     Text edit that grows with input text size and
     is only editable on double click
     """
+
     def __init__(self, text=None, placeholder=None):
         """
         Parameters:
@@ -15,7 +16,7 @@ class LentoTextEdit(QTextEdit):
         placeholder: placeholder to display when text is empty
         """
         super().__init__()
-        
+
         self.readonly = False
         self.placeholder = placeholder
         self.setReadOnly(True)
@@ -38,7 +39,7 @@ class LentoTextEdit(QTextEdit):
 
         if placeholder:
             self.setPlaceholderText(placeholder)
-        
+
         # method called when text is changed, can be
         # set by the caller
         self.textChangedHandler = None
@@ -73,7 +74,7 @@ class LentoTextEdit(QTextEdit):
         # caller/parent of the change in text
         self.setReadOnly(True)
 
-        # only notify text changed if the 
+        # only notify text changed if the
         # widget is not in read only mode.
         # If widget is in read only mode, the
         # text would not have been changed
@@ -103,7 +104,7 @@ class LentoTextEdit(QTextEdit):
         """
         Method called when there is any UI event
         """
-        # if return key is pressed and the current 
+        # if return key is pressed and the current
         # text edit has focus, clear the focus of the
         # text edit. This will trigger focusOutEvent
         # to be called and the text change to be committed

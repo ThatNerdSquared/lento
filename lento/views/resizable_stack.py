@@ -7,6 +7,7 @@ class LentoResizableStackedWidget(QStackedWidget):
     Stack Widget that can resize according to
     currently displayed widget size
     """
+
     def __init__(self) -> None:
         super().__init__()
         self.currentChanged.connect(self.onCurrentChanged)
@@ -24,7 +25,7 @@ class LentoResizableStackedWidget(QStackedWidget):
             if i == self.currentIndex():
                 policy = QSizePolicy.Expanding
                 current_w = w
-            
+
             w.setSizePolicy(policy, policy)
             w.adjust_height()
 

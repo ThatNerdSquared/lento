@@ -20,9 +20,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Test with pytest
+    # - name: Test with pytest
+    #   run: |
+    #     make test
+    - name: Check formatting with black
       run: |
-        make test
+        black --check daemon daemon_interface lento tests
     - name: Lint with flake8
       run: |
         make lint

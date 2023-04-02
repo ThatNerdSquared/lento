@@ -24,6 +24,7 @@ class LentoBlockItem(ABC):
     """
     Base class for any block items
     """
+
     def __init__(self, softblock=False, popup_item=None, allow_interval=60):
         """
         Parameters:
@@ -36,7 +37,7 @@ class LentoBlockItem(ABC):
         self.allow_interval = allow_interval
         self.icon_path = None
         self.label = None
-    
+
     @abstractmethod
     def save(self, parent_card):
         """Will be implemented by child class."""
@@ -54,12 +55,10 @@ class LentoAppItem(LentoBlockItem):
     """
     Class containing all information of an app item
     """
-    def __init__(self, 
-                 app_path,
-                 softblock=False, 
-                 popup_item=None,
-                 allow_interval=60,
-                 load=True):
+
+    def __init__(
+        self, app_path, softblock=False, popup_item=None, allow_interval=60, load=True
+    ):
         """
         Parameters:
         app_path: path to app bundle/executable
@@ -68,9 +67,9 @@ class LentoAppItem(LentoBlockItem):
         allow_interval: how long this block item will be allowed for
         load: whether to load app info from file or not
         """
-        super().__init__(softblock=softblock, 
-                         popup_item=popup_item,
-                         allow_interval=allow_interval)
+        super().__init__(
+            softblock=softblock, popup_item=popup_item, allow_interval=allow_interval
+        )
         self.label = Path(app_path).stem
         self.app_path = app_path
         self.app_bundle_id = None
@@ -81,8 +80,7 @@ class LentoAppItem(LentoBlockItem):
         """
         Save the app item to lento settings under a parent card item
         """
-        if self.icon_path is not None and \
-            self.icon_path != "":
+        if self.icon_path is not None and self.icon_path != "":
             im = Image.open(self.icon_path)
             self.icon_path = IconManager.save_icon(im, self.label)
         CardsManagement.save_app_item(parent_card, self)
@@ -103,25 +101,19 @@ class LentoAppItem(LentoBlockItem):
         current_os = platform.system()
         if current_os == "Darwin":
             # get app bundle ID
-            self.app_bundle_id = subprocess.check_output([
-                "mdls",
-                "-name",
-                "kMDItemCFBundleIdentifier",
-                "-r",
-                self.app_path
-            ]).decode("utf-8")
+            self.app_bundle_id = subprocess.check_output(
+                ["mdls", "-name", "kMDItemCFBundleIdentifier", "-r", self.app_path]
+            ).decode("utf-8")
 
             # determine app bundle info plist path
             if self.app_path[:14] == "/Applications/":
-                self.app_path = os.path.join(Config.MACOS_APPLICATION_FOLDER, Path(self.app_path).name)
-                plist_path = Path(
-                    self.app_path,
-                    "Contents",
-                    "Info.plist"
+                self.app_path = os.path.join(
+                    Config.MACOS_APPLICATION_FOLDER, Path(self.app_path).name
                 )
+                plist_path = Path(self.app_path, "Contents", "Info.plist")
             else:
                 plist_path = Path(self.app_path, "Contents", "Info.plist")
-            
+
             # load info plist and find app icon name
             logging.info("Loading app info from plist path: {}".format(plist_path))
             app_plist = plistlib.loads(plist_path.read_bytes())
@@ -133,13 +125,10 @@ class LentoAppItem(LentoBlockItem):
                     icon_name = icon_name + ".icns"
 
                 original_icon_path = Path(
-                    self.app_path,
-                    "Contents",
-                    "Resources",
-                    icon_name
+                    self.app_path, "Contents", "Resources", icon_name
                 )
                 self.icon_path = original_icon_path
-            
+
             else:
                 self.icon_path = ""
 
@@ -170,11 +159,10 @@ class LentoWebsiteItem(LentoBlockItem):
     """
     Class containing all information of a website item
     """
-    def __init__(self,
-                 website_url,
-                 softblock=False,
-                 popup_item=None,
-                 allow_interval=60):
+
+    def __init__(
+        self, website_url, softblock=False, popup_item=None, allow_interval=60
+    ):
         """
         Parameters:
         website_url: url of website to block
@@ -182,9 +170,9 @@ class LentoWebsiteItem(LentoBlockItem):
         popup_item: the popup item associated with the block item
         allow_interval: how long this block item will be allowed for
         """
-        super().__init__(softblock=softblock, 
-                         popup_item=popup_item,
-                         allow_interval=allow_interval)
+        super().__init__(
+            softblock=softblock, popup_item=popup_item, allow_interval=allow_interval
+        )
         self.label = website_url
         self.website_url = website_url
 
@@ -283,10 +271,11 @@ class LentoCardItem:
     """
     Class containing all information of a card item
     """
+
     def __init__(self, id=None, duration=0, name=None, end_time=None):
         """
         Parameters:
-        id: ID of the card item, if no ID is provided, a ID will 
+        id: ID of the card item, if no ID is provided, a ID will
             be generated
         duration: time interval set on the card
         name: name of the card
@@ -307,11 +296,11 @@ class LentoCardItem:
         # time remaining indicates the amount
         # of time that is left for the card,
         # this is used to setup already
-        # activated card on app launch 
+        # activated card on app launch
         self.time_remaining = duration
 
         LentoPopUpItem.add_observer(self)
-    
+
     def contains(self, block_item):
         """
         Checks if a block item already exists in the card
@@ -319,7 +308,7 @@ class LentoCardItem:
         for label in self.block_items:
             if label == block_item.label:
                 return True
-        
+
         return False
 
     def isDone(self):
@@ -328,7 +317,7 @@ class LentoCardItem:
         """
         if self.end_time is None:
             return False
-        
+
         return time.time() > self.end_time
 
     def activate(self):
@@ -351,7 +340,7 @@ class LentoCardItem:
             # means that the card is resumed, compute the
             # time remainig on the card
             self.time_remaining = self.end_time - time.time()
-            
+
         # mark the card as activated in lento settings
         CardsManagement.activate_card(self)
 
@@ -393,7 +382,7 @@ class LentoCardItem:
     def save(self):
         """
         Save the entire card content to lento settings
-        """   
+        """
         self.save_metadata()
 
         for label in self.block_items:
@@ -404,7 +393,7 @@ class LentoCardItem:
         """
         Save the card metadata to lento settings
         """
-        if self.saved == False:
+        if self.saved is False:
             self.saved = True
         CardsManagement.update_card_metadata(self)
 
@@ -419,10 +408,7 @@ class LentoCardItem:
         """
         Method that handles when a popup ID is deleted
         """
-        logging.info("Card {}: observe popup id {} deleted".format(
-            self.id, 
-            popup_id
-        ))
+        logging.info("Card {}: observe popup id {} deleted".format(self.id, popup_id))
 
         # search the block items in the card, if the block
         # item uses the popup ID, set popup item of the block
@@ -434,8 +420,7 @@ class LentoCardItem:
             item = self.block_items[label]
             if item.popup_item is not None:
                 if item.popup_item.id == popup_id:
-                    logging.info("Removing popup item" \
-                        " for {}".format(item.label))
+                    logging.info("Removing popup item" " for {}".format(item.label))
                     item.popup_item = None
 
     def print(self):

@@ -11,10 +11,8 @@ class LentoListItem(QWidget):
 
     [Icon][Label]        [Edit Button][Delete Button]
     """
-    def __init__(self, 
-                 block_item,
-                 edit_handler=None,
-                 remove_handler=None):
+
+    def __init__(self, block_item, edit_handler=None, remove_handler=None):
         """
         Parameters
         block_item: block item to display
@@ -26,21 +24,20 @@ class LentoListItem(QWidget):
         self.block_item = block_item
 
         layout = QHBoxLayout()
-        layout.setContentsMargins(0,0,0,0)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(5)
         icon = QPushButton()
         icon.setObjectName("list_item_icon")
 
         # hide icon if block item does not have icon path
-        if block_item.icon_path is not None and \
-            block_item.icon_path != "":
+        if block_item.icon_path is not None and block_item.icon_path != "":
             icon.setIcon(QIcon(QPixmap(block_item.icon_path)))
         else:
             icon.setVisible(False)
 
         label = QLabel()
         label.setObjectName("list_item_label")
-        
+
         # hide label if block item does not have label
         if block_item.label is not None:
             label.setText(block_item.label)
@@ -49,9 +46,7 @@ class LentoListItem(QWidget):
 
         # build edit button
         self.edit_button = QPushButton()
-        self.edit_button.setIcon(QIcon(
-            utils.get_data_file_path("assets/edit.svg")
-        ))
+        self.edit_button.setIcon(QIcon(utils.get_data_file_path("assets/edit.svg")))
         self.edit_button.clicked.connect(self._on_edit_clicked)
         self.edit_button.setObjectName("list_item_edit_button")
 
@@ -59,18 +54,14 @@ class LentoListItem(QWidget):
         # relative to the bundle
         edit_hover_path = utils.get_data_file_path("assets/edit_hover.svg")
         self.edit_button.setStyleSheet(
-            "#list_item_edit_button:hover {{" \
-                "image: url({});" \
-            "}}".format(
-                edit_hover_path
-            )
+            "#list_item_edit_button:hover {{"
+            "image: url({});"
+            "}}".format(edit_hover_path)
         )
 
         # build delete button
         self.delete_button = QPushButton()
-        self.delete_button.setIcon(QIcon(
-            utils.get_data_file_path("assets/delete.svg")
-        ))
+        self.delete_button.setIcon(QIcon(utils.get_data_file_path("assets/delete.svg")))
         self.delete_button.clicked.connect(self._on_delete_clicked)
         self.delete_button.setObjectName("list_item_delete_button")
 
@@ -106,10 +97,9 @@ class LentoListItem(QWidget):
         """
         logging.info("Showing edit window for {}".format(self.block_item.label))
         LentoBlockItemWindow(
-            block_item=self.block_item,
-            item_changed_handler = self._on_item_changed
+            block_item=self.block_item, item_changed_handler=self._on_item_changed
         ).exec()
-        
+
     def _on_delete_clicked(self):
         """
         Handles when delete button is clicked
@@ -129,5 +119,5 @@ class LentoListItem(QWidget):
         # call handler for when the block item is edited
         if self.onItemEdited:
             self.onItemEdited(self, old_block_item)
-        
+
         return True

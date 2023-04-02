@@ -5,7 +5,7 @@ from pathlib import Path
 from lento.config import Config
 from daemon_interface.daemon_interface import LentoDaemonInterface
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     card_to_use = sys.argv[-2]
     time_to_run = sys.argv[-1]
 
@@ -14,8 +14,8 @@ if __name__ == '__main__':
 
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s - pid:%(process)d [%(levelname)s] %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
+        format="%(asctime)s - pid:%(process)d [%(levelname)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
 
     interface = LentoDaemonInterface(logging.getLogger())

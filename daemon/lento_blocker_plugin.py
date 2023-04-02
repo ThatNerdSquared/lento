@@ -3,7 +3,10 @@ from typing import Optional
 from daemon.util.db import DBController
 from daemon.util.util import format_website
 from daemon.alert.notifications_controller import NotifsController
-from daemon.alert.notifications_controller import WEBSITE_DEFAULT_TITLE, WEBSITE_INFO_DEFAULT_MSG  # noqa: E501
+from daemon.alert.notifications_controller import (
+    WEBSITE_DEFAULT_TITLE,
+    WEBSITE_INFO_DEFAULT_MSG,
+)  # noqa: E501
 from daemon.alert.notifications_controller import WEBSITE_CONFIRM_DEFAULT_MSG
 from proxy.http import httpStatusCodes
 from proxy.common.flag import flags
@@ -44,24 +47,21 @@ class LentoBlockerPlugin(HttpProxyBasePlugin):
     )
 
     def __init__(
-            self,
-            uid,
-            flags,
-            client,
-            event_queue,
-            upstream_conn_pool,
+        self,
+        uid,
+        flags,
+        client,
+        event_queue,
+        upstream_conn_pool,
     ) -> None:
-        self.uid = uid                  # pragma: no cover
-        self.flags = flags              # pragma: no cover
-        self.client = client            # pragma: no cover
+        self.uid = uid  # pragma: no cover
+        self.flags = flags  # pragma: no cover
+        self.client = client  # pragma: no cover
         self.event_queue = event_queue  # pragma: no cover
         self.upstream_conn_pool = upstream_conn_pool
         DBController.init()
 
-    def before_upstream_connection(
-        self, request: HttpParser
-    ) -> Optional[HttpParser]:
-
+    def before_upstream_connection(self, request: HttpParser) -> Optional[HttpParser]:
         """
         Called just before Proxy upstream connection is established
 
@@ -97,21 +97,18 @@ class LentoBlockerPlugin(HttpProxyBasePlugin):
                     NotifsController.show_info_popup(
                         WEBSITE_DEFAULT_TITLE,
                         WEBSITE_INFO_DEFAULT_MSG.format(host),
-                        custom_msg=web_item.popup_msg
+                        custom_msg=web_item.popup_msg,
                     )
 
                     # update the database with the time
                     # that the popup is shown
                     DBController.update_website_record(
-                        web_item.owner,
-                        web_item.website_url,
-                        datetime.now(),
-                        False
+                        web_item.owner, web_item.website_url, datetime.now(), False
                     )
 
                 raise HttpRequestRejected(
                     status_code=httpStatusCodes.I_AM_A_TEAPOT,
-                    reason=b"I\'m a tea pot",
+                    reason=b"I'm a tea pot",
                 )
 
             # start a series of checks if the site is soft-blocked.
@@ -133,16 +130,13 @@ class LentoBlockerPlugin(HttpProxyBasePlugin):
                     is_allowed = NotifsController.show_confirmation_popup(
                         WEBSITE_DEFAULT_TITLE,
                         WEBSITE_CONFIRM_DEFAULT_MSG.format(host),
-                        custom_msg=web_item.popup_msg
+                        custom_msg=web_item.popup_msg,
                     )
 
                     # update the last asked time and is_allowed for
                     # the WebsiteBlockItem object
                     DBController.update_website_record(
-                        web_item.owner,
-                        web_item.website_url,
-                        datetime.now(),
-                        is_allowed
+                        web_item.owner, web_item.website_url, datetime.now(), is_allowed
                     )
 
                 # block the website if current time is within allow
@@ -154,7 +148,7 @@ class LentoBlockerPlugin(HttpProxyBasePlugin):
                 if not is_allowed:
                     raise HttpRequestRejected(
                         status_code=httpStatusCodes.I_AM_A_TEAPOT,
-                        reason=b"I\'m a tea pot",
+                        reason=b"I'm a tea pot",
                     )
 
         return request

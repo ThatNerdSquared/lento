@@ -20,6 +20,7 @@ class BlockItemModel(Model):
     Each BlockItem has an 'owner' to know
     which TimerTask this item belongs to
     """
+
     owner = TextField()
     is_soft_block = IntegerField()
     allow_interval = IntegerField()
@@ -73,13 +74,15 @@ class DBController:
         if not cla.initialized:
             logging.info("Initializing database")
             db.init(Config.DB_PATH)
-            db.create_tables([
-                BlockItemModel,
-                AppBlockItemModel,
-                WebsiteBlockItemModel,
-                NotificationItemModel,
-                TimerTaskModel
-            ])
+            db.create_tables(
+                [
+                    BlockItemModel,
+                    AppBlockItemModel,
+                    WebsiteBlockItemModel,
+                    NotificationItemModel,
+                    TimerTaskModel,
+                ]
+            )
             db.close()
 
             # once initialized, set the database
@@ -120,10 +123,7 @@ class DBController:
         logging.info("Saving task {} to db...".format(task.name))
 
         # add the TimerTask to database
-        TimerTaskModel.create(
-            name=task.name,
-            end_time=task.end_time
-        )
+        TimerTaskModel.create(name=task.name, end_time=task.end_time)
 
         # add AppBlockItems from the TimerTask
         # to the database
@@ -136,7 +136,7 @@ class DBController:
                 is_allowed=app_item.is_allowed,
                 procname=app_item.procname,
                 allow_interval=app_item.allow_interval,
-                popup_msg=app_item.popup_msg
+                popup_msg=app_item.popup_msg,
             )
 
         # add WebsiteBlockItems from the TimerTask
@@ -150,7 +150,7 @@ class DBController:
                 is_allowed=website_item.is_allowed,
                 website_url=website_item.website_url,
                 allow_interval=website_item.allow_interval,
-                popup_msg=website_item.popup_msg
+                popup_msg=website_item.popup_msg,
             )
 
         # add NotificationItems from the TimerTask
@@ -160,7 +160,7 @@ class DBController:
             NotificationItemModel.create(
                 owner=task.name,
                 message=notification_item.message,
-                interval=notification_item.interval
+                interval=notification_item.interval,
             )
 
         db.close()
@@ -178,9 +178,7 @@ class DBController:
             logging.info("Removing task {} from db...".format(name))
 
             # remove apps associated with the TimerTask
-            AppBlockItemModel.delete().where(
-                AppBlockItemModel.owner == name
-            ).execute()
+            AppBlockItemModel.delete().where(AppBlockItemModel.owner == name).execute()
 
             # remove websites associated with the TimerTask
             WebsiteBlockItemModel.delete().where(
@@ -193,9 +191,7 @@ class DBController:
             ).execute()
 
             # remove the TimerTask last
-            TimerTaskModel.delete().where(
-                TimerTaskModel.name == name
-            ).execute()
+            TimerTaskModel.delete().where(TimerTaskModel.name == name).execute()
 
             db.close()
 
@@ -225,16 +221,14 @@ class DBController:
         try:
             website_model = WebsiteBlockItemModel.get(
                 WebsiteBlockItemModel.owner == owner,
-                WebsiteBlockItemModel.website_url == website_url
+                WebsiteBlockItemModel.website_url == website_url,
             )
         except DoesNotExist:
             return website_model
 
         # build WebsiteBlockItem from WebsiteBlockItemModel
         website_item = WebsiteBlockItem(
-            website_model.website_url,
-            website_model.owner,
-            website_model.is_soft_block
+            website_model.website_url, website_model.owner, website_model.is_soft_block
         )
         website_item.last_asked = website_model.last_asked
         website_item.is_allowed = website_model.is_allowed
@@ -268,7 +262,7 @@ class DBController:
         try:
             record = WebsiteBlockItemModel.get(
                 WebsiteBlockItemModel.owner == owner,
-                WebsiteBlockItemModel.website_url == website_url
+                WebsiteBlockItemModel.website_url == website_url,
             )
         except DoesNotExist:
             return False
@@ -305,8 +299,7 @@ class DBController:
 
         try:
             record = AppBlockItemModel.get(
-                AppBlockItemModel.owner == owner,
-                AppBlockItemModel.procname == procname
+                AppBlockItemModel.owner == owner, AppBlockItemModel.procname == procname
             )
         except DoesNotExist:
             return False
@@ -344,9 +337,7 @@ class DBController:
 
         for app_model in app_model_list:
             app_item = AppBlockItem(
-                app_model.procname,
-                app_model.owner,
-                app_model.is_soft_block
+                app_model.procname, app_model.owner, app_model.is_soft_block
             )
             app_item.last_asked = app_model.last_asked
             app_item.is_allowed = app_model.is_allowed
@@ -364,7 +355,7 @@ class DBController:
             website_item = WebsiteBlockItem(
                 website_model.website_url,
                 website_model.owner,
-                website_model.is_soft_block
+                website_model.is_soft_block,
             )
             website_item.last_asked = website_model.last_asked
             website_item.is_allowed = website_model.is_allowed
@@ -383,7 +374,7 @@ class DBController:
             notification_item = NotificationItem(
                 notification_model.message,
                 notification_model.interval,
-                notification_model.owner
+                notification_model.owner,
             )
 
             timer_task.notifications.append(notification_item)

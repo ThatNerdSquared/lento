@@ -7,6 +7,7 @@ class ResizingTabWidget(QTabWidget):
     Tab Widget that can resize according to
     widget size in current tab
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -24,4 +25,4 @@ class ResizingTabWidget(QTabWidget):
         if not current:
             return super().sizeHint()
         # add extra buffer in height
-        return QSize(width, height+25)
+        return QSize(width, height + 25)

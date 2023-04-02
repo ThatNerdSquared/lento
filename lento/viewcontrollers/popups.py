@@ -12,14 +12,16 @@ class LentoPopUpMode:
     """
     Operating modes of Lento Popup Window
     """
+
     ERROR = 0
     WARNING = 1
 
 
 class LentoPopUpWindow(QDialog):
     """
-    Popup window 
+    Popup window
     """
+
     def __init__(self, msg, mode=LentoPopUpMode.ERROR):
         """
         Parameters:
@@ -52,14 +54,12 @@ class LentoPopUpWindow(QDialog):
         msg_widget_layout = QHBoxLayout()
         msg_widget.setLayout(msg_widget_layout)
 
-        img_path = 'assets/error.svg'
+        img_path = "assets/error.svg"
         if mode == LentoPopUpMode.WARNING:
-            img_path = 'assets/warning.svg'
+            img_path = "assets/warning.svg"
 
         img_label = QLabel()
-        pixmap = QPixmap(
-            utils.get_data_file_path(img_path)
-        )
+        pixmap = QPixmap(utils.get_data_file_path(img_path))
         pixmap = pixmap.scaled(40, 40)
         img_label.setPixmap(pixmap)
 
@@ -73,11 +73,11 @@ class LentoPopUpWindow(QDialog):
         button_widget = QWidget()
         button_widget_layout = QHBoxLayout()
         button_widget.setLayout(button_widget_layout)
-        
+
         cancel_button = QPushButton("Cancel")
         cancel_button.setObjectName("popup_cancel_btn")
         cancel_button.clicked.connect(self._on_cancel_clicked)
-        
+
         confirm_button = QPushButton("OK")
         confirm_button.setObjectName("popup_confirm_btn")
         confirm_button.clicked.connect(self._on_confirm_clicked)
@@ -122,7 +122,7 @@ class LentoPopUpWindow(QDialog):
         """
         logging.info("Popup window cancel clicked")
         self.reject()
-    
+
     def _on_confirm_clicked(self):
         """
         Method called when confirm button is clicked

@@ -3,7 +3,7 @@ import platform
 import subprocess
 
 
-class DaemonPrompt():
+class DaemonPrompt:
     """
     Class handling popup display
 
@@ -24,11 +24,13 @@ class DaemonPrompt():
 
     def _macos_confirmation_prompt(self, title, message):
         # call apple script command to launch popup
-        choice = subprocess.check_output([
-            "osascript",
-            "-e",
-            f"""display dialog "{message}" with title "{title}" buttons {{"No", "Yes"}}"""  # noqa: E501
-        ])
+        choice = subprocess.check_output(
+            [
+                "osascript",
+                "-e",
+                f"""display dialog "{message}" with title "{title}" buttons {{"No", "Yes"}}""",  # noqa: E501
+            ]
+        )
 
         match choice.decode("utf-8").strip():
             case "button returned:Yes":
@@ -43,10 +45,7 @@ class DaemonPrompt():
         MB_ICONWARNING = 0x30
         MB_SYSTEMMODAL = 0x1000
         choice = ctypes.windll.user32.MessageBoxW(
-            0,
-            message,
-            title,
-            MB_YESNO | MB_ICONWARNING | MB_SYSTEMMODAL
+            0, message, title, MB_YESNO | MB_ICONWARNING | MB_SYSTEMMODAL
         )
         # the MessageBox foreign function returns 6 for OK, 7 for No.
         if choice == 6:
@@ -66,18 +65,15 @@ class DaemonPrompt():
 
     def macos_notif_prompt(self, title, message):
         # call apple script command to launch popup
-        return subprocess.Popen([
-            "osascript",
-            "-e",
-            f"""display dialog "{message}" with title "{title}" buttons "OK" default button 1"""  # noqa: E501
-        ])
+        return subprocess.Popen(
+            [
+                "osascript",
+                "-e",
+                f"""display dialog "{message}" with title "{title}" buttons "OK" default button 1""",  # noqa: E501
+            ]
+        )
 
     def windows_notif_prompt(self, title, message):
         MB_SYSTEMMODAL = 0x1000
         MB_OK = 0x00
-        ctypes.windll.user32.MessageBoxW(
-            0,
-            message,
-            title,
-            MB_SYSTEMMODAL | MB_OK
-        )
+        ctypes.windll.user32.MessageBoxW(0, message, title, MB_SYSTEMMODAL | MB_OK)

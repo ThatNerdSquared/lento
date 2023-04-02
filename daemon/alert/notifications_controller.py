@@ -8,8 +8,12 @@ default title & message definitions
 
 APP_DEFAULT_TITLE = "Lento: App Blocked"
 WEBSITE_DEFAULT_TITLE = "Lento: Website Blocked"
-APP_CONFIRM_DEFAULT_MSG = "You tried to open a blocked app!\nDo you still want to open {}?"  # noqa: E501
-WEBSITE_CONFIRM_DEFAULT_MSG = "You tried to open a blocked site!\nDo you still want to open {}?"  # noqa: E501
+APP_CONFIRM_DEFAULT_MSG = (
+    "You tried to open a blocked app!\nDo you still want to open {}?"  # noqa: E501
+)
+WEBSITE_CONFIRM_DEFAULT_MSG = (
+    "You tried to open a blocked site!\nDo you still want to open {}?"  # noqa: E501
+)
 APP_INFO_DEFAULT_MSG = "You tried to open {} which is blocked by Lento"
 WEBSITE_INFO_DEFAULT_MSG = "You tried to open {} which is blocked by Lento"
 
@@ -38,9 +42,7 @@ class NotifsController:
         # start repeat timer on notification
         interval = notification_item.interval
         timer = RepeatTimer(
-            interval,
-            NotifsController._show_banner_notification,
-            [notification_item]
+            interval, NotifsController._show_banner_notification, [notification_item]
         )
         timer.start()
 
@@ -74,10 +76,7 @@ class NotifsController:
         """
 
         if custom_msg is not None and custom_msg != "":
-            message = "Lento Says: {}\n\n{}".format(
-                custom_msg,
-                message
-            )
+            message = "Lento Says: {}\n\n{}".format(custom_msg, message)
 
         DaemonPrompt().show_notif_popup(title, message)
 
@@ -96,10 +95,7 @@ class NotifsController:
         """
 
         if custom_msg is not None and custom_msg != "":
-            message = "Lento Says: {}\n\n{}".format(
-                custom_msg,
-                message
-            )
+            message = "Lento Says: {}\n\n{}".format(custom_msg, message)
 
         return DaemonPrompt().display_confirmation_prompt(title, message)
 

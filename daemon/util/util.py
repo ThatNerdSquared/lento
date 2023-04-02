@@ -1,5 +1,6 @@
 from threading import Timer
 
+
 class RepeatTimer(Timer):
     """
     Timer repeats function call every self.interval

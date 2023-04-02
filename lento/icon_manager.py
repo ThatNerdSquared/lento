@@ -4,8 +4,9 @@ from lento.config import Config
 from grabicon import FaviconGrabber
 
 """
-Manages icon path 
+Manages icon path
 """
+
 
 def load_favicon(website_url):
     """
@@ -15,7 +16,7 @@ def load_favicon(website_url):
     try:
         grabber = FaviconGrabber()
         favicons = grabber.grab(website_url)
-    except Exception as e:
+    except Exception:
         logging.info("Failed to load favicon for {}".format(website_url))
         return ""
 
@@ -33,6 +34,7 @@ def load_favicon(website_url):
 
     return ""
 
+
 def save_icon(image, icon_name):
     """
     Save icon image with the specified name
@@ -46,6 +48,7 @@ def save_icon(image, icon_name):
     rgb_im.save(icon_path)
 
     return icon_path
+
 
 def cleanup_saved_icon(cards):
     """
@@ -64,7 +67,7 @@ def cleanup_saved_icon(cards):
                 used_icons.add(item.icon_path)
 
     logging.info("Using the following icon paths: {}".format(used_icons))
-    
+
     # delete the icon files that are not currently used
     for file_name in file_names:
         file_path = os.path.join(str(Config.ICON_PATH), file_name)

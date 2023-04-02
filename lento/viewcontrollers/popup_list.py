@@ -8,9 +8,10 @@ from lento.viewcontrollers.popups import LentoPopUpWindow, LentoPopUpMode
 
 class LentoPopUpList(QWidget):
     """
-    Widget that displays and manages the list of 
+    Widget that displays and manages the list of
     selectable custom popup messages
     """
+
     def __init__(self):
         super().__init__()
 
@@ -36,12 +37,12 @@ class LentoPopUpList(QWidget):
         # add the default entry
         self.defaultEntry = self._addEntry(editable=False)
         self.defaultEntry.textEdit.insertPlainText("Use Default Popup")
-        
+
         # add each popup message entry to list
         for popup_item in self.popup_item_list:
             self._addEntry(popup_item=popup_item)
 
-        # add new entry to allow new pop ups to be added 
+        # add new entry to allow new pop ups to be added
         self._addEntry()
 
         # reselect the selected pop up message
@@ -76,11 +77,13 @@ class LentoPopUpList(QWidget):
                 self.selectedPopupID = popup_id
                 entry.select()
                 return True
-        
+
         # if no entry is found, select the deafult
         # entry
-        logging.info("Cannot find popup message with id {}," \
-            " selecting default message".format(popup_id))
+        logging.info(
+            "Cannot find popup message with id {},"
+            " selecting default message".format(popup_id)
+        )
         self.defaultEntry.select()
         self.selectedPopupID = None
         return False
@@ -108,7 +111,7 @@ class LentoPopUpList(QWidget):
             entry = self.layout.itemAt(i).widget()
             if entry.popup_id() == self.selectedPopupID:
                 return entry
-        
+
         # if selected popup ID is not found,
         # return None
         self.selectedPopupID = None
@@ -125,7 +128,7 @@ class LentoPopUpList(QWidget):
         newEntry = LentoPopupEntry(
             editable=editable,
             popup_item=popup_item,
-            placeholder="Double Click to Add/Edit Custom Popup..."
+            placeholder="Double Click to Add/Edit Custom Popup...",
         )
         newEntry.selectedHandler = self._handleEntrySelected
         newEntry.textInputHandler = self._handleEntryTextInput
@@ -174,7 +177,7 @@ class LentoPopUpList(QWidget):
 
         entry_to_remove = None
         # if the new text is empty, that indicates that
-        # the popup entry is being deleted. Otherwise 
+        # the popup entry is being deleted. Otherwise
         # consider the operation as an edit
         is_edit = len(new_text) > 0
         # if the entry does not contain any popup
@@ -183,10 +186,10 @@ class LentoPopUpList(QWidget):
         is_add_new = entry.popup_item is None
 
         if is_edit:
-            if "\"" in new_text:
+            if '"' in new_text:
                 LentoPopUpWindow(
-                    "Custom popup message does not support double quote (\")",
-                    mode=LentoPopUpMode.ERROR
+                    'Custom popup message does not support double quote (")',
+                    mode=LentoPopUpMode.ERROR,
                 ).exec()
                 if is_add_new:
                     entry.textEdit.reset()
@@ -201,17 +204,16 @@ class LentoPopUpList(QWidget):
             # popup item
             if is_add_new:
                 entry.popup_item = LentoPopUpItem(
-                    id = str(uuid.uuid4().hex),
-                    msg = new_text
+                    id=str(uuid.uuid4().hex), msg=new_text
                 )
             else:
                 if entry.popup_item.msg == new_text:
                     return
 
                 ret = LentoPopUpWindow(
-                    "Change to this popup message will be applied "\
+                    "Change to this popup message will be applied "
                     "to all other cards & block items, OK to continue?",
-                    mode=LentoPopUpMode.WARNING
+                    mode=LentoPopUpMode.WARNING,
                 ).exec()
 
                 if ret == 0:
@@ -232,9 +234,9 @@ class LentoPopUpList(QWidget):
                 # display warning popup window confirming
                 # deletion
                 ret = LentoPopUpWindow(
-                    "Deletion of this popup message will be applied "\
+                    "Deletion of this popup message will be applied "
                     "to all other cards & block items, OK to continue?",
-                    mode=LentoPopUpMode.WARNING
+                    mode=LentoPopUpMode.WARNING,
                 ).exec()
 
                 if ret == 0:
@@ -251,20 +253,20 @@ class LentoPopUpList(QWidget):
             widget = self.layout.itemAt(i).widget()
             if widget is entry:
                 if is_edit:
-                    # if the entry is edited and 
+                    # if the entry is edited and
                     # and it is the last one in the
                     # list, add new entry to allow
                     # new popup to be added
-                    if i == self.layout.count()-1:
+                    if i == self.layout.count() - 1:
                         self._addEntry()
                 else:
                     # if the entry is being deleted
                     # and it is not the last one in
                     # the list, remove it
-                    if i != self.layout.count()-1:
+                    if i != self.layout.count() - 1:
                         entry_to_remove = entry
                 break
-        
+
         # remove the popup entry to be removed, note that
         # we do not remove the entry in the above loop as
         # the entry is part of the list and moving from

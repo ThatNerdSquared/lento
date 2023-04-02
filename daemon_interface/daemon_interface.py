@@ -9,6 +9,7 @@ from multiprocessing.connection import Client
 
 # TODO: daemonize lentodaemon on Windows
 
+
 class LentoDaemonInterface:
     """
     Class that provides an Application Programming Interface (API)
@@ -38,14 +39,16 @@ class LentoDaemonInterface:
         success = False
         match platform.system():
             case "Darwin":
-                success = subprocess.Popen([
-                    "launchctl",
-                    "load",
-                    str(Config.DAEMON_PLIST_PATH),
-                ])
+                success = subprocess.Popen(
+                    [
+                        "launchctl",
+                        "load",
+                        str(Config.DAEMON_PLIST_PATH),
+                    ]
+                )
             case "Windows":
                 self.logger.info("lentodaemon unsupported on Windows")
-        
+
         if not success:
             self.logger.error("failed to launch daemon")
             return False
@@ -76,13 +79,11 @@ class LentoDaemonInterface:
                 # send message to daemon to clean up first
                 # before terminating the daemon process
                 self.logger.info("messaging daemon to cleanup")
-                address = ('localhost', daemon_port)
+                address = ("localhost", daemon_port)
 
-                request = {
-                    "command": "cleanup"
-                }
+                request = {"command": "cleanup"}
 
-                conn = Client(address, authkey=b'lento')
+                conn = Client(address, authkey=b"lento")
                 conn.send(request)
                 msg = conn.recv()
                 conn.send("close")
@@ -92,18 +93,20 @@ class LentoDaemonInterface:
 
                 # delete "daemon_port" key from lentosettings.json
                 self._remove_port_from_settings()
-        
+
         match platform.system():
             case "Darwin":
-                return subprocess.Popen([
-                    "launchctl",
-                    "unload",
-                    str(Config.DAEMON_PLIST_PATH),
-                ])
+                return subprocess.Popen(
+                    [
+                        "launchctl",
+                        "unload",
+                        str(Config.DAEMON_PLIST_PATH),
+                    ]
+                )
             case "Windows":
                 self.logger.info("lentodaemon unsupported on Windows")
                 return False
-            
+
         return False
 
     def is_daemon_running(self):
@@ -126,7 +129,7 @@ class LentoDaemonInterface:
 
     def is_daemon_ready(self):
         """
-        Returns if "lentodaemon" process is running and 
+        Returns if "lentodaemon" process is running and
         daemon is ready to accept incoming messages
         """
         is_running = self.is_daemon_running()
@@ -167,14 +170,11 @@ class LentoDaemonInterface:
         # send the request
         self.logger.info("sending block timer task info {}".format(info_dict))
 
-        address = ('localhost', daemon_port)
+        address = ("localhost", daemon_port)
 
-        request = {
-            "command": "start_timer",
-            "payload": info_dict
-        }
+        request = {"command": "start_timer", "payload": info_dict}
 
-        conn = Client(address, authkey=b'lento')
+        conn = Client(address, authkey=b"lento")
         conn.send(request)
         msg = conn.recv()
         conn.send("close")

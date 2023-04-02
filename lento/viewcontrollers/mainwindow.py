@@ -9,7 +9,12 @@ from pathlib import Path
 from PySide6.QtCore import QDir, QSize
 from PySide6.QtGui import QFontDatabase, QIcon
 from PySide6.QtWidgets import QApplication, QMainWindow, QToolButton
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QStackedWidget  # noqa: E501
+from PySide6.QtWidgets import (
+    QWidget,
+    QHBoxLayout,
+    QVBoxLayout,
+    QStackedWidget,
+)
 from lento.model import cards_management as CardsManagement
 from lento.model.block_items import LentoCardItem
 from logging.handlers import RotatingFileHandler
@@ -38,23 +43,23 @@ class MainWindow(QMainWindow):
 
         # set left button
         self.left_button = QToolButton()
-        self.left_button.setIcon(QIcon(
-            utils.get_data_file_path("assets/arrow-left.svg")
-        ))
+        self.left_button.setIcon(
+            QIcon(utils.get_data_file_path("assets/arrow-left.svg"))
+        )
         self.left_button.setIconSize(QSize(70, 70))
         self.left_button.setObjectName("emojibutton")
         self.left_button.clicked.connect(self.left_button_click)
 
         # set right button
         self.right_button = QToolButton()
-        self.right_button.setIcon(QIcon(
-            utils.get_data_file_path("assets/arrow-right.svg")
-        ))
+        self.right_button.setIcon(
+            QIcon(utils.get_data_file_path("assets/arrow-right.svg"))
+        )
         self.right_button.setIconSize(QSize(70, 70))
         self.right_button.setObjectName("emojibutton")
         self.right_button.clicked.connect(self.right_button_click)
 
-         # load current cards from lentosettings
+        # load current cards from lentosettings
         cards = CardsManagement.read_cards()
         logging.info("{} cards loaded from config: {}".format(len(cards), cards.keys()))
 
@@ -65,22 +70,27 @@ class MainWindow(QMainWindow):
         card_to_activate = None
         activated_card_id = CardsManagement.get_activated_card_id()
         logging.info("Loaded activated card id: {}".format(activated_card_id))
-        
+
         if activated_card_id is not None:
             card_item = cards.get(activated_card_id)
             if card_item is not None:
                 # if the activated card item is already done, deactivated it
                 if card_item.isDone():
-                    logging.info("Card {} ended at {}, deactivating..."
-                                 .format(activated_card_id, card_item.end_time))
+                    logging.info(
+                        "Card {} ended at {}, deactivating...".format(
+                            activated_card_id, card_item.end_time
+                        )
+                    )
                     card_item.deactivate()
                     activated_card_id = None
-                    
+
             else:
                 # if the activated card does not exist in lento settings,
                 # remove the activated card id from lento settings
-                logging.info("Card id {} does not exist in cards dict," \
-                             " deactivating...".format(activated_card_id))
+                logging.info(
+                    "Card id {} does not exist in cards dict,"
+                    " deactivating...".format(activated_card_id)
+                )
                 CardsManagement.deactivate_active_card()
 
         # create a card for each card item loaded
@@ -88,13 +98,9 @@ class MainWindow(QMainWindow):
             card_item = cards[card_id]
             logging.info("Loading card id {}".format(card_id))
             card_item.print()
-            card = Card(
-                card_item, 
-                self.on_card_started, 
-                self.on_card_complete
-            )
+            card = Card(card_item, self.on_card_started, self.on_card_complete)
 
-            # save the currently active card and 
+            # save the currently active card and
             # activate the card after all view
             # elements are set up
             if card_item.id == activated_card_id:
@@ -102,7 +108,7 @@ class MainWindow(QMainWindow):
 
             self.deck.addWidget(card)
 
-        # if there are no cards in lentosettings, create 
+        # if there are no cards in lentosettings, create
         # empty card
         if len(cards) == 0:
             logging.info("No existing card, adding empty new card...")
@@ -112,20 +118,20 @@ class MainWindow(QMainWindow):
 
         # build menu bar at the bottom
         self.add_card_button = QToolButton()
-        self.add_card_button.setIcon(QIcon(
-            utils.get_data_file_path("assets/add-twemoji.svg")
-        ))
+        self.add_card_button.setIcon(
+            QIcon(utils.get_data_file_path("assets/add-twemoji.svg"))
+        )
         self.add_card_button.setIconSize(QSize(30, 30))
         self.add_card_button.setObjectName("emojibutton")
-        self.add_card_button.clicked.connect(self.add_card)  # noqa: E501
+        self.add_card_button.clicked.connect(self.add_card)
 
         self.trash_card_button = QToolButton()
-        self.trash_card_button.setIcon(QIcon(
-            utils.get_data_file_path("assets/delete-twemoji.svg")
-        ))
+        self.trash_card_button.setIcon(
+            QIcon(utils.get_data_file_path("assets/delete-twemoji.svg"))
+        )
         self.trash_card_button.setIconSize(QSize(30, 30))
         self.trash_card_button.setObjectName("emojibutton")
-        self.trash_card_button.clicked.connect(self.trash_current_card)  # noqa: E501
+        self.trash_card_button.clicked.connect(self.trash_current_card)
 
         menu_buttons = QWidget()
         menu_buttons_layout = QHBoxLayout()
@@ -140,8 +146,8 @@ class MainWindow(QMainWindow):
         deck_domain_layout.addWidget(self.deck)
         deck_domain_layout.addWidget(menu_buttons)
         deck_domain.setLayout(deck_domain_layout)
-        
-        # setup main window layout 
+
+        # setup main window layout
         self.main_layout.addWidget(self.left_button)
         self.main_layout.addWidget(deck_domain)
         self.main_layout.addWidget(self.right_button)
@@ -166,14 +172,13 @@ class MainWindow(QMainWindow):
         if deck_len == 1:
             return
 
-        # if the current card is not saved, display warning popup 
+        # if the current card is not saved, display warning popup
         # warning that the current unsaved card will be deleted
         if not card.card_item.saved:
             logging.info("Current card is not saved, showing warning popup...")
             ret = LentoPopUpWindow(
-                "Current new card is unedited and will be deleted, " \
-                "OK to continue?",
-                mode=LentoPopUpMode.WARNING
+                "Current new card is unedited and will be deleted, " "OK to continue?",
+                mode=LentoPopUpMode.WARNING,
             ).exec()
 
             if ret == 0:
@@ -191,7 +196,7 @@ class MainWindow(QMainWindow):
         else:
             # if the index is out of bounds, wrap around
             # to the last card in deck
-            self.deck.setCurrentIndex(deck_len-1)
+            self.deck.setCurrentIndex(deck_len - 1)
 
     def right_button_click(self):
         """
@@ -205,14 +210,13 @@ class MainWindow(QMainWindow):
         if deck_len == 1:
             return
 
-        # if the current card is not saved, display warning popup 
+        # if the current card is not saved, display warning popup
         # warning that the current unsaved card will be deleted
         if not card.card_item.saved:
             logging.info("Current card is not saved, showing warning popup...")
             ret = LentoPopUpWindow(
-                "Current new card is unedited and will be deleted, " \
-                "OK to continue?",
-                mode=LentoPopUpMode.WARNING
+                "Current new card is unedited and will be deleted, " "OK to continue?",
+                mode=LentoPopUpMode.WARNING,
             ).exec()
 
             if ret == 0:
@@ -246,17 +250,13 @@ class MainWindow(QMainWindow):
             card_item = widget.card_item
             if card_item.name.startswith(new_card_name):
                 new_card_idx += 1
-        
+
         if new_card_idx != 0:
             new_card_name = new_card_name + " " + str(new_card_idx)
 
         # create the new card item
         new_card_item = LentoCardItem(name=new_card_name)
-        new_card = Card(
-            new_card_item,
-            self.on_card_started,
-            self.on_card_complete
-        )
+        new_card = Card(new_card_item, self.on_card_started, self.on_card_complete)
 
         # set the current card to the newly created card
         self.deck.addWidget(new_card)
@@ -272,19 +272,21 @@ class MainWindow(QMainWindow):
 
         # cannot delete a card that is currently activated and running
         if card.card_item.activated:
-            logging.info("Current card {} is running, skip deletion".format(card.card_item.id))
+            logging.info(
+                "Current card {} is running, skip deletion".format(card.card_item.id)
+            )
             return
-        
+
         # show popup confirming deletion
         ret = LentoPopUpWindow(
             "Are you sure you want to delete the current card?",
-            mode=LentoPopUpMode.WARNING
+            mode=LentoPopUpMode.WARNING,
         ).exec()
 
         if ret == 0:
             return
 
-        # delete the card from deck and lento settings 
+        # delete the card from deck and lento settings
         logging.info("Deleting current card with id {}".format(card.card_item.id))
         if card.card_item.saved:
             card.delete()
@@ -338,13 +340,19 @@ def init_sequence():
     log_file_path = Config.APPDATA_PATH / "lentogui.log"
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s - pid:%(process)d [%(levelname)s] %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S',
+        format="%(asctime)s - pid:%(process)d [%(levelname)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
         handlers=[
-            RotatingFileHandler(log_file_path, mode='a', maxBytes=5*1024*1024,
-                                backupCount=2, encoding=None, delay=0),
-            logging.StreamHandler()
-        ]
+            RotatingFileHandler(
+                log_file_path,
+                mode="a",
+                maxBytes=5 * 1024 * 1024,
+                backupCount=2,
+                encoding=None,
+                delay=0,
+            ),
+            logging.StreamHandler(),
+        ],
     )
 
     # Check for the lentosettings.json file, create if nonexistent
@@ -355,14 +363,12 @@ def init_sequence():
         blank_config = {
             "activated_card": None,
             "cards": {},
-            "application_settings": {
-                "theme": "automatic"
-            }
+            "application_settings": {"theme": "automatic"},
         }
         Config.SETTINGS_PATH.write_text(json.dumps(blank_config))
         init_needed = True
 
-    # Create the correct application data folder for the platform, 
+    # Create the correct application data folder for the platform,
     # unless it exists already.
     try:
         logging.info("Creating {}".format(Config.APPDATA_PATH))
@@ -384,8 +390,8 @@ def init_sequence():
 def main():
     app = QApplication(sys.argv)
 
-    # load font asset 
-    fonts = utils.get_data_file_path('fonts')
+    # load font asset
+    fonts = utils.get_data_file_path("fonts")
     for font in QDir(fonts).entryInfoList("*.ttf"):
         QFontDatabase.addApplicationFont(font.absoluteFilePath())
     stylesheet_path = Path(utils.get_data_file_path("lento.qss"))

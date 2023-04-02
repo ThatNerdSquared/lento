@@ -2,7 +2,14 @@ import logging
 import lento.model.block_items as BlockItem
 import lento.model.cards_management as CardsManagement
 from PySide6.QtGui import QColor, Qt
-from PySide6.QtWidgets import QFrame, QGraphicsDropShadowEffect, QScrollArea, QVBoxLayout, QWidget, QPushButton  # noqa: E501
+from PySide6.QtWidgets import (
+    QFrame,
+    QGraphicsDropShadowEffect,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+    QPushButton,
+)
 from lento.views.timer import TimerView
 from lento.views.title import LentoCardTitle
 from lento.views.button import LentoOneTimeButton
@@ -17,10 +24,7 @@ class Card(QWidget):
     Widget containing all information of a card
     """
 
-    def __init__(self, 
-                 card_item, 
-                 start_handler, 
-                 completion_handler):
+    def __init__(self, card_item, start_handler, completion_handler):
         """
         Parameters:
         card_item: LentoCardItem object containing the data of a card
@@ -46,12 +50,9 @@ class Card(QWidget):
         body_rect.setObjectName("outercard")
         self.body_layout = QVBoxLayout()
         internal_card = QVBoxLayout()
-        
+
         # setup title
-        self.title = LentoCardTitle(
-            self.card_item.name,
-            self._on_title_updated
-        )
+        self.title = LentoCardTitle(self.card_item.name, self._on_title_updated)
 
         # setup timer box
         timer_box = QWidget()
@@ -63,16 +64,12 @@ class Card(QWidget):
 
         # setup timer
         self.timer = TimerView(
-            card_item.duration,
-            self._on_time_changed,
-            self._on_timer_complete
+            card_item.duration, self._on_time_changed, self._on_timer_complete
         )
 
         # setup start button
         self.start_button = LentoOneTimeButton(
-            "Start Block",
-            "Running",
-            self.on_start_button_clicked
+            "Start Block", "Running", self.on_start_button_clicked
         )
 
         # group timer & start button into one timer box widget
@@ -84,7 +81,7 @@ class Card(QWidget):
         # contain any block items
         self.list_widget = QWidget()
         list_widget_layout = QVBoxLayout()
-        list_widget_layout.setContentsMargins(0,0,0,0)
+        list_widget_layout.setContentsMargins(0, 0, 0, 0)
         list_widget_layout.setSpacing(0)
         self.list_widget.setLayout(list_widget_layout)
 
@@ -196,13 +193,11 @@ class Card(QWidget):
 
     def on_add_button_clicked(self):
         """
-        Handles when add button is clicked 
+        Handles when add button is clicked
         """
         logging.info("Showing new block item window")
         # show new LentoBlockItemWindow
-        new_item_window = LentoBlockItemWindow(
-            item_changed_handler=self._add_new_item
-        )
+        new_item_window = LentoBlockItemWindow(item_changed_handler=self._add_new_item)
         new_item_window.exec()
 
     def on_start_button_clicked(self):
@@ -210,15 +205,13 @@ class Card(QWidget):
         Handles when start button is clicked
         """
 
-        logging.info("Start Button for card {} clicked"
-                     .format(self.card_item.id))
-        
+        logging.info("Start Button for card {} clicked".format(self.card_item.id))
+
         # cannot satrt block if there are no block items
         if len(self.card_item.block_items) == 0:
             logging.info("card {} has 0 block items".format(self.card_item.id))
             LentoPopUpWindow(
-                "No items to block, card cannot be started",
-                mode=LentoPopUpMode.ERROR
+                "No items to block, card cannot be started", mode=LentoPopUpMode.ERROR
             ).exec()
             return
 
@@ -226,8 +219,7 @@ class Card(QWidget):
         if self.card_item.duration == 0:
             logging.info("card {} has 0 duration".format(self.card_item.id))
             LentoPopUpWindow(
-                "Zero card duration, card cannot be started",
-                mode=LentoPopUpMode.ERROR
+                "Zero card duration, card cannot be started", mode=LentoPopUpMode.ERROR
             ).exec()
             return
 
@@ -235,39 +227,36 @@ class Card(QWidget):
 
         # cannot start block if failed to fetch card dictionary
         if card_dict is None:
-            logging.info("Failed to fetch card dict with id {}"
-                         .format(self.card_item.id))
-            LentoPopUpWindow(
-                "Failed to start block",
-                mode=LentoPopUpMode.ERROR
-            ).exec()
+            logging.info(
+                "Failed to fetch card dict with id {}".format(self.card_item.id)
+            )
+            LentoPopUpWindow("Failed to start block", mode=LentoPopUpMode.ERROR).exec()
             return
 
         duration = card_dict.get("duration")
         duration = float(duration)
 
-        logging.info("Starting block with dictionary: {}; duration: {}"
-                     .format(card_dict, duration))
+        logging.info(
+            "Starting block with dictionary: {}; duration: {}".format(
+                card_dict, duration
+            )
+        )
 
         try:
             # launch card task in daemon
             ret = self.daemon_interface.start_block_timer(
-                card_dict,
-                duration,
-                launch_daemon=True
+                card_dict, duration, launch_daemon=True
             )
-        except Exception as e:
+        except Exception:
             ret = False
 
-        if ret == False:
-            logging.info("Failed to launch block task for card {}"
-                         .format(self.card_item.id))
-            LentoPopUpWindow(
-                "Failed to start block",
-                mode=LentoPopUpMode.ERROR
-            ).exec()
+        if ret is False:
+            logging.info(
+                "Failed to launch block task for card {}".format(self.card_item.id)
+            )
+            LentoPopUpWindow("Failed to start block", mode=LentoPopUpMode.ERROR).exec()
             return
-        
+
         self.activate()
 
     def adjust_height(self):
@@ -275,11 +264,13 @@ class Card(QWidget):
         Adjusts the height of the card according to the items
         in the toggle lists
         """
-        new_height = self.initial_height + \
-                     self.web_list.list_height(self) + \
-                     self.app_list.list_height(self) + \
-                     self.ra_list.list_height(self) + \
-                     self.add_app_web_button.height()
+        new_height = (
+            self.initial_height
+            + self.web_list.list_height(self)
+            + self.app_list.list_height(self)
+            + self.ra_list.list_height(self)
+            + self.add_app_web_button.height()
+        )
         self.setFixedHeight(new_height)
 
     def _add_new_item(self, block_item):
@@ -296,13 +287,13 @@ class Card(QWidget):
             self.card_item.add_block_item(block_item)
             self._show_block_item(block_item)
             return True
-        
+
         LentoPopUpWindow(
-            "Block item {} cannot be added because it is"\
-                " already in card".format(block_item.label),
-            mode=LentoPopUpMode.ERROR
+            "Block item {} cannot be added because it is"
+            " already in card".format(block_item.label),
+            mode=LentoPopUpMode.ERROR,
         ).exec()
-        
+
         return False
 
     def _show_block_item(self, block_item):
@@ -324,7 +315,7 @@ class Card(QWidget):
             # block item added to the list
             if list_widget.count() == 0:
                 list_widget.setVisible(True)
-            
+
             list_widget.add_to_list(block_item)
             # adjust height of the card after adding the element
             self.adjust_height()
@@ -333,9 +324,12 @@ class Card(QWidget):
         """
         Method called when a block item is edited in a toggle list
         """
-        logging.info("{} block item edited; old soft block = {};" \
-                     " new soft block = {}".format(old_block_item.label,
-                     old_block_item.softblock, new_block_item.softblock))
+        logging.info(
+            "{} block item edited; old soft block = {};"
+            " new soft block = {}".format(
+                old_block_item.label, old_block_item.softblock, new_block_item.softblock
+            )
+        )
 
         # the softblock property of the edited item may differ from the
         # softblock property of the original item; if this is the case,
@@ -345,7 +339,7 @@ class Card(QWidget):
         # list if restricted access is disabled after edit)
         if old_block_item.softblock != new_block_item.softblock:
             # remove the block item from the toggle list, this will invoke
-            # _on_block_item_remove callback which will also remove the 
+            # _on_block_item_remove callback which will also remove the
             # block item from the card item
             toggle_list.remove_from_list(old_block_item)
             # add the new item back into the card, under the corresponding
@@ -360,13 +354,14 @@ class Card(QWidget):
         Method called when a block item is removed from a toggle list
         """
 
-        logging.info("Removing block item {} from card {}".format(
-            block_item.label,
-            self.card_item.id
-        ))
+        logging.info(
+            "Removing block item {} from card {}".format(
+                block_item.label, self.card_item.id
+            )
+        )
 
         # make the list invisible if it no longer contains
-        # any block item 
+        # any block item
         if toggle_list.count() == 0:
             toggle_list.setVisible(False)
 
@@ -385,15 +380,11 @@ class Card(QWidget):
         if title != self.card_item.name and title in card_name_set:
             self.title.title.setText(self.card_item.name)
             LentoPopUpWindow(
-                "Card name {} already exists".format(title),
-                mode=LentoPopUpMode.ERROR
+                "Card name {} already exists".format(title), mode=LentoPopUpMode.ERROR
             ).exec()
             return
 
-        logging.info("Changing card {} title to {}".format(
-            self.card_item.id,
-            title
-        ))
+        logging.info("Changing card {} title to {}".format(self.card_item.id, title))
         self.card_item.name = title
         self.card_item.save_metadata()
 
@@ -407,15 +398,13 @@ class Card(QWidget):
         if new_duration == 0:
             self.timer.set_time(self.card_item.duration)
             LentoPopUpWindow(
-                "Card duration cannot be 0",
-                mode=LentoPopUpMode.ERROR
+                "Card duration cannot be 0", mode=LentoPopUpMode.ERROR
             ).exec()
-            return 
+            return
 
-        logging.info("Changing card {} duration to {}".format(
-            self.card_item.id,
-            new_duration
-        ))
+        logging.info(
+            "Changing card {} duration to {}".format(self.card_item.id, new_duration)
+        )
         self.card_item.duration = new_duration
         self.card_item.save_metadata()
 

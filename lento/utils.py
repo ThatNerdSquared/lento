@@ -10,6 +10,7 @@ from lento.config import Config
 Utility Methods
 """
 
+
 def get_data_file_path(relative_path):
     """
     Returns the absolute path of an asset based on
@@ -18,7 +19,7 @@ def get_data_file_path(relative_path):
     try:
         base = sys._MEIPASS
     except Exception:
-        base = os.path.abspath('.')
+        base = os.path.abspath(".")
 
     return os.path.join(base, relative_path)
 
@@ -30,7 +31,7 @@ def is_url(url):
     scheme_included = False
     schemes_to_check = ["https://", "http://", "file://", "ftp://"]
     for scheme in schemes_to_check:
-        if len(scheme) <= len(url) and url[:len(scheme)] == scheme:
+        if len(scheme) <= len(url) and url[: len(scheme)] == scheme:
             scheme_included = True
 
     if not scheme_included:
@@ -47,13 +48,16 @@ def get_apps():
     current_os = platform.system()
     apps = {}
     if current_os == "Windows":
-        command = "powershell \"Get-Process -FileVersionInfo -ErrorAction SilentlyContinue | Select-Object FileName\""  # noqa: E501
+        command = 'powershell "Get-Process -FileVersionInfo -ErrorAction SilentlyContinue | Select-Object FileName"'  # noqa: E501
         raw_data = subprocess.getoutput(command).split("\n")
         items = remove_dupes_blanks_and_whitespace(raw_data[3:])
         for app_path in items:
             app_name = os.path.basename(app_path).replace(".exe", "")
-            if os.path.join(Config.DRIVE_LETTER, "Program Files", "WindowsApps") in app_path:  # noqa: E501
-                command = f"powershell \"(Get-AppxPackage -Name \"*{app_name}*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\""  # noqa: E501
+            if (
+                os.path.join(Config.DRIVE_LETTER, "Program Files", "WindowsApps")
+                in app_path
+            ):  # noqa: E501
+                command = f'powershell "(Get-AppxPackage -Name "*{app_name}*" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo"'  # noqa: E501
                 app_icon = subprocess.getoutput(command)
                 if app_icon == "":
                     app_icon_path = None
@@ -63,10 +67,7 @@ def get_apps():
                         "Program Files",
                         "WindowsApps",
                         Path(app_path).parts[3],
-                        "".join([
-                            app_icon[:-4],
-                            ".scale-200.png"
-                        ])
+                        "".join([app_icon[:-4], ".scale-200.png"]),
                     )
             else:
                 app_icon_path = os.path.join(
@@ -74,21 +75,16 @@ def get_apps():
                     "AppData",
                     "Local",
                     "Lento",
-                    f"{app_name}.bmp"
+                    f"{app_name}.bmp",
                 )
                 if not os.path.exists(app_icon_path):
-                    command = f"powershell \"Add-Type -AssemblyName System.Drawing; [System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')\""  # noqa: E501
+                    command = f"powershell \"Add-Type -AssemblyName System.Drawing; [System.Drawing.Icon]::ExtractAssociatedIcon('{app_path}').toBitmap().Save('{app_icon_path}')\""  # noqa: E501
                     subprocess.call(command, shell=True)
-            apps[app_name] = {
-                "path": app_path,
-                "icon_path": app_icon_path
-            }
+            apps[app_name] = {"path": app_path, "icon_path": app_icon_path}
     elif current_os == "Darwin":
         raise Exception("This function does not currently support macOS.")
     else:
-        raise Exception(
-            "Something went wrong and the OS name could not be found."
-        )
+        raise Exception("Something went wrong and the OS name could not be found.")
 
     return apps
 

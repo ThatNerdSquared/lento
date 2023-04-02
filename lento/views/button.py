@@ -1,4 +1,3 @@
-
 from lento import utils
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QPushButton
@@ -8,6 +7,7 @@ class LentoOneTimeButton(QPushButton):
     """
     Button that is disabled after click
     """
+
     def __init__(self, unclicked_text, clicked_text, on_click_handler):
         """
         Parameters:
@@ -31,16 +31,14 @@ class LentoOneTimeButton(QPushButton):
         self.setEnabled(True)
         self.setText(self.unclicked_text)
         self.setIcon(QIcon())
-    
+
     def activate(self):
         """
         Set the button to be activated
         """
         self.setEnabled(False)
         self.setText(self.clicked_text)
-        self.setIcon(QIcon(
-            utils.get_data_file_path("assets/check.svg")
-        ))
+        self.setIcon(QIcon(utils.get_data_file_path("assets/check.svg")))
 
     def _on_click(self):
         """

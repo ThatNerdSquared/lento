@@ -73,8 +73,7 @@ class TimerTask:
         # if the end time is not set, set the task end time
         # when the task starts
         if not self.end_time:
-            self.end_time = datetime.now() + \
-                timedelta(seconds=self.task_interval)
+            self.end_time = datetime.now() + timedelta(seconds=self.task_interval)
 
         # initialize app blocker and proxy
         self.app_blocker = AppBlocker(self.blocked_apps)
@@ -162,9 +161,7 @@ class TimerTask:
                     # format website to take out "www."
                     website = format_website(website)
                     website_item = WebsiteBlockItem(
-                        website,
-                        self.name,
-                        soft_block=is_soft_block
+                        website, self.name, soft_block=is_soft_block
                     )
                     allow_interval = website_info["allow_interval"]
                     website_item.allow_interval = allow_interval
@@ -189,11 +186,7 @@ class TimerTask:
             for app in apps_dict.keys():
                 app_info = apps_dict[app]
                 if app_info["enabled"]:
-                    app_item = AppBlockItem(
-                        app,
-                        self.name,
-                        soft_block=is_soft_block
-                    )
+                    app_item = AppBlockItem(app, self.name, soft_block=is_soft_block)
                     app_item.allow_interval = app_info["allow_interval"]
                     app_item.popup_msg = app_info["popup_msg"]
                     self.blocked_apps[app] = app_item
@@ -217,11 +210,7 @@ class TimerTask:
                 title = notification_info["title"]
                 message = notification_info["body"]
                 notif_item = NotificationItem(
-                    notif_id,
-                    title,
-                    message,
-                    interval,
-                    self.name
+                    notif_id, title, message, interval, self.name
                 )
 
                 self.notifications.append(notif_item)

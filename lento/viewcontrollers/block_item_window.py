@@ -1,11 +1,21 @@
 import logging
-from PySide6 import QtCore
+from PySide6.QtCore import QEvent
 from PySide6.QtGui import Qt
-from PySide6.QtWidgets import QDialog
-from PySide6.QtWidgets import QFrame, QScrollArea, QWidget, QLabel, QHBoxLayout, QVBoxLayout, QPushButton  # noqa: E501
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (
+    QDialog,
+    QFrame,
+    QScrollArea,
+    QWidget,
+    QLabel,
+    QHBoxLayout,
+    QVBoxLayout,
+    QPushButton,
+)
 from lento.views.resizing_tab import ResizingTabWidget
-from lento.viewcontrollers.block_item_details import LentoBlockItemDetailsView, LentoBlockItemDetailsViewMode # noqa: E501
+from lento.viewcontrollers.block_item_details import (
+    LentoBlockItemDetailsView,
+    LentoBlockItemDetailsViewMode,
+)  # noqa: E501
 
 
 class LentoBlockItemWindow(QDialog):
@@ -29,14 +39,14 @@ class LentoBlockItemWindow(QDialog):
         self.item_changed_handler = item_changed_handler
 
         # make the window frameless
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
 
         body_rect = QWidget()
         body_rect.setObjectName("outercard")
         body_layout = QVBoxLayout()
 
-        # build control bar and control button 
+        # build control bar and control button
         # located at the top of the window
         controlbar = QWidget()
         controlbar_layout = QHBoxLayout()
@@ -62,22 +72,28 @@ class LentoBlockItemWindow(QDialog):
         if block_item is not None:
             title.setText(block_item.label)
         title.setMaximumWidth(400)
-            
+
         title.setObjectName("itemtitle")
         internal_card.addWidget(title)
         title.setAlignment(Qt.AlignCenter)
 
         # if no block item is supplied, assume the window is
-        # for adding new block item, create the tabs for 
+        # for adding new block item, create the tabs for
         # different types of block items
         if block_item is None:
             self.tab = ResizingTabWidget()
-            self.tab.addTab(LentoBlockItemDetailsView(mode=LentoBlockItemDetailsViewMode.APP), 'Apps')
-            self.tab.addTab(LentoBlockItemDetailsView(mode=LentoBlockItemDetailsViewMode.WEBSITE), 'Website')
+            self.tab.addTab(
+                LentoBlockItemDetailsView(mode=LentoBlockItemDetailsViewMode.APP),
+                "Apps",
+            )
+            self.tab.addTab(
+                LentoBlockItemDetailsView(mode=LentoBlockItemDetailsViewMode.WEBSITE),
+                "Website",
+            )
             self.tab.currentChanged.connect(self.on_tab_changed)
             internal_card.addWidget(self.tab)
-        
-        # if block item is supplied, only show info of 
+
+        # if block item is supplied, only show info of
         # provided block item
         else:
             self.item_view = LentoBlockItemDetailsView(block_item=block_item)
@@ -110,7 +126,7 @@ class LentoBlockItemWindow(QDialog):
         Handles when cancel button is clicked
         """
         self.close()
-    
+
     def on_confirm_clicked(self):
         """
         Handles when confirm button is clicked
@@ -136,8 +152,10 @@ class LentoBlockItemWindow(QDialog):
                 logging.info("Closing LentoBlockItemWindow")
                 self.close()
             else:
-                logging.info("Not closing LentoBlockItemWindow" \
-                    " because block item is not saved")
+                logging.info(
+                    "Not closing LentoBlockItemWindow"
+                    " because block item is not saved"
+                )
         else:
             self.close()
 
@@ -155,7 +173,7 @@ class LentoBlockItemWindow(QDialog):
         Method called when there is any UI event
         """
         # if return key is pressed, do not dismiss the window
-        if event.type() == QtCore.QEvent.KeyPress and obj is self:
-            if event.key() == QtCore.Qt.Key_Return:
+        if event.type() == QEvent.KeyPress and obj is self:
+            if event.key() == Qt.Key_Return:
                 return True
         return super().eventFilter(obj, event)

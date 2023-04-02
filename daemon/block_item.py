@@ -47,13 +47,13 @@ class WebsiteBlockItem(BlockItem):
     """
     Class that defines a website to be blocked
     """
+
     def __init__(self, website_url, owner, soft_block=False):
         super().__init__(owner, soft_block=soft_block)
         self.website_url = website_url
 
     def print(self):
-        logging.info("*************Website: {}*************"
-                     .format(self.website_url))
+        logging.info("*************Website: {}*************".format(self.website_url))
         super().print()
 
 
@@ -61,6 +61,7 @@ class NotificationItem:
     """
     Class that defines a repeated notification to be displayed
     """
+
     def __init__(self, name, title, message, interval, owner):
         self.name = name
         self.title = title

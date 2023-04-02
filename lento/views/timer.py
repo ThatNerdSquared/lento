@@ -8,16 +8,12 @@ class TimerView(QWidget):
     Widget allowing input of a time interval and
     counts down the time interval
     """
-    def __init__(
-        self,
-        time_preset,
-        time_changed_handler,
-        completion_handler
-    ):
+
+    def __init__(self, time_preset, time_changed_handler, completion_handler):
         """
         Parameters:
         time_preset: the preset time to be displayed
-        time_changed_handler: method called when time interval 
+        time_changed_handler: method called when time interval
             is changed
         completion_handler: method called when count down completes
         """
@@ -71,8 +67,14 @@ class TimerView(QWidget):
 
         # configure all letters and input boxes
         self.widget_list = [
-            self.hour_box, hour_letter, self.mins_box1, self.mins_box2,
-            mins_letter, self.secs_box1, self.secs_box2, secs_letter
+            self.hour_box,
+            hour_letter,
+            self.mins_box1,
+            self.mins_box2,
+            mins_letter,
+            self.secs_box1,
+            self.secs_box2,
+            secs_letter,
         ]
 
         for item in self.widget_list:
@@ -96,44 +98,24 @@ class TimerView(QWidget):
         Set the timer input box based on a time interval in seconds
         """
         split_time = self._split_seconds(time)
-        self.hour_box.setText(
-            self._replace_empty_with_zero(split_time["hour"])
-        )
-        self.mins_box1.setText(
-            self._replace_empty_with_zero(split_time["mins1"])
-        )
-        self.mins_box2.setText(
-            self._replace_empty_with_zero(split_time["mins2"])
-        )
-        self.secs_box1.setText(
-            self._replace_empty_with_zero(split_time["secs1"])
-        )
-        self.secs_box2.setText(
-            self._replace_empty_with_zero(split_time["secs2"])
-        )
+        self.hour_box.setText(self._replace_empty_with_zero(split_time["hour"]))
+        self.mins_box1.setText(self._replace_empty_with_zero(split_time["mins1"]))
+        self.mins_box2.setText(self._replace_empty_with_zero(split_time["mins2"]))
+        self.secs_box1.setText(self._replace_empty_with_zero(split_time["secs1"]))
+        self.secs_box2.setText(self._replace_empty_with_zero(split_time["secs2"]))
 
     def _gather_seconds(self):
         """
         Convert the time in timer input boxes to single
         time interval number in seconds
         """
-        hour_to_seconds = float(
-            self._replace_empty_with_zero(self.hour_box.text())
-        )
-        mins_to_seconds = (
-            float(
-                self._replace_empty_with_zero(self.mins_box1.text())
-            ) * 10 + float(
-                self._replace_empty_with_zero(self.mins_box2.text())
-            )
-        )
-        seconds = (
-            float(
-                self._replace_empty_with_zero(self.secs_box1.text())
-            ) * 10 + float(
-                self._replace_empty_with_zero(self.secs_box2.text())
-            )
-        )
+        hour_to_seconds = float(self._replace_empty_with_zero(self.hour_box.text()))
+        mins_to_seconds = float(
+            self._replace_empty_with_zero(self.mins_box1.text())
+        ) * 10 + float(self._replace_empty_with_zero(self.mins_box2.text()))
+        seconds = float(
+            self._replace_empty_with_zero(self.secs_box1.text())
+        ) * 10 + float(self._replace_empty_with_zero(self.secs_box2.text()))
         total = (hour_to_seconds * 60 * 60) + (mins_to_seconds * 60) + seconds
         return total
 
@@ -183,8 +165,7 @@ class TimerView(QWidget):
         # minutes box or first seconds box, make
         # sure the input is less than 6, otherwise
         # clear the input from input box
-        if cur_widget == self.secs_box1 or \
-            cur_widget == self.mins_box1:
+        if cur_widget == self.secs_box1 or cur_widget == self.mins_box1:
             if text != "" and int(text) >= 6:
                 cur_widget.setText("")
                 return
@@ -207,7 +188,7 @@ class TimerView(QWidget):
             self.TIME_PRESET = seconds_total
             self.time_changed_handler(seconds_total)
 
-        # fill all empty timer input boxes with 0 
+        # fill all empty timer input boxes with 0
         # and clear focus of all timer input boxes
         for item in self.widget_list:
             if isinstance(item, QLineEdit):
@@ -222,7 +203,7 @@ class TimerView(QWidget):
         """
         if self.running:
             return
-        
+
         self.running = True
         self.current_time = self._gather_seconds()
 

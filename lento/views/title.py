@@ -1,12 +1,14 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QHBoxLayout, QLineEdit, QWidget
 
-#TODO: make the title respond to focus out
+# TODO: make the title respond to focus out
+
 
 class LentoCardTitle(QWidget):
     """
     Card Title Widget
     """
+
     def __init__(self, text, text_changed_handler):
         """
         Parameters:

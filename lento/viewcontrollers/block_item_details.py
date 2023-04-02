@@ -2,12 +2,16 @@ import copy
 import logging
 import platform
 from lento import utils
-from PySide6 import QtCore
-from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, Qt, QPixmap
 from PySide6.QtWidgets import QFileDialog, QSpinBox
-from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout, QVBoxLayout, QPushButton  # noqa: E501
-from lento.views.textedit import LentoTextEdit 
+from PySide6.QtWidgets import (
+    QWidget,
+    QLabel,
+    QHBoxLayout,
+    QVBoxLayout,
+    QPushButton,
+)  # noqa: E501
+from lento.views.textedit import LentoTextEdit
 from lento.viewcontrollers.popup_list import LentoPopUpList
 from lento.model.block_items import LentoAppItem, LentoWebsiteItem
 from lento.views.toggle import Toggle
@@ -17,6 +21,7 @@ class LentoBlockItemDetailsViewMode:
     """
     Defines the operating modes of the block item details view
     """
+
     APP = 0
     WEBSITE = 1
 
@@ -26,16 +31,13 @@ class LentoBlockItemDetailsView(QWidget):
     Widget to display information of a block item or
     help to create a new block item
     """
-    def __init__(
-        self, 
-        block_item=None, 
-        mode=LentoBlockItemDetailsViewMode.WEBSITE
-    ):
+
+    def __init__(self, block_item=None, mode=LentoBlockItemDetailsViewMode.WEBSITE):
         """
         Parameters:
         block_item: the block item to display, if None, display
             UI elements for block item creation
-        mode: operating mode of the widget, if a block item is 
+        mode: operating mode of the widget, if a block item is
             supplied, the operating mode will be ignored and
             will be based on the supplied block item
         """
@@ -66,7 +68,7 @@ class LentoBlockItemDetailsView(QWidget):
         else:
             self.block_item = None
 
-        # if a block item is supplied, setup the UI to 
+        # if a block item is supplied, setup the UI to
         # display block item information
         if block_item is not None:
             if self.mode == LentoBlockItemDetailsViewMode.APP:
@@ -83,20 +85,20 @@ class LentoBlockItemDetailsView(QWidget):
 
             if block_item.softblock:
                 self.ra_toggle.setChecked(True)
-                self.bi_spin.setValue(block_item.allow_interval/60)
+                self.bi_spin.setValue(block_item.allow_interval / 60)
 
             if block_item.popup_item:
                 # if the popup item is not found, this means the item is
                 # previously deleted, remove the popup id from the item
                 # in lento settings
                 if not self.popup_list.selectPopup(block_item.popup_item.id):
-                    logging.info("popup item with ID {} not found for {}".format(
-                        block_item.popup_item.id, 
-                        block_item.label
-                    ))
+                    logging.info(
+                        "popup item with ID {} not found for {}".format(
+                            block_item.popup_item.id, block_item.label
+                        )
+                    )
                     block_item.popup_item = None
                     block_item.save()
-                    
 
     def _build_layout(self):
         """
@@ -108,13 +110,13 @@ class LentoBlockItemDetailsView(QWidget):
         selection_widget = QWidget()
         selection_widget_layout = QVBoxLayout()
         selection_widget.setLayout(selection_widget_layout)
-        selection_widget_layout.setContentsMargins(0,0,0,0)
+        selection_widget_layout.setContentsMargins(0, 0, 0, 0)
 
         # add error message first as hidden and make it
         # visible in case of error
         self.error_msg = QLabel()
         self.error_msg.setObjectName("add_window_error_msg")
-        self.error_msg.setAlignment(QtCore.Qt.AlignCenter)
+        self.error_msg.setAlignment(Qt.AlignCenter)
         self.error_msg.setVisible(False)
 
         if self.mode == LentoBlockItemDetailsViewMode.APP:
@@ -125,7 +127,7 @@ class LentoBlockItemDetailsView(QWidget):
 
             self.app_widget = QWidget()
             app_widget_layout = QHBoxLayout()
-            app_widget_layout.setContentsMargins(0,0,0,0)
+            app_widget_layout.setContentsMargins(0, 0, 0, 0)
             self.app_widget.setLayout(app_widget_layout)
             self.app_widget.setObjectName("add_window_app_panel")
             self.app_widget.setVisible(False)
@@ -139,18 +141,16 @@ class LentoBlockItemDetailsView(QWidget):
             self.app_path_label.setObjectName("add_window_app_label")
 
             self.app_edit_button = QPushButton()
-            self.app_edit_button.setIcon(QIcon(
-                utils.get_data_file_path("assets/edit.svg")
-            ))
+            self.app_edit_button.setIcon(
+                QIcon(utils.get_data_file_path("assets/edit.svg"))
+            )
             self.app_edit_button.clicked.connect(self._on_edit_app_clicked)
             self.app_edit_button.setObjectName("add_window_app_edit_button")
             edit_hover_path = utils.get_data_file_path("assets/edit_hover.svg")
             self.app_edit_button.setStyleSheet(
-                "#add_window_app_edit_button:hover {{" \
-                    "image: url({});" \
-                "}}".format(
-                    edit_hover_path
-                )
+                "#add_window_app_edit_button:hover {{"
+                "image: url({});"
+                "}}".format(edit_hover_path)
             )
 
             app_widget_layout.addWidget(self.app_icon)
@@ -158,9 +158,7 @@ class LentoBlockItemDetailsView(QWidget):
             app_widget_layout.addStretch()
             app_widget_layout.addWidget(self.app_edit_button)
 
-            self.error_msg.setText(
-                "No app selected"
-            )
+            self.error_msg.setText("No app selected")
 
             selection_widget_layout.addWidget(self.app_add_button)
             selection_widget_layout.addWidget(self.app_widget)
@@ -171,17 +169,13 @@ class LentoBlockItemDetailsView(QWidget):
                 placeholder="Enter website URL to block..."
             )
             self.web_text_edit.setAlignment(Qt.AlignCenter)
-            self.web_text_edit.setContentsMargins(0,0,0,0)
+            self.web_text_edit.setContentsMargins(0, 0, 0, 0)
             self.web_text_edit.textChangedHandler = self._on_website_entered
-            self.web_check_msg = QLabel(
-                "Warning: This website URL maybe invalid"
-            )
+            self.web_check_msg = QLabel("Warning: This website URL maybe invalid")
             self.web_check_msg.setVisible(False)
             self.web_check_msg.setObjectName("add_window_web_chk_msg")
 
-            self.error_msg.setText(
-                "No website entered"
-            )
+            self.error_msg.setText("No website entered")
 
             selection_widget_layout.addWidget(self.web_text_edit)
             selection_widget_layout.addWidget(self.web_check_msg)
@@ -192,20 +186,18 @@ class LentoBlockItemDetailsView(QWidget):
         # build restricted access toggle
         ra_widget = QWidget()
         ra_layout = QHBoxLayout()
-        ra_layout.setContentsMargins(0,0,0,0)
+        ra_layout.setContentsMargins(0, 0, 0, 0)
         ra_widget.setLayout(ra_layout)
 
         ra_text = QLabel("Restricted Access")
         ra_text.setObjectName("add_window_ra_text")
-        ra_text.setContentsMargins(0,0,0,0)
+        ra_text.setContentsMargins(0, 0, 0, 0)
         tooltip_button = QPushButton()
-        tooltip_button.setIcon(QIcon(
-            utils.get_data_file_path("assets/help.svg")
-        ))
+        tooltip_button.setIcon(QIcon(utils.get_data_file_path("assets/help.svg")))
         tooltip_button.setObjectName("add_window_ra_icon")
         tooltip_button.setToolTip(
-            "If Restricted Access is turned on, we will\n" \
-            "display popup and ask you if this item should\n" \
+            "If Restricted Access is turned on, we will\n"
+            "display popup and ask you if this item should\n"
             "be blocked every time we detect this item"
         )
         self.ra_toggle = Toggle()
@@ -221,7 +213,7 @@ class LentoBlockItemDetailsView(QWidget):
         # if restricted access toggle is on
         self.bi_widget = QWidget()
         bi_widget_layout = QHBoxLayout()
-        bi_widget_layout.setContentsMargins(0,0,0,20)
+        bi_widget_layout.setContentsMargins(0, 0, 0, 20)
         self.bi_widget.setLayout(bi_widget_layout)
         self.bi_widget.setVisible(False)
 
@@ -249,7 +241,7 @@ class LentoBlockItemDetailsView(QWidget):
 
         body_layout.addWidget(self.popup_list)
         self.setLayout(body_layout)
-        
+
     def get_block_item(self):
         """
         Returns:
@@ -269,13 +261,12 @@ class LentoBlockItemDetailsView(QWidget):
 
             # create a new website item based on the entered url
             self.block_item = LentoWebsiteItem(selected_url)
-        
+
         # configure other properties of the block item
         if self.block_item:
-            self.block_item.softblock = (self.ra_toggle.handle_position == 1)
+            self.block_item.softblock = self.ra_toggle.handle_position == 1
             self.block_item.allow_interval = self.bi_spin.value() * 60
             self.block_item.popup_item = self.popup_list.selectedPopup()
-
 
         logging.info("Returning block item {}".format(self.block_item.label))
         return self.block_item
@@ -291,7 +282,7 @@ class LentoBlockItemDetailsView(QWidget):
         Make error message visible
         """
         self.error_msg.setVisible(True)
-    
+
     def clear_error_msg(self):
         """
         Hide the error message
@@ -306,7 +297,7 @@ class LentoBlockItemDetailsView(QWidget):
         if len(text) == 0:
             self.web_check_msg.setVisible(False)
             return
-        
+
         # if url does not begin with https:// add it
         # TODO: this is hacky, what if the URL begins with http://?
         if text[:7] != "https://":
@@ -318,7 +309,7 @@ class LentoBlockItemDetailsView(QWidget):
             self.web_check_msg.setVisible(True)
         else:
             self.web_check_msg.setVisible(False)
-        
+
         # clear the error message
         self.clear_error_msg()
 
@@ -329,9 +320,7 @@ class LentoBlockItemDetailsView(QWidget):
         # set the icon if it exists
         if app_item.icon_path:
             self.app_icon.setVisible(True)
-            self.app_icon.setIcon(QIcon(
-                QPixmap(app_item.icon_path
-            )))
+            self.app_icon.setIcon(QIcon(QPixmap(app_item.icon_path)))
         else:
             self.app_icon.setVisible(False)
 
@@ -359,7 +348,7 @@ class LentoBlockItemDetailsView(QWidget):
         Handles when restricted access toggle is flipped
         """
         # when restricted access toggle is on,
-        # display the view to configure access interval 
+        # display the view to configure access interval
         if checked:
             self.bi_widget.setVisible(True)
         else:

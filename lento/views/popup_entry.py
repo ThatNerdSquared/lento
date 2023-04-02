@@ -1,4 +1,3 @@
-
 from lento import utils
 from PySide6.QtWidgets import QHBoxLayout, QCheckBox, QFrame
 from lento.views.textedit import LentoTextEdit
@@ -8,6 +7,7 @@ class LentoPopupEntry(QFrame):
     """
     Widget that displays a popup message entry
     """
+
     def __init__(self, editable=True, popup_item=None, placeholder=None):
         """
         Parameters:
@@ -25,38 +25,32 @@ class LentoPopupEntry(QFrame):
         self.checkBox.stateChanged.connect(self._onCheckboxChanged)
 
         # set up check box icon, note that because the path
-        # are relative, the absolute path needs to be determined 
+        # are relative, the absolute path needs to be determined
         # and added to the style sheet
-        checkbox_checked_path = utils.get_data_file_path(
-            "assets/checkbox_checked.svg"
-        )
-        checkbox_normal_path = utils.get_data_file_path(
-            "assets/checkbox_normal.svg"
-        )
-        checkbox_hover_path = utils.get_data_file_path(
-            "assets/checkbox_hover.svg"
-        )
+        checkbox_checked_path = utils.get_data_file_path("assets/checkbox_checked.svg")
+        checkbox_normal_path = utils.get_data_file_path("assets/checkbox_normal.svg")
+        checkbox_hover_path = utils.get_data_file_path("assets/checkbox_hover.svg")
         checkbox_disabled_path = utils.get_data_file_path(
             "assets/checkbox_disabled.svg"
         )
 
         self.checkBox.setStyleSheet(
-            "QCheckBox::indicator:checked {{" \
-                "image: url({});"\
-            "}}" \
-            "QCheckBox::indicator:unchecked {{" \
-                "image: url({});" \
-            "}}" \
-            "QCheckBox::indicator:unchecked:hover {{" \
-                "image: url({});" \
-            "}}" \
-            "QCheckBox::indicator:unchecked:disabled {{" \
-                "image: url({});" \
+            "QCheckBox::indicator:checked {{"
+            "image: url({});"
+            "}}"
+            "QCheckBox::indicator:unchecked {{"
+            "image: url({});"
+            "}}"
+            "QCheckBox::indicator:unchecked:hover {{"
+            "image: url({});"
+            "}}"
+            "QCheckBox::indicator:unchecked:disabled {{"
+            "image: url({});"
             "}}".format(
                 checkbox_checked_path,
                 checkbox_normal_path,
                 checkbox_hover_path,
-                checkbox_disabled_path
+                checkbox_disabled_path,
             )
         )
 
@@ -64,14 +58,11 @@ class LentoPopupEntry(QFrame):
             self.checkBox.setEnabled(False)
         else:
             self.checkBox.setEnabled(True)
-        
+
         layout.addWidget(self.checkBox)
 
         self.editable = editable
-        self.textEdit = LentoTextEdit(
-            text=text,
-            placeholder=placeholder
-        )
+        self.textEdit = LentoTextEdit(text=text, placeholder=placeholder)
 
         # enable the check box if there is text to be displayed
         if text is not None:
@@ -84,16 +75,16 @@ class LentoPopupEntry(QFrame):
         self.setLayout(layout)
         self.selectedHandler = None
         self.textInputHandler = None
-    
+
     def popup_id(self):
         """
         Return:
-        popup ID of the displayed popup item, 
+        popup ID of the displayed popup item,
         None if the entry does not contain a popup item
         """
         if self.popup_item:
             return self.popup_item.id
-        
+
         return None
 
     def select(self):
@@ -108,7 +99,7 @@ class LentoPopupEntry(QFrame):
         # _onCheckboxChanged to be called which will
         # make the text edit readonly
         self.checkBox.setChecked(True)
-    
+
     def deselect(self):
         """
         Deselects the entry
