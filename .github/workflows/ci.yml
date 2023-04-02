@@ -25,7 +25,7 @@ jobs:
     #     make test
     - name: Check formatting with black
       run: |
-        black --check daemon daemon_interface lento tests
+        black --check lento
     - name: Lint with flake8
       run: |
         make lint
