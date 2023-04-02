@@ -1,7 +1,7 @@
 import logging
 from lento.desktop_client import utils
 from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtWidgets import QHBoxLayout, QPushButton, QLabel, QWidget  # noqa: E501
+from PySide6.QtWidgets import QHBoxLayout, QPushButton, QLabel, QWidget
 from lento.desktop_client.viewcontrollers.block_item_window import LentoBlockItemWindow
 
 

@@ -10,7 +10,7 @@ class WindowsProxyController:
     def __init__(self):
         super().__init__()
         self.MAIN_REG_PATH = (
-            r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"  # noqa: E501
+            r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"
         )
 
     def set_registry_key(self, key, value, type):

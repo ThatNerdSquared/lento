@@ -56,7 +56,7 @@ def get_apps():
             if (
                 os.path.join(Config.DRIVE_LETTER, "Program Files", "WindowsApps")
                 in app_path
-            ):  # noqa: E501
+            ):
                 command = f'powershell "(Get-AppxPackage -Name "*{app_name}*" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo"'  # noqa: E501
                 app_icon = subprocess.getoutput(command)
                 if app_icon == "":

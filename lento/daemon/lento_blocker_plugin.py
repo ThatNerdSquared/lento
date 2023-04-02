@@ -6,7 +6,7 @@ from lento.daemon.alert.notifications_controller import NotifsController
 from lento.daemon.alert.notifications_controller import (
     WEBSITE_DEFAULT_TITLE,
     WEBSITE_INFO_DEFAULT_MSG,
-)  # noqa: E501
+)
 from lento.daemon.alert.notifications_controller import WEBSITE_CONFIRM_DEFAULT_MSG
 from proxy.http import httpStatusCodes
 from proxy.common.flag import flags

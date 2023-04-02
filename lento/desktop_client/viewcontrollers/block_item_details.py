@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
     QPushButton,
-)  # noqa: E501
+)
 from lento.desktop_client.views.textedit import LentoTextEdit
 from lento.desktop_client.viewcontrollers.popup_list import LentoPopUpList
 from lento.desktop_client.model.block_items import LentoAppItem, LentoWebsiteItem

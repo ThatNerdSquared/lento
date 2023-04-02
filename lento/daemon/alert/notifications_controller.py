@@ -9,10 +9,10 @@ default title & message definitions
 APP_DEFAULT_TITLE = "Lento: App Blocked"
 WEBSITE_DEFAULT_TITLE = "Lento: Website Blocked"
 APP_CONFIRM_DEFAULT_MSG = (
-    "You tried to open a blocked app!\nDo you still want to open {}?"  # noqa: E501
+    "You tried to open a blocked app!\nDo you still want to open {}?"
 )
 WEBSITE_CONFIRM_DEFAULT_MSG = (
-    "You tried to open a blocked site!\nDo you still want to open {}?"  # noqa: E501
+    "You tried to open a blocked site!\nDo you still want to open {}?"
 )
 APP_INFO_DEFAULT_MSG = "You tried to open {} which is blocked by Lento"
 WEBSITE_INFO_DEFAULT_MSG = "You tried to open {} which is blocked by Lento"

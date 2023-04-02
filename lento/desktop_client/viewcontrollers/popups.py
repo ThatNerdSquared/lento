@@ -5,7 +5,7 @@ from PySide6.QtGui import QColor, QPixmap
 from PySide6.QtWidgets import QDialog
 from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QPushButton, QGraphicsDropShadowEffect
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel  # noqa: E501
+from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel
 
 
 class LentoPopUpMode:

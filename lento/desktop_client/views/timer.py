@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt
 from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QWidget  # noqa: E501
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QWidget
 
 
 class TimerView(QWidget):

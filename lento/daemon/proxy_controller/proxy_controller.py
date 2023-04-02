@@ -1,13 +1,12 @@
 import proxy
 import logging
 import platform
-import lento.daemon.lento_blocker_plugin
 from lento.daemon.util.util import format_website
 from lento.config import Config
 from lento.daemon.proxy_controller.macos_proxy_controller import macOSProxyController
 from lento.daemon.proxy_controller.windows_proxy_controller import (
     WindowsProxyController,
-)  # noqa: E501
+)
 
 PROXIES = {"Darwin": macOSProxyController, "Windows": WindowsProxyController}
 

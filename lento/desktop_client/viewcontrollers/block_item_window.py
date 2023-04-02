@@ -15,7 +15,7 @@ from lento.desktop_client.views.resizing_tab import ResizingTabWidget
 from lento.desktop_client.viewcontrollers.block_item_details import (
     LentoBlockItemDetailsView,
     LentoBlockItemDetailsViewMode,
-)  # noqa: E501
+)
 
 
 class LentoBlockItemWindow(QDialog):

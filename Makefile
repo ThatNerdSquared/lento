@@ -1,14 +1,12 @@
 PYTHON := python3
 
 .PHONY = lint test run build_macos build_windows remove-build-files
-DAEMON_DIRS = $(shell find ./daemon/ -type d)
-DAEMON_FILES = $(shell find ./daemon/ -type f -name '*')
 APP_DIRS = $(shell find ./lento/ -type d)
 APP_FILES = $(shell find ./lento/ -type f -name '*')
 
 lint:
 	@echo Linting...
-	@${PYTHON} -m flake8 ./app.py lento daemon tests --exclude="tests/helpers.py"
+	@${PYTHON} -m flake8 ./app.py ./daemon.py lento tests --exclude="tests/helpers.py"
 	@echo Done!
 
 test:

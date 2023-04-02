@@ -1,7 +1,6 @@
 import json
 import sys
 import logging
-from pathlib import Path
 from lento.config import Config
 from daemon_interface.daemon_interface import LentoDaemonInterface
 

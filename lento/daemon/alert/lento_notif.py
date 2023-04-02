@@ -33,7 +33,7 @@ class LentoNotif:
             [
                 "osascript",
                 "-e",
-                f"""display notification "{self.body}" with title "{self.title}\"""",  # noqa: E501
+                f"""display notification "{self.body}" with title "{self.title}\"""",
             ]
         )
 
