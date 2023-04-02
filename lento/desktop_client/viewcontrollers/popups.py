@@ -1,5 +1,5 @@
 import logging
-from lento import utils
+from lento.desktop_client import utils
 from PySide6 import QtCore
 from PySide6.QtGui import QColor, QPixmap
 from PySide6.QtWidgets import QDialog

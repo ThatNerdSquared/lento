@@ -1,6 +1,6 @@
-from lento import utils
+from lento.desktop_client import utils
 from PySide6.QtWidgets import QHBoxLayout, QCheckBox, QFrame
-from lento.views.textedit import LentoTextEdit
+from lento.desktop_client.views.textedit import LentoTextEdit
 
 
 class LentoPopupEntry(QFrame):

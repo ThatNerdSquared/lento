@@ -11,8 +11,8 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QPushButton,
 )
-from lento.views.resizing_tab import ResizingTabWidget
-from lento.viewcontrollers.block_item_details import (
+from lento.desktop_client.views.resizing_tab import ResizingTabWidget
+from lento.desktop_client.viewcontrollers.block_item_details import (
     LentoBlockItemDetailsView,
     LentoBlockItemDetailsViewMode,
 )  # noqa: E501

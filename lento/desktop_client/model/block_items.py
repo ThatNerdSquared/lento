@@ -5,8 +5,8 @@ import platform
 import subprocess
 import plistlib
 import logging
-import lento.model.cards_management as CardsManagement
-import lento.icon_manager as IconManager
+import lento.desktop_client.model.cards_management as CardsManagement
+import lento.desktop_client.icon_manager as IconManager
 from pathlib import Path
 from lento.config import Config
 from abc import ABC, abstractmethod

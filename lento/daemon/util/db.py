@@ -1,10 +1,10 @@
 import logging
-import daemon
 from peewee import Model, TextField, IntegerField, DoubleField
 from peewee import DateTimeField, SqliteDatabase, DoesNotExist
-from daemon.block_item import WebsiteBlockItem, AppBlockItem
-from daemon.block_item import NotificationItem
+from lento.daemon.block_item import WebsiteBlockItem, AppBlockItem
+from lento.daemon.block_item import NotificationItem
 from lento.config import Config
+from lento import daemon
 
 db = SqliteDatabase(None)
 

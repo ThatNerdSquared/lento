@@ -4,11 +4,11 @@ import socket
 import logging
 import multiprocessing
 from lento.config import Config
-from daemon.util.db import DBController
+from lento.daemon.util.db import DBController
 from multiprocessing.connection import Listener
-from daemon.timer_task import TimerTask
+from lento.daemon.timer_task import TimerTask
 from logging.handlers import RotatingFileHandler
-from daemon.alert.lento_notif import LentoNotif
+from lento.daemon.alert.lento_notif import LentoNotif
 
 
 class LentoDaemon:
@@ -47,7 +47,8 @@ class LentoDaemon:
 
             # if task is already complete, remove it
             if self.task.is_complete():
-                logging.info("Task {} is already complete".format(self.task.name))
+                logging.info(
+                    "Task {} is already complete".format(self.task.name))
                 DBController.remove_timer_task(self.task.name)
                 self.task = None
 
@@ -61,13 +62,13 @@ class LentoDaemon:
 
         # get an open port on device
         port = self._find_open_port()
-        address = ("localhost", port)  # family is deduced to be 'AF_INET'
+        address = ('localhost', port)     # family is deduced to be 'AF_INET'
 
         # IPC setup, code taken from
         # https://stackoverflow.com/questions/6920858/interprocess-communication-in-python
 
         logging.info("Listening for incoming connection at {}".format(address))
-        listener = Listener(address, authkey=b"lento")
+        listener = Listener(address, authkey=b'lento')
 
         # save the port that the daemon is listening from
         # in lentosettings.json under "daemon_port" key
@@ -83,7 +84,7 @@ class LentoDaemon:
             while True:
                 msg = conn.recv()
 
-                if msg == "close":
+                if msg == 'close':
                     conn.close()
                     break
 
@@ -105,7 +106,7 @@ class LentoDaemon:
         logging.info("Task {} complete".format(self.task.name))
         LentoNotif(
             "Lento: Block Complete",
-            "Task {} complete, block deactivated".format(self.task.name),
+            "Task {} complete, block deactivated".format(self.task.name)
         ).send_banner()
         self.task = None
 
@@ -135,10 +136,8 @@ class LentoDaemon:
                 self._run_task(info_dict)
                 return None
             else:
-                logging.info(
-                    "Ignoring start timer request, "
-                    "{} already running".format(self.task.name)
-                )
+                logging.info("Ignoring start timer request, "
+                             "{} already running".format(self.task.name))
                 return "Task {} already running".format(self.task.name)
 
         # handle clean up message
@@ -170,7 +169,7 @@ class LentoDaemon:
         open port
         """
         sock = socket.socket()
-        sock.bind(("", 0))
+        sock.bind(('', 0))
         _, port = sock.getsockname()
 
         return port
@@ -185,26 +184,20 @@ class LentoDaemon:
         Config.SETTINGS_PATH.write_text(json.dumps(SETTINGS))
 
 
-if __name__ == "__main__":
+def main():
     # setup logging: set up two logging handlers to log
     # both to file (RotatingFileHandler) and to console
     # (StreamHandler)
     log_file_path = Config.APPDATA_PATH / "lentodaemon.log"
     logging.basicConfig(
         level=logging.INFO,
-        format="%(asctime)s - pid:%(process)d [%(levelname)s] %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
+        format='%(asctime)s - pid:%(process)d [%(levelname)s] %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
         handlers=[
-            RotatingFileHandler(
-                log_file_path,
-                mode="a",
-                maxBytes=5 * 1024 * 1024,
-                backupCount=2,
-                encoding=None,
-                delay=0,
-            ),
-            logging.StreamHandler(),
-        ],
+            RotatingFileHandler(log_file_path, mode='a', maxBytes=5*1024*1024,
+                                backupCount=2, encoding=None, delay=0),
+            logging.StreamHandler()
+        ]
     )
 
     # multiprocessing hack for packager
@@ -217,3 +210,6 @@ if __name__ == "__main__":
     # start daemon
     daemon = LentoDaemon(num_acceptors)
     daemon.entry()
+
+if __name__ == '__main__':
+    main()

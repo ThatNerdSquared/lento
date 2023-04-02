@@ -1,15 +1,15 @@
 import psutil
 import subprocess
 import logging
-from daemon.alert.notifications_controller import (
+from lento.daemon.alert.notifications_controller import (
     NotifsController,
     APP_DEFAULT_TITLE,
-)  # noqa: E501
-from daemon.alert.notifications_controller import (
+)
+from lento.daemon.alert.notifications_controller import (
     APP_INFO_DEFAULT_MSG,
     APP_CONFIRM_DEFAULT_MSG,
-)  # noqa: E501
-from daemon.util.db import DBController
+)
+from lento.daemon.util.db import DBController
 from datetime import datetime
 
 

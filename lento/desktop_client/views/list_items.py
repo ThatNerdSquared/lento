@@ -1,8 +1,8 @@
 import logging
-from lento import utils
+from lento.desktop_client import utils
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtWidgets import QHBoxLayout, QPushButton, QLabel, QWidget  # noqa: E501
-from lento.viewcontrollers.block_item_window import LentoBlockItemWindow
+from lento.desktop_client.viewcontrollers.block_item_window import LentoBlockItemWindow
 
 
 class LentoListItem(QWidget):

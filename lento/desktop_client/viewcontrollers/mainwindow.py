@@ -1,10 +1,10 @@
 import sys
 import json
 import logging
-import lento.icon_manager as IM
+import lento.desktop_client.icon_manager as IM
 from lento.config import Config
-from lento.viewcontrollers.card import Card
-from lento import utils
+from lento.desktop_client.viewcontrollers.card import Card
+from lento.desktop_client import utils
 from pathlib import Path
 from PySide6.QtCore import QDir, QSize
 from PySide6.QtGui import QFontDatabase, QIcon
@@ -15,10 +15,10 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QStackedWidget,
 )
-from lento.model import cards_management as CardsManagement
-from lento.model.block_items import LentoCardItem
+from lento.desktop_client.model.block_items import LentoCardItem
+from lento.desktop_client.model import cards_management as CardsManagement
 from logging.handlers import RotatingFileHandler
-from lento.viewcontrollers.popups import LentoPopUpWindow, LentoPopUpMode
+from lento.desktop_client.viewcontrollers.popups import LentoPopUpWindow, LentoPopUpMode
 
 
 class MainWindow(QMainWindow):

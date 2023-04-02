@@ -1,11 +1,11 @@
 import logging
-from daemon.block_item import AppBlockItem, WebsiteBlockItem
-from daemon.block_item import NotificationItem
-from daemon.util.util import RepeatTimer, format_website
-from daemon.util.db import DBController
-from daemon.alert.notifications_controller import NotifsController
-from daemon.app_blocker.appblocker import AppBlocker
-from daemon.proxy_controller.proxy_controller import ProxyController
+from lento.daemon.block_item import AppBlockItem, WebsiteBlockItem
+from lento.daemon.block_item import NotificationItem
+from lento.daemon.util.util import RepeatTimer, format_website
+from lento.daemon.util.db import DBController
+from lento.daemon.alert.notifications_controller import NotifsController
+from lento.daemon.app_blocker.appblocker import AppBlocker
+from lento.daemon.proxy_controller.proxy_controller import ProxyController
 from datetime import datetime, timedelta
 
 

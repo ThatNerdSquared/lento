@@ -1,11 +1,11 @@
 import proxy
 import logging
 import platform
-import daemon.lento_blocker_plugin  # noqa # pylint: disable=unused-import
-from daemon.util.util import format_website
+import lento.daemon.lento_blocker_plugin
+from lento.daemon.util.util import format_website
 from lento.config import Config
-from daemon.proxy_controller.macos_proxy_controller import macOSProxyController
-from daemon.proxy_controller.windows_proxy_controller import (
+from lento.daemon.proxy_controller.macos_proxy_controller import macOSProxyController
+from lento.daemon.proxy_controller.windows_proxy_controller import (
     WindowsProxyController,
 )  # noqa: E501
 

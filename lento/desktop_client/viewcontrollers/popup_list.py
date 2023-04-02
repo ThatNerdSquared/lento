@@ -1,9 +1,9 @@
 import logging
 import uuid
 from PySide6.QtWidgets import QWidget, QVBoxLayout
-from lento.views.popup_entry import LentoPopupEntry
-from lento.model.block_items import LentoPopUpItem
-from lento.viewcontrollers.popups import LentoPopUpWindow, LentoPopUpMode
+from lento.desktop_client.views.popup_entry import LentoPopupEntry
+from lento.desktop_client.model.block_items import LentoPopUpItem
+from lento.desktop_client.viewcontrollers.popups import LentoPopUpWindow, LentoPopUpMode
 
 
 class LentoPopUpList(QWidget):
