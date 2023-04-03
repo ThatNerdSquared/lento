@@ -9,8 +9,9 @@ import copy
 import json
 import os
 import platform
-from lento.common import cards_management as CardsManagement
+
 from lento import utils
+from lento.common import cards_management as CardsManagement
 from lento.common import get_block_controller
 from tests import helpers
 

@@ -1,15 +1,14 @@
 # flake8: noqa
 import os
 import textwrap
+
 from lento.config import Config
 
 data = {
     "initial_blank_config": {
         "activated_card": None,
         "cards": {},
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
     "config_after_add": {
         "activated_card": None,
@@ -24,12 +23,10 @@ data = {
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": {}
+                "goals": {},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
     "bare_config": {
         "activated_card": None,
@@ -44,14 +41,12 @@ data = {
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": {}
+                "goals": {},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
-    "filled_config":  {
+    "filled_config": {
         "activated_card": None,
         "cards": {
             "Untitled Card": {
@@ -64,48 +59,34 @@ data = {
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": {}
+                "goals": {},
             },
             "Llama Taming": {
                 "id": "e68d8993-ee30-4e3f-941b-43c074e2759c",
                 "name": "Llama Taming",
                 "emoji": "🦙",
                 "time": 5400,
-                "hard_blocked_sites": {
-                    "twitter.com": True
-                },
-                "soft_blocked_sites": {
-                    "youtube.com": True
-                },
-                "hard_blocked_apps": {
-                    "NetNewsWire": True
-                },
-                "soft_blocked_apps": {
-                    "calibre": False
-                },
+                "hard_blocked_sites": {"twitter.com": True},
+                "soft_blocked_sites": {"youtube.com": True},
+                "hard_blocked_apps": {"NetNewsWire": True},
+                "soft_blocked_apps": {"calibre": False},
                 "notifications": {
                     "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
                         "name": "Test Notif 1",
                         "enabled": True,
                         "type": "popup",
                         "blocked_visit_triggers": [],
-                        "associated_goals": [
-                            "Obtain llama"
-                        ],
+                        "associated_goals": ["Obtain llama"],
                         "time_interval_trigger": 900000,
                         "title": "Get back to %g!",
                         "body": "Keep focused!",
-                        "audio_paths": {
-                            "Bloop": "/System/Library/Sounds/Bloop.aiff"
-                        }
+                        "audio_paths": {"Bloop": "/System/Library/Sounds/Bloop.aiff"},
                     }
                 },
-                "goals": {"Obtain llama": True}
-            }
+                "goals": {"Obtain llama": True},
+            },
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
     "updated_bare_config": {
         "activated_card": None,
@@ -120,12 +101,10 @@ data = {
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": {}
+                "goals": {},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
     "bare_config_with_blocked_sites": {
         "activated_card": None,
@@ -135,20 +114,15 @@ data = {
                 "name": "Untitled Card",
                 "emoji": "😃",
                 "time": 0,
-                "hard_blocked_sites": {
-                    "youtube.com": True,
-                    "twitter.com": True
-                },
+                "hard_blocked_sites": {"youtube.com": True, "twitter.com": True},
                 "soft_blocked_sites": {},
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": {}
+                "goals": {},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
     "bare_config_with_sb_sites": {
         "activated_card": None,
@@ -159,19 +133,14 @@ data = {
                 "emoji": "😃",
                 "time": 0,
                 "hard_blocked_sites": {},
-                "soft_blocked_sites": {
-                    "youtube.com": True,
-                    "twitter.com": True
-                },
+                "soft_blocked_sites": {"youtube.com": True, "twitter.com": True},
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": {}
+                "goals": {},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
     "bare_config_with_all_blocked_sites": {
         "activated_card": None,
@@ -181,23 +150,15 @@ data = {
                 "name": "Untitled Card",
                 "emoji": "😃",
                 "time": 0,
-                "hard_blocked_sites": {
-                    "youtube.com": True,
-                    "twitter.com": True
-                },
-                "soft_blocked_sites": {
-                    "discord.com": True,
-                    "slack.com": True
-                },
+                "hard_blocked_sites": {"youtube.com": True, "twitter.com": True},
+                "soft_blocked_sites": {"discord.com": True, "slack.com": True},
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": {}
+                "goals": {},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
     "bare_config_with_apps": {
         "activated_card": None,
@@ -213,22 +174,20 @@ data = {
                     "calibre": {
                         "enabled": False,
                         "bundle_id": "net.kovidgoyal.calibre",
-                        "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg"  # noqa: E501
+                        "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg",  # noqa: E501
                     },
                     "GRIS": {
                         "enabled": True,
                         "bundle_id": "unity.nomada studio.GRIS",
-                        "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"  # noqa: E501
-                    }
+                        "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg",  # noqa: E501
+                    },
                 },
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": {}
+                "goals": {},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
     "bare_config_reordered_apps": {
         "activated_card": None,
@@ -244,34 +203,32 @@ data = {
                     "GRIS": {
                         "enabled": True,
                         "bundle_id": "unity.nomada studio.GRIS",
-                        "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"  # noqa: E501
+                        "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg",  # noqa: E501
                     },
                     "calibre": {
                         "enabled": False,
                         "bundle_id": "net.kovidgoyal.calibre",
-                        "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg"  # noqa: E501
-                    }
+                        "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg",  # noqa: E501
+                    },
                 },
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": {}
+                "goals": {},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
     "new_blocklist": {
         "GRIS": {
             "enabled": True,
             "bundle_id": "unity.nomada studio.GRIS",
-            "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg"
+            "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg",
         },
         "calibre": {
             "enabled": False,
             "bundle_id": "net.kovidgoyal.calibre",
-            "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg"
-        }
+            "app_icon_path": "~/Library/Application Support/Lento/calibre.jpg",
+        },
     },
     "bare_config_with_notif": {
         "activated_card": None,
@@ -290,28 +247,21 @@ data = {
                         "name": "Test Notif 1",
                         "enabled": True,
                         "type": "banner",
-                        "blocked_visit_triggers": [
-                            "youtube.com",
-                            "twitter.com"
-                        ],
-                        "associated_goals": [
-                            "Debug USACO problem"
-                        ],
+                        "blocked_visit_triggers": ["youtube.com", "twitter.com"],
+                        "associated_goals": ["Debug USACO problem"],
                         "time_interval_trigger": None,
                         "title": "Get back to %g!",
                         "body": "Keep focused!",
                         "audio_paths": {
                             "reminder": "~/Desktop/reminder.mp3",
-                            "Frog": "/System/Library/Sounds/Frog.aiff"
-                        }
+                            "Frog": "/System/Library/Sounds/Frog.aiff",
+                        },
                     }
                 },
-                "goals": {}
+                "goals": {},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
     "bare_config_multiple_notif": {
         "activated_card": None,
@@ -330,45 +280,35 @@ data = {
                         "name": "Test Notif 1",
                         "enabled": True,
                         "type": "banner",
-                        "blocked_visit_triggers": [
-                            "youtube.com",
-                            "twitter.com"
-                        ],
-                        "associated_goals": [
-                            "Debug USACO problem"
-                        ],
+                        "blocked_visit_triggers": ["youtube.com", "twitter.com"],
+                        "associated_goals": ["Debug USACO problem"],
                         "time_interval_trigger": None,
                         "title": "Get back to %g!",
                         "body": "Keep focused!",
                         "audio_paths": {
                             "reminder": "~/Desktop/reminder.mp3",
-                            "Frog": "/System/Library/Sounds/Frog.aiff"
-                        }
+                            "Frog": "/System/Library/Sounds/Frog.aiff",
+                        },
                     },
                     "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
                         "name": "Test Notif 2",
                         "enabled": False,
                         "type": "popup",
                         "blocked_visit_triggers": [],
-                        "associated_goals": [
-                            "Create pet AI"
-                        ],
+                        "associated_goals": ["Create pet AI"],
                         "time_interval_trigger": 900000,
                         "title": "Work on %g",
                         "body": "Keep focused!",
-                        "audio_paths": {
-                            "Bloop": "/System/Library/Sounds/Bloop.aiff"
-                        }
-                    }
+                        "audio_paths": {"Bloop": "/System/Library/Sounds/Bloop.aiff"},
+                    },
                 },
-                "goals": {}
+                "goals": {},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
-    "GRIS": textwrap.dedent("""
+    "GRIS": textwrap.dedent(
+        """
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
         <plist version="1.0">
@@ -414,8 +354,10 @@ data = {
             <string>10.9.0</string>
         </dict>
         </plist>
-    """).strip(),
-    "Scrivener": textwrap.dedent("""
+    """
+    ).strip(),
+    "Scrivener": textwrap.dedent(
+        """
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
         <plist version="1.0">
@@ -728,8 +670,10 @@ data = {
             </array>
         </dict>
         </plist>
-    """).strip(),
-    "NetNewsWire": textwrap.dedent("""
+    """
+    ).strip(),
+    "NetNewsWire": textwrap.dedent(
+        """
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
         <plist version="1.0">
@@ -833,42 +777,34 @@ data = {
             <string>NetNewsWire (RSS Reader; https://netnewswire.com/)</string>
         </dict>
         </plist>
-    """).strip(),
+    """
+    ).strip(),
     "reordered_notifs_dict": {
         "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
             "name": "Test Notif 2",
             "enabled": False,
             "type": "popup",
             "blocked_visit_triggers": [],
-            "associated_goals": [
-                "Create pet AI"
-            ],
+            "associated_goals": ["Create pet AI"],
             "time_interval_trigger": 900000,
             "title": "Work on %g",
             "body": "Keep focused!",
-            "audio_paths": {
-                "Bloop": "/System/Library/Sounds/Bloop.aiff"
-            }
+            "audio_paths": {"Bloop": "/System/Library/Sounds/Bloop.aiff"},
         },
         "a019868e-f43f-478f-8dcc-ba78c35525c4": {
             "name": "Test Notif 1",
             "enabled": True,
             "type": "banner",
-            "blocked_visit_triggers": [
-                "youtube.com",
-                "twitter.com"
-            ],
-            "associated_goals": [
-                "Debug USACO problem"
-            ],
+            "blocked_visit_triggers": ["youtube.com", "twitter.com"],
+            "associated_goals": ["Debug USACO problem"],
             "time_interval_trigger": None,
             "title": "Get back to %g!",
             "body": "Keep focused!",
             "audio_paths": {
                 "reminder": "~/Desktop/reminder.mp3",
-                "Frog": "/System/Library/Sounds/Frog.aiff"
-            }
-        }
+                "Frog": "/System/Library/Sounds/Frog.aiff",
+            },
+        },
     },
     "deleted_notifs_dict": {
         "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
@@ -876,15 +812,11 @@ data = {
             "enabled": False,
             "type": "popup",
             "blocked_visit_triggers": [],
-            "associated_goals": [
-                "Create pet AI"
-            ],
+            "associated_goals": ["Create pet AI"],
             "time_interval_trigger": 900000,
             "title": "Work on %g",
             "body": "Keep focused!",
-            "audio_paths": {
-                "Bloop": "/System/Library/Sounds/Bloop.aiff"
-            }
+            "audio_paths": {"Bloop": "/System/Library/Sounds/Bloop.aiff"},
         }
     },
     "flawed_notifs_dict": {
@@ -892,15 +824,11 @@ data = {
             "name": "Test Notif 2",
             "enabled": False,
             "blocked_visit_triggers": [],
-            "associated_goals": [
-                "Create pet AI"
-            ],
+            "associated_goals": ["Create pet AI"],
             "time_interval_trigger": 900000,
             "title": "Work on %g",
             "body": "Keep focused!",
-            "audio_paths": {
-                "Bloop": "/System/Library/Sounds/Bloop.aiff"
-            }
+            "audio_paths": {"Bloop": "/System/Library/Sounds/Bloop.aiff"},
         }
     },
     "bare_config_with_goals": {
@@ -916,66 +844,67 @@ data = {
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": {
-                    "Debug USACO problem": True,
-                    "Conquer world": False
-                }
+                "goals": {"Debug USACO problem": True, "Conquer world": False},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
-    "reordered_goal_dict": {
-        "Conquer world": False,
-        "Debug USACO problem": True
-    },
+    "reordered_goal_dict": {"Conquer world": False, "Debug USACO problem": True},
     "proper_apps_dict": {
         "Trello": {
-            "path": str(os.path.join(
-                Config.DRIVE_LETTER,
-                "Program Files",
-                "WindowsApps",
-                "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
-                "app",
-                "Trello.exe"
-            )),
-            "icon_path": str(os.path.join(
-                Config.DRIVE_LETTER,
-                "Program Files",
-                "WindowsApps",
-                "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
-                "assets",
-                "Square310x310Logo.scale-200.png"
-            ))
+            "path": str(
+                os.path.join(
+                    Config.DRIVE_LETTER,
+                    "Program Files",
+                    "WindowsApps",
+                    "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
+                    "app",
+                    "Trello.exe",
+                )
+            ),
+            "icon_path": str(
+                os.path.join(
+                    Config.DRIVE_LETTER,
+                    "Program Files",
+                    "WindowsApps",
+                    "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
+                    "assets",
+                    "Square310x310Logo.scale-200.png",
+                )
+            ),
         },
-        "vivaldi": { }
+        "vivaldi": {},
     },
     "apps_to_add": [
         {
             "name": "Trello",
-            "path": str(os.path.join(
-                Config.DRIVE_LETTER,
-                "Program Files",
-                "WindowsApps",
-                "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
-                "app",
-                "Trello.exe"
-            )),
-            "icon_path": str(os.path.join(
-                Config.DRIVE_LETTER,
-                "Program Files",
-                "WindowsApps",
-                "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
-                "assets",
-                "Square310x310Logo.scale-200.png"
-            ))
+            "path": str(
+                os.path.join(
+                    Config.DRIVE_LETTER,
+                    "Program Files",
+                    "WindowsApps",
+                    "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
+                    "app",
+                    "Trello.exe",
+                )
+            ),
+            "icon_path": str(
+                os.path.join(
+                    Config.DRIVE_LETTER,
+                    "Program Files",
+                    "WindowsApps",
+                    "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
+                    "assets",
+                    "Square310x310Logo.scale-200.png",
+                )
+            ),
         },
         {
             "name": "vivaldi",
-        }
+        },
     ],
-    "expected_pf_anchor": textwrap.dedent("""
+    "expected_pf_anchor": textwrap.dedent(
+        """
         # Options
         set block-policy drop
         set fingerprints "/etc/pf.os"
@@ -997,12 +926,15 @@ data = {
         rdr pass log on lo0 proto udp from any to 3.95.117.96 -> 127.0.0.1 port 65531
         pass out on en0 route-to lo0 proto tcp from en0 to 3.95.117.96 keep state
         pass out on en0 route-to lo0 proto udp from en0 to 3.95.117.96 keep state
-    """).lstrip(),
-    "expected_pf_conf": textwrap.dedent("""
+    """
+    ).lstrip(),
+    "expected_pf_conf": textwrap.dedent(
+        """
         #io.github.lento
         anchor "io.github.lento"
         load anchor "io.github.lento" from "/etc/pf.anchors/io.github.lento\"
-    """).lstrip(),
+    """
+    ).lstrip(),
     "bare_config_with_activated_card": {
         "activated_card": "Untitled Card",
         "cards": {
@@ -1011,20 +943,15 @@ data = {
                 "name": "Untitled Card",
                 "emoji": "😃",
                 "time": 0,
-                "hard_blocked_sites": {
-                    "youtube.com": True,
-                    "twitter.com": True
-                },
+                "hard_blocked_sites": {"youtube.com": True, "twitter.com": True},
                 "soft_blocked_sites": {},
                 "hard_blocked_apps": {},
                 "soft_blocked_apps": {},
                 "notifications": {},
-                "goals": {}
+                "goals": {},
             }
         },
-        "application_settings": {
-            "theme": "automatic"
-        }
+        "application_settings": {"theme": "automatic"},
     },
 }
 
@@ -1034,7 +961,7 @@ def fake_bundle_id(args):
     cases = {
         "/Applications/GRIS.app": b"unity.nomada studio.GRIS",
         "/Applications/Scrivener.app": b"com.literatureandlatte.scrivener3",
-        "/Applications/NetNewsWire.app": b"com.ranchero.NetNewsWire-Evergreen"
+        "/Applications/NetNewsWire.app": b"com.ranchero.NetNewsWire-Evergreen",
     }
     return cases[app]
 
@@ -1048,55 +975,66 @@ class fake_rgb:
     def save(x):
         return True
 
+
 def fake_subprocess(cmd, shell=True):
     if type(cmd) is list:
         cmd = " ".join(cmd)
-    correct_trello_path = "".join([
-        str(os.path.join(
-            Config.DRIVE_LETTER,
-            "Program Files",
-            "WindowsApps",
-            "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
-            "app",
-            "Trello.exe"
-        )),
-        "   "
-    ])
-    correct_vivaldi_path = "".join([
-        str(os.path.join(
-            os.path.expanduser("~"),
-            "AppData",
-            "Local",
-            "Vivaldi",
-            "Application",
-            "vivaldi.exe"
-        )),
-        "   "
-    ])
+    correct_trello_path = "".join(
+        [
+            str(
+                os.path.join(
+                    Config.DRIVE_LETTER,
+                    "Program Files",
+                    "WindowsApps",
+                    "45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa",
+                    "app",
+                    "Trello.exe",
+                )
+            ),
+            "   ",
+        ]
+    )
+    correct_vivaldi_path = "".join(
+        [
+            str(
+                os.path.join(
+                    os.path.expanduser("~"),
+                    "AppData",
+                    "Local",
+                    "Vivaldi",
+                    "Application",
+                    "vivaldi.exe",
+                )
+            ),
+            "   ",
+        ]
+    )
     cases = {
-        "powershell \"Get-Process -FileVersionInfo -ErrorAction SilentlyContinue | Select-Object FileName\"": f"""     
+        'powershell "Get-Process -FileVersionInfo -ErrorAction SilentlyContinue | Select-Object FileName"': f"""     
 FileName   
 --------   
 {correct_trello_path}
 {correct_trello_path}
 {correct_vivaldi_path}
 {correct_vivaldi_path}""",
-        "powershell \"(Get-AppxPackage -Name \"*Trello*\" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo\"": os.path.join("assets", "Square310x310Logo.png"),
-        "powershell \"{Add-Type -AssemblyName System.Drawing\n[System.Drawing.Icon]::ExtractAssociatedIcon(\'{app_path}\').toBitmap().Save(\'{app_icon_path}\')command_string}\"": "",
+        'powershell "(Get-AppxPackage -Name "*Trello*" | Get-AppxPackageManifest).package.applications.application.VisualElements.DefaultTile.Square310x310Logo"': os.path.join(
+            "assets", "Square310x310Logo.png"
+        ),
+        "powershell \"{Add-Type -AssemblyName System.Drawing\n[System.Drawing.Icon]::ExtractAssociatedIcon('{app_path}').toBitmap().Save('{app_icon_path}')command_string}\"": "",
         "/sbin/pfctl -E -f /etc/pf.conf": "rules_activated",
         "/sbin/pfctl -F rules": "flushed_rules",
         "networksetup -setwebproxy wi-fi localhost 42": "macOS web proxy activated",
         "networksetup -setsecurewebproxy wi-fi localhost 42": "macOS secure web proxy activated",
         "networksetup -setwebproxystate wi-fi off": "macOS web proxy deactivated",
         "networksetup -setsecurewebproxystate wi-fi off": "macOS secure web proxy deactivated",
-        f"cp \"lentodaemon\" \"{Config.DAEMON_BINARY_PATH}\"": "macOS daemon copied",
-        f"rm -f \"{Config.DAEMON_BINARY_PATH}\"": "macOS block cleanup finished",
+        f'cp "lentodaemon" "{Config.DAEMON_BINARY_PATH}"': "macOS daemon copied",
+        f'rm -f "{Config.DAEMON_BINARY_PATH}"': "macOS block cleanup finished",
         "/tmp/lentodaemon Untitled Card 42": "daemon launched",
         "\\tmp\\lentodaemon Untitled Card 42": "daemon launched",
-        "powershell \"cp \"lentodaemon.exe\" \"/tmp/lentodaemon\"\"": "Windows daemon copied",
-        "powershell \"cp \"lentodaemon.exe\" \"\\tmp\\lentodaemon\"\"": "Windows daemon copied",
-        "powershell \"rm -Force \'/tmp/lentodaemon\'\"": "Windows block cleanup finished",
-        "powershell \"rm -Force \'\\tmp\\lentodaemon\'\"": "Windows block cleanup finished"
+        'powershell "cp "lentodaemon.exe" "/tmp/lentodaemon""': "Windows daemon copied",
+        'powershell "cp "lentodaemon.exe" "\\tmp\\lentodaemon""': "Windows daemon copied",
+        "powershell \"rm -Force '/tmp/lentodaemon'\"": "Windows block cleanup finished",
+        "powershell \"rm -Force '\\tmp\\lentodaemon'\"": "Windows block cleanup finished",
     }
     return cases[cmd]
 
@@ -1112,7 +1050,9 @@ def fake_gethost(domain):
         case "slack.com":
             return "3.95.117.96"
         case _:
-            raise Exception(f"Domain name '{domain}' not found in mock domains match statement!")
+            raise Exception(
+                f"Domain name '{domain}' not found in mock domains match statement!"
+            )
 
 
 def fake_SetValueEx_enable(reg, key, num, type, value):
@@ -1149,6 +1089,7 @@ class FakeSQLite:
 class fakeFavicon:
     def grab(self, url):
         return [FakeIcon(url)]
+
 
 class FakeIcon:
     def __init__(self, url):

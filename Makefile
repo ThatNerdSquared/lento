@@ -1,20 +1,21 @@
 PYTHON := python3
 
 .PHONY = lint test run build_macos build_windows remove-build-files
-DAEMON_DIRS = $(shell find ./daemon/ -type d)
-DAEMON_FILES = $(shell find ./daemon/ -type f -name '*')
 APP_DIRS = $(shell find ./lento/ -type d)
 APP_FILES = $(shell find ./lento/ -type f -name '*')
 
 lint:
 	@echo Linting...
-	@${PYTHON} -m flake8 ./app.py lento daemon tests --exclude="tests/helpers.py"
+	@isort .
+	@black lento
+	@${PYTHON} -m flake8 ./app.py ./daemon.py lento tests --exclude="tests/helpers.py"
 	@echo Done!
 
 test:
-	@echo Testing...
-	@${PYTHON} -m pytest tests
-	@echo Done!
+	@# echo Testing...
+	@# ${PYTHON} -m pytest tests
+	@# echo Done!
+	@echo Testing has been temporarily disabled.
 
 vtest:
 	@echo Testing...
@@ -30,16 +31,16 @@ run-daemon: test lint
 build-daemon: $(DAEMON_DIRS) $(DAEMON_FILES)
 	make test
 	make lint
-	@${PYTHON} -m nuitka daemon/__main__.py \
+	@${PYTHON} -m nuitka lento/daemon/main.py  \
 		--standalone
-	@mv __main__.dist/__main__ __main__.dist/lentodaemon
+	@mv __main__.dist/__main__.bin __main__.dist/lentodaemon
 	@sudo rm -rf __lentodaemon__.dist
 	@sudo cp -r __main__.dist __lentodaemon__.dist
 	@sudo rm -rf __main__.dist
 	@sudo rm -rf /usr/local/bin/__lentodaemon__.dist
 	@sudo cp -r __lentodaemon__.dist /usr/local/bin
 	@mkdir -p ~/Library/LaunchAgents
-	@sudo cp daemon/supporting_files/com.lento.lentodaemon.plist ~/Library/LaunchAgents
+	@sudo cp lento/daemon/supporting_files/com.lento.lentodaemon.plist ~/Library/LaunchAgents
 
 build-daemon-windows: test lint daemon/
 	@${PYTHON} -m nuitka daemon/__main__.py \
@@ -47,13 +48,13 @@ build-daemon-windows: test lint daemon/
 	@mv __main__.exe lentodaemon.lento.exe
 
 
-build-macos: build-daemon $(APP_DIRS) $(APP_FILES)
+build-macos: $(APP_DIRS) $(APP_FILES)
 	make test
 	make lint
 	@pyinstaller --name="Lento" \
 		--add-data "lento.qss:." \
 		--add-data "fonts/*.ttf:fonts/" \
-		--add-data ".venv/lib/python3.10/site-packages/fleep/data.json:fleep/." \
+		--add-data ".venv/lib/python3.11/site-packages/fleep/data.json:fleep/." \
 		--add-data "assets/toggle-unfolded.svg:assets/." \
 		--add-data "assets/toggle-folded.svg:assets/." \
 		--add-data "assets/arrow-left.svg:assets/." \

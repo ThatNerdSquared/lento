@@ -1,3 +1,3 @@
-from lento.viewcontrollers import mainwindow
+from lento.desktop_client.viewcontrollers import mainwindow
 
 mainwindow.main()

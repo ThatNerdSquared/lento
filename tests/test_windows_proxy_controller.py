@@ -1,6 +1,8 @@
 import platform
+
 import proxy
 import pytest
+
 try:
     import winreg
 except ImportError:
@@ -11,7 +13,7 @@ from tests import helpers
 
 @pytest.mark.skipif(
     platform.system() != "Windows",
-    reason="`winreg` cannot be tested on non-Windows platforms"
+    reason="`winreg` cannot be tested on non-Windows platforms",
 )
 def test_enable_system_proxy_windows(monkeypatch):
     monkeypatch.setattr(platform, "system", lambda: "Windows")
@@ -24,7 +26,7 @@ def test_enable_system_proxy_windows(monkeypatch):
 
 @pytest.mark.skipif(
     platform.system() != "Windows",
-    reason="`winreg` cannot be tested on non-Windows platforms"
+    reason="`winreg` cannot be tested on non-Windows platforms",
 )
 def test_disable_system_proxy_windows(monkeypatch):
     monkeypatch.setattr(platform, "system", lambda: "Windows")

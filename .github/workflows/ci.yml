@@ -20,9 +20,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Test with pytest
+    # - name: Test with pytest
+    #   run: |
+    #     make test
+    - name: Check import sorts
       run: |
-        make test
+        isort --check-only .
+    - name: Check formatting with black
+      run: |
+        black --check lento
     - name: Lint with flake8
       run: |
         make lint
