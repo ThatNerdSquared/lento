@@ -1,7 +1,9 @@
 import logging
-from lento.desktop_client import utils
+
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QPushButton, QVBoxLayout, QWidget
+
+from lento.desktop_client import utils
 from lento.desktop_client.views.list_items import LentoListItem
 
 

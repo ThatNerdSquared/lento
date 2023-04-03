@@ -1,8 +1,10 @@
 import json
-import sys
 import logging
-from lento.config import Config
+import sys
+
 from daemon_interface.daemon_interface import LentoDaemonInterface
+
+from lento.config import Config
 
 if __name__ == "__main__":
     card_to_use = sys.argv[-2]

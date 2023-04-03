@@ -1,6 +1,7 @@
-from lento.desktop_client import utils
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QPushButton
+
+from lento.desktop_client import utils
 
 
 class LentoOneTimeButton(QPushButton):

@@ -1,6 +1,6 @@
 from PySide6 import QtCore
-from PySide6.QtWidgets import QTextEdit
 from PySide6.QtGui import QFontMetrics, Qt
+from PySide6.QtWidgets import QTextEdit
 
 
 class LentoTextEdit(QTextEdit):

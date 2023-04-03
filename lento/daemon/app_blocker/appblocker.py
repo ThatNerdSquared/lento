@@ -1,16 +1,16 @@
-import psutil
-import subprocess
 import logging
+import subprocess
+from datetime import datetime
+
+import psutil
+
 from lento.daemon.alert.notifications_controller import (
-    NotifsController,
-    APP_DEFAULT_TITLE,
-)
-from lento.daemon.alert.notifications_controller import (
-    APP_INFO_DEFAULT_MSG,
     APP_CONFIRM_DEFAULT_MSG,
+    APP_DEFAULT_TITLE,
+    APP_INFO_DEFAULT_MSG,
+    NotifsController,
 )
 from lento.daemon.util.db import DBController
-from datetime import datetime
 
 
 class AppBlocker:

@@ -1,6 +1,7 @@
 # flake8: noqa
 import os
 import textwrap
+
 from lento.config import Config
 
 data = {

@@ -1,8 +1,9 @@
 import platform
 import subprocess
-from daemon import lento_notif
 from pathlib import Path
 from unittest.mock import MagicMock
+
+from daemon import lento_notif
 
 
 def test_init_notif_works_properly():

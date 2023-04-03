@@ -1,7 +1,9 @@
-import os
 import logging
-from lento.config import Config
+import os
+
 from grabicon import FaviconGrabber
+
+from lento.config import Config
 
 """
 Manages icon path

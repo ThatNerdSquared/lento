@@ -1,10 +1,12 @@
 import json
-import time
-import psutil
 import platform
 import subprocess
-from lento.config import Config
+import time
 from multiprocessing.connection import Client
+
+import psutil
+
+from lento.config import Config
 
 # TODO: daemonize lentodaemon on Windows
 

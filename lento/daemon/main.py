@@ -1,14 +1,15 @@
 import json
-import sys
-import socket
 import logging
 import multiprocessing
-from lento.config import Config
-from lento.daemon.util.db import DBController
-from multiprocessing.connection import Listener
-from lento.daemon.timer_task import TimerTask
+import socket
+import sys
 from logging.handlers import RotatingFileHandler
+from multiprocessing.connection import Listener
+
+from lento.config import Config
 from lento.daemon.alert.lento_notif import LentoNotif
+from lento.daemon.timer_task import TimerTask
+from lento.daemon.util.db import DBController
 
 
 class LentoDaemon:

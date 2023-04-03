@@ -1,15 +1,17 @@
 import copy
 import json
 import platform
-import pytest
 import subprocess
 import uuid
+from pathlib import Path
+from unittest.mock import MagicMock
+
+import pytest
+from PIL import Image
+
 import lento.common.cards_management as CardsManagement
 from lento.config import Config
 from tests import helpers
-from pathlib import Path
-from PIL import Image
-from unittest.mock import MagicMock
 
 
 def test_create_card_uses_correct_data(monkeypatch, tmp_path):

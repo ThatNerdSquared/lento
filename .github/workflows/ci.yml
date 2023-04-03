@@ -23,6 +23,9 @@ jobs:
     # - name: Test with pytest
     #   run: |
     #     make test
+    - name: Check import sorts
+      run: |
+        isort --check-only .
     - name: Check formatting with black
       run: |
         black --check lento

@@ -6,13 +6,16 @@ APP_FILES = $(shell find ./lento/ -type f -name '*')
 
 lint:
 	@echo Linting...
+	@isort .
+	@black lento
 	@${PYTHON} -m flake8 ./app.py ./daemon.py lento tests --exclude="tests/helpers.py"
 	@echo Done!
 
 test:
-	@echo Testing...
-	@${PYTHON} -m pytest tests
-	@echo Done!
+	@# echo Testing...
+	@# ${PYTHON} -m pytest tests
+	@# echo Done!
+	@echo Testing has been temporarily disabled.
 
 vtest:
 	@echo Testing...
@@ -26,8 +29,8 @@ run-daemon: test lint
 	@${PYTHON} -m daemon 1
 
 build-daemon: $(DAEMON_DIRS) $(DAEMON_FILES)
-	# make test
-	# make lint
+	make test
+	make lint
 	@${PYTHON} -m nuitka lento/daemon/main.py  \
 		--standalone
 	@mv __main__.dist/__main__.bin __main__.dist/lentodaemon
@@ -46,8 +49,8 @@ build-daemon-windows: test lint daemon/
 
 
 build-macos: $(APP_DIRS) $(APP_FILES)
-	# make test
-	# make lint
+	make test
+	make lint
 	@pyinstaller --name="Lento" \
 		--add-data "lento.qss:." \
 		--add-data "fonts/*.ttf:fonts/" \

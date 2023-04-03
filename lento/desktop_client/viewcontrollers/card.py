@@ -1,22 +1,24 @@
 import logging
-import lento.desktop_client.model.block_items as BlockItem
-import lento.desktop_client.model.cards_management as CardsManagement
+
 from PySide6.QtGui import QColor, Qt
 from PySide6.QtWidgets import (
     QFrame,
     QGraphicsDropShadowEffect,
+    QPushButton,
     QScrollArea,
     QVBoxLayout,
     QWidget,
-    QPushButton,
 )
+
+import lento.desktop_client.model.block_items as BlockItem
+import lento.desktop_client.model.cards_management as CardsManagement
+from lento.daemon_interface.daemon_interface import LentoDaemonInterface
+from lento.desktop_client.viewcontrollers.block_item_window import LentoBlockItemWindow
+from lento.desktop_client.viewcontrollers.popups import LentoPopUpMode, LentoPopUpWindow
+from lento.desktop_client.views.button import LentoOneTimeButton
 from lento.desktop_client.views.timer import TimerView
 from lento.desktop_client.views.title import LentoCardTitle
-from lento.desktop_client.views.button import LentoOneTimeButton
-from lento.desktop_client.viewcontrollers.block_item_window import LentoBlockItemWindow
 from lento.desktop_client.views.toggle_list import LentoToggleList
-from lento.desktop_client.viewcontrollers.popups import LentoPopUpWindow, LentoPopUpMode
-from lento.daemon_interface.daemon_interface import LentoDaemonInterface
 
 
 class Card(QWidget):

@@ -1,8 +1,9 @@
-import logging
 import json
+import logging
 import platform
-from lento.config import Config
+
 import lento.desktop_client.model.block_items as BlockItem
+from lento.config import Config
 
 """
 Manages all reading from and writing to lento settings

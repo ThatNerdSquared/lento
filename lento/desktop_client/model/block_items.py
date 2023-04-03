@@ -1,17 +1,18 @@
+import logging
 import os
+import platform
+import plistlib
+import subprocess
 import time
 import uuid
-import platform
-import subprocess
-import plistlib
-import logging
-import lento.desktop_client.model.cards_management as CardsManagement
-import lento.desktop_client.icon_manager as IconManager
-from pathlib import Path
-from lento.config import Config
 from abc import ABC, abstractmethod
+from pathlib import Path
+
 from PIL import Image
 
+import lento.desktop_client.icon_manager as IconManager
+import lento.desktop_client.model.cards_management as CardsManagement
+from lento.config import Config
 
 # TODO: each block item class should generate its own serialized dict,
 # this requires a restructure of lentosettings.json where we save a

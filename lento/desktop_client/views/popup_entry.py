@@ -1,5 +1,6 @@
+from PySide6.QtWidgets import QCheckBox, QFrame, QHBoxLayout
+
 from lento.desktop_client import utils
-from PySide6.QtWidgets import QHBoxLayout, QCheckBox, QFrame
 from lento.desktop_client.views.textedit import LentoTextEdit
 
 

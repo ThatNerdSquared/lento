@@ -1,6 +1,8 @@
-import subprocess
-import proxy
 import platform
+import subprocess
+
+import proxy
+
 from daemon import get_proxy
 from tests import helpers
 

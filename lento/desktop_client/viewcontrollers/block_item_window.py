@@ -1,21 +1,23 @@
 import logging
+
 from PySide6.QtCore import QEvent
 from PySide6.QtGui import Qt
 from PySide6.QtWidgets import (
     QDialog,
     QFrame,
-    QScrollArea,
-    QWidget,
-    QLabel,
     QHBoxLayout,
-    QVBoxLayout,
+    QLabel,
     QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
 )
-from lento.desktop_client.views.resizing_tab import ResizingTabWidget
+
 from lento.desktop_client.viewcontrollers.block_item_details import (
     LentoBlockItemDetailsView,
     LentoBlockItemDetailsViewMode,
 )
+from lento.desktop_client.views.resizing_tab import ResizingTabWidget
 
 
 class LentoBlockItemWindow(QDialog):

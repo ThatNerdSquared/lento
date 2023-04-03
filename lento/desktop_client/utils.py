@@ -2,8 +2,9 @@ import os
 import platform
 import subprocess
 import sys
-from urllib.parse import urlparse
 from pathlib import Path
+from urllib.parse import urlparse
+
 from lento.config import Config
 
 """

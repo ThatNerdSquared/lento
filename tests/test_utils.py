@@ -1,8 +1,9 @@
 import os
 import platform
 import subprocess
-from lento.config import Config
+
 from lento import utils
+from lento.config import Config
 from tests import helpers
 
 

@@ -1,11 +1,12 @@
 import json
-import peewee
 import platform
 import subprocess
 from pathlib import Path
+
+import peewee
+
 from lento import utils
-from lento.common import get_block_controller
-from lento.common import _block_controller
+from lento.common import _block_controller, get_block_controller
 from lento.config import Config
 from tests import helpers
 

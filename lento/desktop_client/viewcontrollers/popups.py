@@ -1,11 +1,19 @@
 import logging
-from lento.desktop_client import utils
+
 from PySide6 import QtCore
-from PySide6.QtGui import QColor, QPixmap
-from PySide6.QtWidgets import QDialog
 from PySide6.QtCore import QSize
-from PySide6.QtWidgets import QPushButton, QGraphicsDropShadowEffect
-from PySide6.QtWidgets import QVBoxLayout, QHBoxLayout, QWidget, QLabel
+from PySide6.QtGui import QColor, QPixmap
+from PySide6.QtWidgets import (
+    QDialog,
+    QGraphicsDropShadowEffect,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
+
+from lento.desktop_client import utils
 
 
 class LentoPopUpMode:

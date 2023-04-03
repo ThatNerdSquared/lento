@@ -1,5 +1,5 @@
 import PySide6
-from PySide6.QtWidgets import QStackedWidget, QSizePolicy
+from PySide6.QtWidgets import QSizePolicy, QStackedWidget
 
 
 class LentoResizableStackedWidget(QStackedWidget):

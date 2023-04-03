@@ -1,19 +1,22 @@
 import copy
 import logging
 import platform
-from lento.desktop_client import utils
-from PySide6.QtGui import QIcon, Qt, QPixmap
-from PySide6.QtWidgets import QFileDialog, QSpinBox
+
+from PySide6.QtGui import QIcon, QPixmap, Qt
 from PySide6.QtWidgets import (
-    QWidget,
-    QLabel,
+    QFileDialog,
     QHBoxLayout,
-    QVBoxLayout,
+    QLabel,
     QPushButton,
+    QSpinBox,
+    QVBoxLayout,
+    QWidget,
 )
-from lento.desktop_client.views.textedit import LentoTextEdit
-from lento.desktop_client.viewcontrollers.popup_list import LentoPopUpList
+
+from lento.desktop_client import utils
 from lento.desktop_client.model.block_items import LentoAppItem, LentoWebsiteItem
+from lento.desktop_client.viewcontrollers.popup_list import LentoPopUpList
+from lento.desktop_client.views.textedit import LentoTextEdit
 from lento.desktop_client.views.toggle import Toggle
 
 

@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QTabWidget
 from PySide6.QtCore import QSize
+from PySide6.QtWidgets import QTabWidget
 
 
 class ResizingTabWidget(QTabWidget):

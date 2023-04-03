@@ -1,6 +1,6 @@
-from lento.daemon.util.util import RepeatTimer
-from lento.daemon.alert.lento_notif import LentoNotif
 from lento.daemon.alert.daemonprompt import DaemonPrompt
+from lento.daemon.alert.lento_notif import LentoNotif
+from lento.daemon.util.util import RepeatTimer
 
 """
 default title & message definitions

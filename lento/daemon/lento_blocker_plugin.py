@@ -1,19 +1,21 @@
 import logging
+from datetime import datetime
 from typing import Optional
-from lento.daemon.util.db import DBController
-from lento.daemon.util.util import format_website
-from lento.daemon.alert.notifications_controller import NotifsController
+
+from proxy.common.flag import flags
+from proxy.http import httpStatusCodes
+from proxy.http.exception import HttpRequestRejected
+from proxy.http.parser import HttpParser
+from proxy.http.proxy import HttpProxyBasePlugin
+
 from lento.daemon.alert.notifications_controller import (
+    WEBSITE_CONFIRM_DEFAULT_MSG,
     WEBSITE_DEFAULT_TITLE,
     WEBSITE_INFO_DEFAULT_MSG,
+    NotifsController,
 )
-from lento.daemon.alert.notifications_controller import WEBSITE_CONFIRM_DEFAULT_MSG
-from proxy.http import httpStatusCodes
-from proxy.common.flag import flags
-from proxy.http.proxy import HttpProxyBasePlugin
-from proxy.http.parser import HttpParser
-from proxy.http.exception import HttpRequestRejected
-from datetime import datetime
+from lento.daemon.util.db import DBController
+from lento.daemon.util.util import format_website
 
 # interval to not show a hardblock popup once a
 # hardblock popup is shown. From testing, observe
