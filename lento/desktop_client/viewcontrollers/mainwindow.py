@@ -16,15 +16,15 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+import lento.desktop_client.data_store.datastore as datastore
 import lento.desktop_client.icon_manager as IM
 from lento.config import Config
 from lento.desktop_client import utils
+from lento.desktop_client.data_store.json_data_backend import JSONDataBackend
 from lento.desktop_client.model import cards_management as CardsManagement
 from lento.desktop_client.model.block_items import LentoCardItem
 from lento.desktop_client.viewcontrollers.card import Card
 from lento.desktop_client.viewcontrollers.popups import LentoPopUpMode, LentoPopUpWindow
-import lento.desktop_client.data_store.datastore as datastore
-from lento.desktop_client.data_store.json_data_backend import JSONDataBackend
 
 
 class MainWindow(QMainWindow):

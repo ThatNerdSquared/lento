@@ -6,7 +6,7 @@ from data_store import DSOperation
 
 class AbstractDataBackend(ABC):
     def __init__(self):
-        self.OPS_TABLE = {DSOperation.RETRIEVE_WEBSITE_LIST: self.retrieve_website_list}
+        self.OPS_TABLE = {DSOperation.GET_WEBSITE_LIST: self.get_website_list}
 
     def query(self, op: DSOperation):
         res = self.OPS_TABLE[op]()
@@ -17,5 +17,5 @@ class AbstractDataBackend(ABC):
         """Will be implemented by children."""
 
     @abstractmethod
-    def retrieve_website_list(self, card_id: UUID):
+    def get_website_list(self, card_id: UUID):
         """Will be implemented by children."""

@@ -14,7 +14,7 @@ class JSONDataBackend(AbstractDataBackend):
     def get_backend_type(self):
         return BackendType.JSON
 
-    def retrieve_website_list(card_id: UUID):
+    def get_website_list(card_id: UUID):
         raw_card_data = json.loads(Config.SETTINGS_PATH.read_text())
         websites_dict = raw_card_data["cards"][card_id]["blocked_sites"]
         res = []

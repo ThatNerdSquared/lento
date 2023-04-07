@@ -2,7 +2,7 @@ from typing import Enum
 
 
 class DSOperation(Enum):
-    RETRIEVE_WEBSITE_LIST = 1
+    GET_WEBSITE_LIST = 1
 
 
 class BackendType(Enum):

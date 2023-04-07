@@ -28,5 +28,5 @@ def init_datastore(backends=[]):
         internal_store.add_backend(backend)
 
 
-def retrieve_website_list(card_id: UUID):
-    internal_store.query(DSOperation.RETRIEVE_WEBSITE_LIST)
+def get_website_list(card_id: UUID):
+    internal_store.query(DSOperation.GET_WEBSITE_LIST)
