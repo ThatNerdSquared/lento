@@ -1,8 +1,8 @@
 import logging
-import os
 from uuid import UUID
 
 from grabicon import FaviconGrabber
+from PySide6.QtGui import QIcon
 
 from lento.config import Config
 
@@ -19,7 +19,7 @@ class IconManager:
         for child in Config.ICON_PATH.iterdir():
             if child.is_file():
                 blockitem_id = child.stem
-                icons[blockitem_id] = child
+                icons[blockitem_id] = QIcon(str(child))
 
         self.icons = icons
 
@@ -34,10 +34,10 @@ class IconManager:
                     res = self._get_favicon(blockitem_path, blockitem_id)
                 case BlockItemType.APP:
                     res = self._get_app_icon(blockitem_path, blockitem_id)
-            self.icons[blockitem_id] = res
+            self.icons[blockitem_id] = QIcon(str(res))
         return res
 
-    def _get_favicon(website_url, blockitem_id):
+    def _get_favicon(self, website_url, blockitem_id):
         try:
             grabber = FaviconGrabber()
             favicon = grabber.grab(website_url)[0]
@@ -50,7 +50,7 @@ class IconManager:
         icon_path.write_bytes(favicon.data)
         return icon_path
 
-    def _get_app_icon(app_id, blockitem):
+    def _get_app_icon(self, app_id, blockitem):
         pass
 
 
@@ -73,24 +73,25 @@ def cleanup_saved_icon(cards):
     """
     Deletes all unused icon files
     """
-    logging.info("Deleting unused icon images at {}".format(Config.ICON_PATH))
-    file_names = os.listdir(Config.ICON_PATH)
-    used_icons = set()
+    pass
+    # logging.info("Deleting unused icon images at {}".format(Config.ICON_PATH))
+    # file_names = os.listdir(Config.ICON_PATH)
+    # used_icons = set()
 
-    # find the list of icon paths currently used
-    for card_id in cards:
-        card_item = cards[card_id]
-        for label in card_item.block_items:
-            item = card_item.block_items.get(label)
-            if item.icon_path is not None:
-                used_icons.add(item.icon_path)
+    # # find the list of icon paths currently used
+    # for card_id in cards:
+    #     card_item = cards[card_id]
+    #     for label in card_item.block_items:
+    #         item = card_item.block_items.get(label)
+    #         if item.icon_path is not None:
+    #             used_icons.add(item.icon_path)
 
-    logging.info("Using the following icon paths: {}".format(used_icons))
+    # logging.info("Using the following icon paths: {}".format(used_icons))
 
-    # delete the icon files that are not currently used
-    for file_name in file_names:
-        file_path = os.path.join(str(Config.ICON_PATH), file_name)
-        if os.path.isfile(file_path):
-            if file_path not in used_icons:
-                logging.info("Removing file {}".format(file_path))
-                os.remove(file_path)
+    # # delete the icon files that are not currently used
+    # for file_name in file_names:
+    #     file_path = os.path.join(str(Config.ICON_PATH), file_name)
+    #     if os.path.isfile(file_path):
+    #         if file_path not in used_icons:
+    #             logging.info("Removing file {}".format(file_path))
+    #             os.remove(file_path)

@@ -13,11 +13,12 @@ from .icon_manager import IconManager
 class JSONDataBackend(AbstractDataBackend):
     def __init__(self):
         super().__init__()
+        self.icon_manager = IconManager()
 
     def get_backend_type(self):
         return BackendType.JSON
 
-    def get_website_list(card_id: UUID) -> List[LentoWebsiteItem]:
+    def get_website_list(self, card_id: UUID) -> List[LentoWebsiteItem]:
         raw_card_data = json.loads(Config.SETTINGS_PATH.read_text())
         websites_dict = raw_card_data["cards"][card_id]["blocked_sites"]
         res = []
@@ -30,7 +31,9 @@ class JSONDataBackend(AbstractDataBackend):
                 restricted_access=item["restricted_access"],
                 associated_popup_id=item["associated_popup_id"],
                 allow_interval=item["allow_interval"],
-                icon_path=IconManager.load_icon(site_id, item, BlockItemType.WEBSITE),
+                icon=self.icon_manager.load_icon(
+                    site_id, item["website_url"], BlockItemType.WEBSITE
+                ),
                 website_url=item["website_url"],
             )
             res.append(blockitem)

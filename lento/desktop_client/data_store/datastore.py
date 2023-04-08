@@ -31,4 +31,4 @@ def init_datastore(backends=[]):
 
 
 def get_website_list(card_id: UUID) -> List[LentoWebsiteItem]:
-    internal_store.query(DSOperation.GET_WEBSITE_LIST, card_id)
+    return internal_store.query(DSOperation.GET_WEBSITE_LIST, card_id)

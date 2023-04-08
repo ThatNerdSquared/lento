@@ -10,8 +10,8 @@ class AbstractDataBackend(ABC):
     def __init__(self):
         self.OPS_TABLE = {DSOperation.GET_WEBSITE_LIST: self.get_website_list}
 
-    def query(self, op: DSOperation):
-        res = self.OPS_TABLE[op]()
+    def query(self, op: DSOperation, *args):
+        res = self.OPS_TABLE[op](*args)
         return (self.get_backend_type(), res)
 
     @abstractmethod

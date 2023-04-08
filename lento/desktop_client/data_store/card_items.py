@@ -2,8 +2,9 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
-from pathlib import Path
 from uuid import UUID
+
+from PySide6.QtGui import QIcon
 
 
 class BlockItemType(Enum):
@@ -24,7 +25,7 @@ class _LentoBlockItem(ABC):
     restricted_access: bool = False
     associated_popup_id: UUID
     allow_interval: int = 0
-    icon_path: Path
+    icon: QIcon
 
     @abstractmethod
     def save(self, parent_card):
