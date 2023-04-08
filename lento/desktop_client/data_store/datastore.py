@@ -3,6 +3,9 @@ from uuid import UUID
 
 from . import DSOperation
 from .card_items import LentoWebsiteItem
+from .json_data_backend import JSONDataBackend
+
+from PySide6.QtGui import QIcon
 
 
 class _DataStore:
@@ -21,6 +24,11 @@ class _DataStore:
             ds_response[backend_type] = res
         return ds_response
 
+    def query_bundled_asset(self, asset_id: str) -> QIcon:
+        for backend in self.backends:
+            if isinstance(backend, JSONDataBackend):
+                return backend.icon_manager.load_bundled_icon(asset_id)
+
 
 internal_store = _DataStore([])
 
@@ -32,3 +40,7 @@ def init_datastore(backends=[]):
 
 def get_website_list(card_id: UUID) -> List[LentoWebsiteItem]:
     return internal_store.query(DSOperation.GET_WEBSITE_LIST, card_id)
+
+
+def get_asset(asset_id: str) -> QIcon:
+    return internal_store.query_bundled_asset(asset_id)

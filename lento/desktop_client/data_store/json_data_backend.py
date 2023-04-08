@@ -31,7 +31,7 @@ class JSONDataBackend(AbstractDataBackend):
                 restricted_access=item["restricted_access"],
                 associated_popup_id=item["associated_popup_id"],
                 allow_interval=item["allow_interval"],
-                icon=self.icon_manager.load_icon(
+                icon=self.icon_manager.load_blockitem_icon(
                     site_id, item["website_url"], BlockItemType.WEBSITE
                 ),
                 website_url=item["website_url"],

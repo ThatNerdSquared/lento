@@ -4,6 +4,7 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QListView, QPushButton, QVBoxLayout, QWidget
 
 from lento.desktop_client import utils
+from lento.desktop_client.data_store import datastore
 from lento.desktop_client.views.list_items import LentoListItem
 
 
@@ -12,11 +13,30 @@ class ToggleListView(QWidget):
         super().__init__()
         main_layout = QVBoxLayout()
         self.toggle = QPushButton(title)
+        self.toggle.clicked.connect(self._toggle_sublist)
+        self.toggle.setMinimumHeight(30)  # TODO: magic number
         self.toggle.setCheckable(True)
+        self.toggle.setChecked(True)
+        self.toggle.setIcon(datastore.get_asset("toggle-unfolded"))
 
-        for x in (self.toggle, listview):
+        self.sublist = listview
+
+        for x in (self.toggle, self.sublist):
             main_layout.addWidget(x)
         self.setLayout(main_layout)
+
+    def _toggle_sublist(self, checked):
+        """
+        Method called when toggle button is clicked
+        """
+        if checked:
+            # if toggle button is checked, show inner list
+            self.sublist.show()
+            self.toggle.setIcon(datastore.get_asset("toggle-unfolded"))
+        else:
+            # if toggle button is unchecked, hide inner list
+            self.sublist.hide()
+            self.toggle.setIcon(datastore.get_asset("toggle-folded"))
 
 
 class LentoToggleList(QWidget):

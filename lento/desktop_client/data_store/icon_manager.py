@@ -21,9 +21,20 @@ class IconManager:
                 blockitem_id = child.stem
                 icons[blockitem_id] = QIcon(str(child))
 
+        for child in Config.ASSETS_PATH.iterdir():
+            if child.is_file():
+                blockitem_id = child.stem
+                icons[blockitem_id] = QIcon(str(child))
+
         self.icons = icons
 
-    def load_icon(
+    def load_bundled_icon(self, asset_id) -> QIcon:
+        try:
+            return self.icons[asset_id]
+        except KeyError:
+            logging.warn(f"Icon {asset_id} not found in bundle!")
+
+    def load_blockitem_icon(
         self, blockitem_id: UUID, blockitem_path: str, item_type: BlockItemType
     ):
         try:
