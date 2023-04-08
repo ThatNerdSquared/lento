@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (
 )
 
 import lento.desktop_client.data_store.datastore as datastore
-import lento.desktop_client.icon_manager as IM
+import lento.desktop_client.data_store.icon_manager as IM
 from lento.config import Config
 from lento.desktop_client import utils
 from lento.desktop_client.data_store.json_data_backend import JSONDataBackend

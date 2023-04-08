@@ -1,6 +1,8 @@
+from typing import List
 from uuid import UUID
 
-from data_store import DSOperation
+from . import DSOperation
+from .card_items import LentoWebsiteItem
 
 
 class _DataStore:
@@ -12,10 +14,10 @@ class _DataStore:
     def add_backend(self, backend):
         self.backends.append(backend)
 
-    def query(self, op: DSOperation):
+    def query(self, op: DSOperation, *args):
         ds_response = {}
         for backend in self.backends:
-            (backend_type, res) = backend.query(op)
+            (backend_type, res) = backend.query(op, *args)
             ds_response[backend_type] = res
         return ds_response
 
@@ -28,5 +30,5 @@ def init_datastore(backends=[]):
         internal_store.add_backend(backend)
 
 
-def get_website_list(card_id: UUID):
-    internal_store.query(DSOperation.GET_WEBSITE_LIST)
+def get_website_list(card_id: UUID) -> List[LentoWebsiteItem]:
+    internal_store.query(DSOperation.GET_WEBSITE_LIST, card_id)

@@ -18,7 +18,7 @@ from lento.desktop_client.viewcontrollers.popups import LentoPopUpMode, LentoPop
 from lento.desktop_client.views.button import LentoOneTimeButton
 from lento.desktop_client.views.timer import TimerView
 from lento.desktop_client.views.title import LentoCardTitle
-from lento.desktop_client.views.toggle_list import LentoToggleList
+from lento.desktop_client.views.togglelist_view import LentoToggleList
 
 
 class Card(QWidget):

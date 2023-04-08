@@ -1,40 +1,57 @@
 import logging
 import os
+from uuid import UUID
 
 from grabicon import FaviconGrabber
 
 from lento.config import Config
+
+from .card_items import BlockItemType
 
 """
 Manages icon path
 """
 
 
-def load_favicon(website_url):
-    """
-    Loads favicon based on provided website URL
-    """
-    # load favicons
-    try:
-        grabber = FaviconGrabber()
-        favicons = grabber.grab(website_url)
-    except Exception:
-        logging.info("Failed to load favicon for {}".format(website_url))
-        return ""
+class IconManager:
+    def __init__(self):
+        icons = {}
+        for child in Config.ICON_PATH.iterdir():
+            if child.is_file():
+                blockitem_id = child.stem
+                icons[blockitem_id] = child
 
-    logging.info("Loaded favicons for {}: {}".format(website_url, favicons))
+        self.icons = icons
 
-    # save loaded favicon to file
-    if len(favicons) > 0:
-        icon = favicons[0]
-        trimmed_url = website_url.replace("\\", "_").replace("/", "_")
-        icon_path = Config.ICON_PATH / f"{trimmed_url}.{icon.extension}"
+    def load_icon(
+        self, blockitem_id: UUID, blockitem_path: str, item_type: BlockItemType
+    ):
+        try:
+            res = self.icons[blockitem_id]
+        except KeyError:
+            match item_type:
+                case BlockItemType.WEBSITE:
+                    res = self._get_favicon(blockitem_path, blockitem_id)
+                case BlockItemType.APP:
+                    res = self._get_app_icon(blockitem_path, blockitem_id)
+            self.icons[blockitem_id] = res
+        return res
 
+    def _get_favicon(website_url, blockitem_id):
+        try:
+            grabber = FaviconGrabber()
+            favicon = grabber.grab(website_url)[0]
+        except Exception:
+            logging.info("Failed to load favicon for {}".format(website_url))
+            return ""
+
+        icon_path = Config.ICON_PATH / f"{blockitem_id}.{favicon.extension}"
         logging.info("Saving favicon for {} at {}".format(website_url, icon_path))
-        icon_path.write_bytes(icon.data)
-        return str(icon_path)
+        icon_path.write_bytes(favicon.data)
+        return icon_path
 
-    return ""
+    def _get_app_icon(app_id, blockitem):
+        pass
 
 
 def save_icon(image, icon_name):

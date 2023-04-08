@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
+from typing import List
 from uuid import UUID
 
-from data_store import DSOperation
+from . import DSOperation
+from .card_items import LentoWebsiteItem
 
 
 class AbstractDataBackend(ABC):
@@ -17,5 +19,5 @@ class AbstractDataBackend(ABC):
         """Will be implemented by children."""
 
     @abstractmethod
-    def get_website_list(self, card_id: UUID):
+    def get_website_list(self, card_id: UUID) -> List[LentoWebsiteItem]:
         """Will be implemented by children."""
