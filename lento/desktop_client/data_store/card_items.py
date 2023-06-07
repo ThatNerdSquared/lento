@@ -2,6 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
 from uuid import UUID
 
 from PySide6.QtGui import QIcon
@@ -23,7 +24,7 @@ class _LentoBlockItem(ABC):
     item_label: str = field(init=False)
     enabled: bool = True
     restricted_access: bool = False
-    associated_popup_id: UUID
+    associated_popup_id: UUID | None
     allow_interval: int = 0
     icon: QIcon
 
@@ -75,7 +76,55 @@ class LentoWebsiteItem(_LentoBlockItem):
             f"Label: {self.item_label}",
             f"Website URL: {self.website_url}",
             f"Icon Path: {self.icon_path}",
-            f"Softblock: {self.restricted_access}",
+            f"Restricted Access: {self.restricted_access}",
+            f"Allow Interval: {self.allow_interval}",
+            f"Popup Item ID: {popup_id_msg}",
+        ]
+        for msg in log_msgs:
+            logging.info(msg)
+
+
+@dataclass(kw_only=True)
+class LentoAppItem(_LentoBlockItem):
+    """
+    Class containing all information of an app item
+    """
+
+    app_path: Path
+    app_bundle_id: str | None
+
+    def __post_init__(self):
+        self.app_path = Path(self.app_path)
+        self.item_label = self.app_path.stem
+
+    def save(self, parent_card):
+        """
+        Save the app item to lento settings under a parent card item
+        """
+        # if self.icon_path is not None and self.icon_path != "":
+        #     im = Image.open(self.icon_path)
+        #     self.icon_path = IconManager.save_icon(im, self.label)
+        # CardsManagement.save_app_item(parent_card, self)
+
+    def delete(self, parent_card):
+        """
+        Delete the app item from lento settings under a parent
+        card item
+        """
+        # CardsManagement.delete_app_item(parent_card, self)
+
+    def log_item_data(self):
+        """
+        Prints the content of the app item
+        """
+        popup_id_msg = self.associated_popup_id or "None"
+        log_msgs = [
+            "************** App Item **************",
+            f"Label: {self.item_label}",
+            f"App Path: {self.app_path}"
+            f"App Bundle ID: {self.app_bundle_id}"
+            f"Icon Path: {self.icon_path}",
+            f"Restricted Access: {self.restricted_access}",
             f"Allow Interval: {self.allow_interval}",
             f"Popup Item ID: {popup_id_msg}",
         ]

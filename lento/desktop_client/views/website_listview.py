@@ -9,6 +9,11 @@ class WebsiteListView(QListView):
         super().__init__()
         websitelist_model = WebsiteListModel(card_id)
         self.setModel(websitelist_model)
+        # HELLO, ME FROM THE FUTURE!!
+        # I believe the last thing you were attempting to do
+        # was to create a delegate to pop up the editing view
+        # for website items.
+        # self.setItemDelegate()
 
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)

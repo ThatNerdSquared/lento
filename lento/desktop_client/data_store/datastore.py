@@ -1,11 +1,11 @@
 from typing import List
 from uuid import UUID
 
+from PySide6.QtGui import QIcon
+
 from . import DSOperation
 from .card_items import LentoWebsiteItem
 from .json_data_backend import JSONDataBackend
-
-from PySide6.QtGui import QIcon
 
 
 class _DataStore:
