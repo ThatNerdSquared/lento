@@ -18,7 +18,8 @@ from lento.desktop_client.viewcontrollers.popups import LentoPopUpMode, LentoPop
 from lento.desktop_client.views.button import LentoOneTimeButton
 from lento.desktop_client.views.timer import TimerView
 from lento.desktop_client.views.title import LentoCardTitle
-from lento.desktop_client.views.toggle_list import LentoToggleList
+from lento.desktop_client.views.togglelist_view import LentoToggleList, ToggleListView
+from lento.desktop_client.views.website_listview import WebsiteListView
 
 
 class Card(QWidget):
@@ -87,12 +88,13 @@ class Card(QWidget):
         list_widget_layout.setSpacing(0)
         self.list_widget.setLayout(list_widget_layout)
 
-        self.web_list = LentoToggleList(
-            "Websites",
-            item_edited_handler=self._on_block_item_edit,
-            item_removed_handler=self._on_block_item_remove,
-        )
-        self.web_list.setVisible(False)
+        # self.web_list = LentoToggleList(
+        #     "Websites",
+        #     item_edited_handler=self._on_block_item_edit,
+        #     item_removed_handler=self._on_block_item_remove,
+        # )
+        # self.web_list.setVisible(False)
+        self.web_list = ToggleListView("Websites", WebsiteListView(card_item.id))
 
         self.app_list = LentoToggleList(
             "Apps",
@@ -268,7 +270,8 @@ class Card(QWidget):
         """
         new_height = (
             self.initial_height
-            + self.web_list.list_height(self)
+            # + self.web_list.list_height(self)
+            + 20
             + self.app_list.list_height(self)
             + self.ra_list.list_height(self)
             + self.add_app_web_button.height()

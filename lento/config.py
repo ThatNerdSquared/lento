@@ -41,3 +41,7 @@ class Config:
     DAEMON_BINARY_PATH = Path(
         str(APPDATA_PATH if platform.system() == "Darwin" else HOME_FOLDER)
     ) / ("lentodaemon" if platform.system() == "Darwin" else "lentodaemon.exe")
+    try:
+        ASSETS_PATH = Path(sys._MEIPASS) / "assets"
+    except Exception:
+        ASSETS_PATH = Path(".") / "assets"

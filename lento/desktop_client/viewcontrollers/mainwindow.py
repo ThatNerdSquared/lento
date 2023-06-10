@@ -16,9 +16,11 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-import lento.desktop_client.icon_manager as IM
+import lento.desktop_client.data_store.datastore as datastore
+import lento.desktop_client.data_store.icon_manager as IM
 from lento.config import Config
 from lento.desktop_client import utils
+from lento.desktop_client.data_store.json_data_backend import JSONDataBackend
 from lento.desktop_client.model import cards_management as CardsManagement
 from lento.desktop_client.model.block_items import LentoCardItem
 from lento.desktop_client.viewcontrollers.card import Card
@@ -358,6 +360,8 @@ def init_sequence():
             logging.StreamHandler(),
         ],
     )
+
+    datastore.init_datastore(backends=[JSONDataBackend()])
 
     # Check for the lentosettings.json file, create if nonexistent
     try:

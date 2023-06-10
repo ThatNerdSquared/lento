@@ -10,7 +10,7 @@ from pathlib import Path
 
 from PIL import Image
 
-import lento.desktop_client.icon_manager as IconManager
+import lento.desktop_client.data_store.icon_manager as IconManager
 import lento.desktop_client.model.cards_management as CardsManagement
 from lento.config import Config
 
