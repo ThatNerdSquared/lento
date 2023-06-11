@@ -24,17 +24,6 @@ linter:
   rules:
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
-    avoid_classes_with_only_static_members: true
-    avoid_positional_boolean_parameters: true
-    avoid_setters_without_getters: true
-    avoid_types_on_closure_parameters: true
-    directives_ordering: true
-    omit_local_variable_types: true
-    prefer_relative_imports: true
-    type_annotate_public_apis: true
-    unnecessary_lambdas: true
-    use_to_and_as_if_applicable: true
-    use_setters_to_change_properties: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
