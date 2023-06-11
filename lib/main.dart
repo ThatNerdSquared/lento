@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           cardTheme: lentoCardTheme,
           colorScheme: lentoLightColorScheme,
-          scaffoldBackgroundColor: lentoLightColorScheme.surface,
+          scaffoldBackgroundColor: lentoLightColorScheme.background,
           shadowColor: lentoLightColorScheme.shadow),
       home: const LentoHome(title: 'Lento Home'),
     );

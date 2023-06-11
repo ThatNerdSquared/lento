@@ -62,7 +62,7 @@ class _CardTimerState extends State<CardTimer> {
                 padding: EdgeInsets.zero,
                 decoration: BoxDecoration(
                     color: _timerColor,
-                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                    borderRadius: Config.defaultBorderRadius),
                 child:
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Visibility(
@@ -154,12 +154,16 @@ class _CardTimerState extends State<CardTimer> {
       const Padding(
           padding:
               EdgeInsets.only(bottom: Config.defaultElementSpacing * 2 / 3)),
-      ElevatedButton(
-          onPressed: _isBlockRunning ? null : _startTimer,
-          style: ElevatedButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.primary,
-              backgroundColor: Theme.of(context).colorScheme.tertiary),
-          child: Text(_isBlockRunning ? 'Session Started' : 'Start Block'))
+      Container(
+          decoration: const BoxDecoration(
+              borderRadius: Config.defaultBorderRadius,
+              boxShadow: [Config.defaultShadow]),
+          child: ElevatedButton(
+              onPressed: _isBlockRunning ? null : _startTimer,
+              style: ElevatedButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.primary,
+                  backgroundColor: Theme.of(context).colorScheme.tertiary),
+              child: Text(_isBlockRunning ? 'Session Started' : 'Start Block')))
     ]);
   }
 

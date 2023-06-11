@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 
 class Config {
-  static const double defaultBlurRadius = 20.0;
-  static const double defaultBorderRadius = 40.0;
+  static const BorderRadius defaultBorderRadius =
+      BorderRadius.all(Radius.circular(20));
   static const double defaultElementSpacing = 15.0;
-  static const Offset defaultShadowOffset = Offset(0, 4);
+  static const BoxShadow defaultShadow = BoxShadow(
+      color: Color.fromRGBO((0), 0, 0, 0.20),
+      offset: Offset(0, 4),
+      blurRadius: 20.0);
 }
 
-const lentoLightColorScheme = ColorScheme(
+const ColorScheme lentoLightColorScheme = ColorScheme(
   brightness: Brightness.light,
-  shadow: Color.fromRGBO((0), 0, 0, 0.25),
-  // background: Colors.white,
-  background: Color(0xFFF5F5F5),
+  shadow: Color.fromRGBO((0), 0, 0, 0.20),
+  background: Colors.white,
   onBackground: Colors.black,
   primary: Colors.white,
   onPrimary: Colors.black,
@@ -25,7 +27,6 @@ const lentoLightColorScheme = ColorScheme(
   onError: Colors.white,
 );
 
-CardTheme lentoCardTheme = CardTheme(
-  shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(Config.defaultBorderRadius)),
+CardTheme lentoCardTheme = const CardTheme(
+  shape: RoundedRectangleBorder(borderRadius: Config.defaultBorderRadius),
 );

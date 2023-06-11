@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'config.dart';
+
 /*
 TODO:
 - Text color
@@ -33,7 +35,7 @@ class _CardTitleState extends State<CardTitle> {
           setState(() {
             count = 0;
             _enabled = false;
-            _titleColor = null;
+            _titleColor = Theme.of(context).colorScheme.primary;
           });
         },
         child: GestureDetector(
@@ -47,7 +49,7 @@ class _CardTitleState extends State<CardTitle> {
                 height: 50.0,
                 decoration: BoxDecoration(
                     color: _titleColor,
-                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                    borderRadius: Config.defaultBorderRadius),
                 child: TextField(
                     controller: _titleController,
                     enabled: _enabled,

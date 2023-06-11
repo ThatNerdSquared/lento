@@ -14,14 +14,9 @@ class LentoCard extends StatelessWidget {
         width: 350.0,
         height: 450.0,
         child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Config.defaultBorderRadius),
-                boxShadow: [
-                  BoxShadow(
-                      color: Theme.of(context).shadowColor,
-                      offset: Config.defaultShadowOffset,
-                      blurRadius: Config.defaultBlurRadius)
-                ]),
+            decoration: const BoxDecoration(
+                borderRadius: Config.defaultBorderRadius,
+                boxShadow: [Config.defaultShadow]),
             child: Card(
                 child: Padding(
                     padding: const EdgeInsets.all(Config.defaultElementSpacing),
