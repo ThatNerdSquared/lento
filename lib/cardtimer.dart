@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 
+import 'config.dart';
+
 class CardTimer extends StatefulWidget {
   const CardTimer({super.key, required this.startingColour});
 
@@ -17,21 +19,12 @@ class _CardTimerState extends State<CardTimer> {
   int _minutes = 0;
   int _hours = 0;
 
-  late String _secondsString = '0$_seconds';
-  late String _minutesString = '0$_minutes';
-  late String _hoursString = '0$_hours';
-
-  bool _displayVisible = true;
-  bool _editVisible = false;
-  bool _isDisabled = false;
-
+  bool _isBlockRunning = false;
+  bool _isEditingTimer = false;
   late Color _timerColor = widget.startingColour;
-  var _timerPadding = EdgeInsets.zero;
 
   double _containerWidth = 280.0;
   double _containerHeight = 100.0;
-
-  var _buttonText = const Text('Start Block');
 
   @override
   Widget build(BuildContext context) {
@@ -39,60 +32,46 @@ class _CardTimerState extends State<CardTimer> {
       MouseRegion(
           onHover: (pointer) {
             setState(() {
-              _timerColor = Theme.of(context).colorScheme.surfaceTint;
+              _isBlockRunning
+                  ? null
+                  : _timerColor = Theme.of(context).colorScheme.surfaceTint;
             });
           },
           onExit: (pointer) {
             setState(() {
               _timerColor = Theme.of(context).colorScheme.surface;
-              _displayVisible = true;
-              _editVisible = false;
-              _secondsString = _seconds.toString();
-              _minutesString = _minutes.toString();
-              _hoursString = _hours.toString();
 
-              if (_secondsString.length == 1) {
-                _secondsString = '0$_secondsString';
-              }
-
-              if (_minutesString.length == 1) {
-                _minutesString = '0$_minutesString';
-              }
-
-              if (_hoursString.length == 1) {
-                _hoursString = '0$_hoursString';
-              }
-
-              _timerPadding = EdgeInsets.zero;
               _containerWidth = 280.0;
               _containerHeight = 100.0;
+              _isEditingTimer = false;
             });
           },
           child: GestureDetector(
               onTap: () {
                 setState(() {
-                  _containerWidth = 300.0;
-                  _containerHeight = 180.0;
-                  _editVisible = true;
-                  _displayVisible = false;
+                  if (!_isBlockRunning) {
+                    _containerWidth = 300.0;
+                    _containerHeight = 180.0;
+                    _isEditingTimer = true;
+                  }
                 });
               },
               child: Container(
                 width: _containerWidth,
                 height: _containerHeight,
-                padding: _timerPadding,
+                padding: EdgeInsets.zero,
                 decoration: BoxDecoration(
                     color: _timerColor,
                     borderRadius: const BorderRadius.all(Radius.circular(10))),
                 child:
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                   Visibility(
-                      visible: _displayVisible,
+                      visible: !_isEditingTimer,
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              _hoursString,
+                              _formatTime(_hours),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 40,
@@ -106,7 +85,7 @@ class _CardTimerState extends State<CardTimer> {
                               ),
                             ),
                             Text(
-                              _minutesString,
+                              _formatTime(_minutes),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 40,
@@ -120,7 +99,7 @@ class _CardTimerState extends State<CardTimer> {
                               ),
                             ),
                             Text(
-                              _secondsString,
+                              _formatTime(_seconds),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 40,
@@ -128,7 +107,7 @@ class _CardTimerState extends State<CardTimer> {
                             ),
                           ])),
                   Visibility(
-                    visible: _editVisible,
+                    visible: _isEditingTimer,
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -139,7 +118,7 @@ class _CardTimerState extends State<CardTimer> {
                                 NumberPicker(
                                   value: _hours,
                                   minValue: 0,
-                                  maxValue: 99,
+                                  maxValue: 23,
                                   onChanged: (value) =>
                                       setState(() => _hours = value),
                                 )
@@ -151,7 +130,7 @@ class _CardTimerState extends State<CardTimer> {
                                 NumberPicker(
                                   value: _minutes,
                                   minValue: 0,
-                                  maxValue: 99,
+                                  maxValue: 59,
                                   onChanged: (value) =>
                                       setState(() => _minutes = value),
                                 )
@@ -163,7 +142,7 @@ class _CardTimerState extends State<CardTimer> {
                                 NumberPicker(
                                   value: _seconds,
                                   minValue: 0,
-                                  maxValue: 99,
+                                  maxValue: 59,
                                   onChanged: (value) =>
                                       setState(() => _seconds = value),
                                 )
@@ -172,13 +151,15 @@ class _CardTimerState extends State<CardTimer> {
                   ),
                 ]),
               ))),
-      const Padding(padding: EdgeInsets.only(bottom: 10.0)),
+      const Padding(
+          padding:
+              EdgeInsets.only(bottom: Config.defaultElementSpacing * 2 / 3)),
       ElevatedButton(
-          onPressed: _isDisabled ? null : _startTimer,
+          onPressed: _isBlockRunning ? null : _startTimer,
           style: ElevatedButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.primary,
               backgroundColor: Theme.of(context).colorScheme.tertiary),
-          child: _buttonText)
+          child: Text(_isBlockRunning ? 'Session Started' : 'Start Block'))
     ]);
   }
 
@@ -189,67 +170,42 @@ class _CardTimerState extends State<CardTimer> {
     print(presetHours); // ignore: avoid_print
     print(presetMinutes); //ignore: avoid_print
     print(presetSeconds); //ignore: avoid_print
+    setState(() {
+      _isBlockRunning = true;
+    });
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
-        _isDisabled = true;
-        _editVisible = false;
-        _buttonText = const Text('Session Started');
-
+        _isEditingTimer = false;
         if (_seconds > 0) {
           _seconds--;
-          _secondsString = _timeString(_seconds);
         }
         if (_seconds == 0 && _minutes > 0) {
           _minutes--;
-          _minutesString = _timeString(_minutes);
           _seconds = 59;
-          _secondsString = _seconds.toString();
         }
 
         if (_minutes == 0 && _hours > 0) {
           _hours--;
-          _hoursString = _timeString(_hours);
           _minutes = 59;
-          _minutesString = _minutes.toString();
         }
       });
 
       if (_seconds == 0 && _minutes == 0 && _hours == 0) {
         timer.cancel();
-        print('******'); // ignore: avoid_print
-        print(presetHours); // ignore: avoid_print
-        print(presetMinutes); // ignore: avoid_print
-        print(presetSeconds); // ignore: avoid_print
-
-        _reset(presetHours, presetMinutes, presetSeconds);
+        setState(() {
+          _isBlockRunning = false;
+          _seconds = presetSeconds;
+          _minutes = presetMinutes;
+          _hours = presetHours;
+        });
+        print('timer complete'); // ignore: avoid_print
       }
     });
   }
 
-  void _reset(hours, minutes, seconds) {
-    setState(() {
-      _isDisabled = false;
-      _buttonText = const Text('Start Block');
-      // _buttonStyle = ElevatedButton.styleFrom(
-      //     foregroundColor: Colors.white,
-      //     backgroundColor: const Color(0xFF85b718));
-      _hoursString = _timeString(hours);
-      _minutesString = _timeString(minutes);
-      _secondsString = _timeString(seconds);
-
-      _seconds = seconds;
-      _minutes = minutes;
-      _hours = hours;
-    });
-  }
-
-  String _timeString(time) {
+  String _formatTime(time) {
     var timeStr = time.toString();
-    if (timeStr.length == 1) {
-      timeStr = '0$timeStr';
-    }
-
-    return timeStr;
+    return timeStr.length == 1 ? '0$timeStr' : timeStr;
   }
 }
