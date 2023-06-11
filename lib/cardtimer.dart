@@ -1,299 +1,253 @@
-import 'package:flutter/material.dart';
-import 'package:numberpicker/numberpicker.dart';
 import 'dart:async';
 
-class cardTimer extends StatefulWidget{
-  const cardTimer({super.key});
+import 'package:flutter/material.dart';
+import 'package:numberpicker/numberpicker.dart';
+
+class CardTimer extends StatefulWidget {
+  const CardTimer({super.key});
 
   @override
-  State<cardTimer> createState() => _cardTimerState();
-  
+  State<CardTimer> createState() => _CardTimerState();
 }
 
-
-class _cardTimerState extends State<cardTimer> {
+class _CardTimerState extends State<CardTimer> {
   int _seconds = 0;
   int _minutes = 0;
   int _hours = 0;
-  int _currentValue = 3;
 
-  late String _secondsString = "0" + _seconds.toString();
-  late String _minutesString = "0" + _minutes.toString();
-  late String _hoursString = "0" + _hours.toString();
+  late String _secondsString = "0$_seconds";
+  late String _minutesString = "0$_minutes";
+  late String _hoursString = "0$_hours";
 
   bool _displayVisible = true;
   bool _editVisible = false;
-  bool _buttonVisible = false;
   bool _isDisabled = false;
 
-  var _editIcon = Icon(Icons.edit_note);
   var _timerColor = Colors.grey[200];
   var _timerPadding = EdgeInsets.zero;
 
   double _containerWidth = 280.0;
   double _containerHeight = 100.0;
 
-  var _buttonText =  Text("Start");
+  var _buttonText = const Text("Start");
   var _buttonStyle = ElevatedButton.styleFrom(
-              foregroundColor: Colors.white as Color,
-              backgroundColor: const Color(0xFF85b718)
-            );
-
-  Timer? _timer;
+      foregroundColor: Colors.white, backgroundColor: const Color(0xFF85b718));
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        MouseRegion(
-          onHover: (PointerEvent pointer){
-            setState((){
-              _timerColor = Color(0xFFeef2ef);
+    return Column(children: [
+      MouseRegion(
+          onHover: (pointer) {
+            setState(() {
+              _timerColor = const Color(0xFFeef2ef);
             });
           },
-          onExit: (PointerEvent pointer){
-            setState((){
-              _timerColor = Colors.grey[200];              _displayVisible = true;
+          onExit: (pointer) {
+            setState(() {
+              _timerColor = Colors.grey[200];
+              _displayVisible = true;
               _editVisible = false;
               _secondsString = _seconds.toString();
               _minutesString = _minutes.toString();
               _hoursString = _hours.toString();
 
-              if(_secondsString.length == 1){
-                _secondsString = "0" + _secondsString;
+              if (_secondsString.length == 1) {
+                _secondsString = "0$_secondsString";
               }
 
-              if (_minutesString.length == 1){
-                _minutesString = "0" + _minutesString;
+              if (_minutesString.length == 1) {
+                _minutesString = "0$_minutesString";
               }
 
-              if (_hoursString.length == 1){
-                _hoursString = "0" + _hoursString;
+              if (_hoursString.length == 1) {
+                _hoursString = "0$_hoursString";
               }
-              _buttonVisible = false;
 
               _timerPadding = EdgeInsets.zero;
               _containerWidth = 280.0;
               _containerHeight = 100.0;
-
-            }
-            );
+            });
           },
-
-          child:
-              GestureDetector(
-                onTap: (){
-                  setState(() {
+          child: GestureDetector(
+              onTap: () {
+                setState(() {
                   _containerWidth = 300.0;
                   _containerHeight = 180.0;
                   _editVisible = true;
                   _displayVisible = false;
                 });
-                },
+              },
+              child: Container(
+                width: _containerWidth,
+                height: _containerHeight,
+                padding: _timerPadding,
+                decoration: BoxDecoration(
+                    color: _timerColor,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
                 child:
-                  Container(
-                    width: _containerWidth,
-                    height: _containerHeight,
-                    padding: _timerPadding,
-                    decoration: BoxDecoration(
-                      color: _timerColor,
-                      borderRadius: BorderRadius.all(Radius.circular(10))
-                    ),
-
-                    child:
-                      Row(
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Visibility(
+                      visible: _displayVisible,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _hoursString,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 40,
+                              ),
+                            ),
+                            const Text(
+                              ":",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 40,
+                              ),
+                            ),
+                            Text(
+                              _minutesString,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 40,
+                              ),
+                            ),
+                            const Text(
+                              ":",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 40,
+                              ),
+                            ),
+                            Text(
+                              _secondsString,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 40,
+                              ),
+                            ),
+                          ])),
+                  Visibility(
+                    visible: _editVisible,
+                    child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                            Visibility(
-                              visible: _displayVisible,
-                              child:
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                      _hoursString,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 40,
-                                      ),
-                                    ),
-
-                                  Text(
-                                    ":",
-                                    style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 40,
-                                        ),
-                                  ),
-
-                                  Text(
-                                      _minutesString,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 40,
-                                      ),
-                                    ),
-
-                                  Text(
-                                    ":",
-                                    style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 40,
-                                        ),
-                                  ),
-
-                                    Text(
-                                      _secondsString,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 40,
-                                      ),
-                                    ),
-                                ]
-                            )
-                          ),
-
-                          Visibility(
-                            visible: _editVisible,
-                            child: 
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Hours"
-                                      ),
-                                      NumberPicker(
-                                        value: _hours,
-                                        minValue: 0,
-                                        maxValue: 99,
-                                        onChanged: (value) => setState(() => _hours = value),
-                                      )
-                                    ]
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Minutes"
-                                      ),
-                                      NumberPicker(
-                                        value: _minutes,
-                                        minValue: 0,
-                                        maxValue: 99,
-                                        onChanged: (value) => setState(() => _minutes = value),
-                                      )
-                                    ]
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Seconds"
-                                      ),
-                                      NumberPicker(
-                                        value: _seconds,
-                                        minValue: 0,
-                                        maxValue: 99,
-                                        onChanged: (value) => setState(() => _seconds = value),
-                                      )
-                                    ]
-                                  ),
-                                ]
-                              ),
-                          ),
-                        ]
-                      ),
-                  ) 
-              )
-            ),
-
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10.0)
-          ),
-
-          ElevatedButton(
-            onPressed: _isDisabled? null : () => _startTimer(),
-            child: _buttonText,
-            style: _buttonStyle
-          )
-        ]
-      );
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text("Hours"),
+                                NumberPicker(
+                                  value: _hours,
+                                  minValue: 0,
+                                  maxValue: 99,
+                                  onChanged: (value) =>
+                                      setState(() => _hours = value),
+                                )
+                              ]),
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text("Minutes"),
+                                NumberPicker(
+                                  value: _minutes,
+                                  minValue: 0,
+                                  maxValue: 99,
+                                  onChanged: (value) =>
+                                      setState(() => _minutes = value),
+                                )
+                              ]),
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text("Seconds"),
+                                NumberPicker(
+                                  value: _seconds,
+                                  minValue: 0,
+                                  maxValue: 99,
+                                  onChanged: (value) =>
+                                      setState(() => _seconds = value),
+                                )
+                              ]),
+                        ]),
+                  ),
+                ]),
+              ))),
+      const Padding(padding: EdgeInsets.only(bottom: 10.0)),
+      ElevatedButton(
+          onPressed: _isDisabled ? null : _startTimer,
+          style: _buttonStyle,
+          child: _buttonText)
+    ]);
   }
 
   void _startTimer() {
-    int _presetHours = _hours;
-    int _presetMinutes = _minutes;
-    int _presetSeconds = _seconds;
-    print(_presetHours);
-    print(_presetMinutes);
-    print(_presetSeconds);
+    var presetHours = _hours;
+    var presetMinutes = _minutes;
+    var presetSeconds = _seconds;
+    print(presetHours); // ignore: avoid_print
+    print(presetMinutes); //ignore: avoid_print
+    print(presetSeconds); //ignore: avoid_print
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _isDisabled = true;
         _editVisible = false;
-        _buttonVisible = false;
-        _buttonText =  Text("Session Started");
+        _buttonText = const Text("Session Started");
 
         if (_seconds > 0) {
-          _seconds-- ;
-          _secondsString = timeString(_seconds);
-        } 
-        if(_seconds == 0 && _minutes > 0 ) {
-          _minutes-- ;
-          _minutesString = timeString(_minutes);
+          _seconds--;
+          _secondsString = _timeString(_seconds);
+        }
+        if (_seconds == 0 && _minutes > 0) {
+          _minutes--;
+          _minutesString = _timeString(_minutes);
           _seconds = 59;
           _secondsString = _seconds.toString();
         }
 
-        if(_minutes == 0 && _hours > 0){
-          _hours-- ;
-          _hoursString = timeString(_hours);
+        if (_minutes == 0 && _hours > 0) {
+          _hours--;
+          _hoursString = _timeString(_hours);
           _minutes = 59;
           _minutesString = _minutes.toString();
         }
-        });
+      });
 
-        if(_seconds == 0 && _minutes == 0 && _hours == 0){
-          timer.cancel();
-          print("******");
-          print(_presetHours);
-          print(_presetMinutes);
-          print(_presetSeconds);
+      if (_seconds == 0 && _minutes == 0 && _hours == 0) {
+        timer.cancel();
+        print("******"); // ignore: avoid_print
+        print(presetHours); // ignore: avoid_print
+        print(presetMinutes); // ignore: avoid_print
+        print(presetSeconds); // ignore: avoid_print
 
-          _reset(_presetHours, _presetMinutes, _presetSeconds);
-        }
-        });
-
+        _reset(presetHours, presetMinutes, presetSeconds);
+      }
+    });
   }
 
-void _reset(hours, minutes, seconds){
-  setState((){
-    _isDisabled = false;
-      _buttonText =  Text("Start");
+  void _reset(hours, minutes, seconds) {
+    setState(() {
+      _isDisabled = false;
+      _buttonText = const Text("Start");
       _buttonStyle = ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: const Color(0xFF85b718)
-            );
-      _hoursString = timeString(hours);
-      _minutesString = timeString(minutes);
-      _secondsString = timeString(seconds);
+          foregroundColor: Colors.white,
+          backgroundColor: const Color(0xFF85b718));
+      _hoursString = _timeString(hours);
+      _minutesString = _timeString(minutes);
+      _secondsString = _timeString(seconds);
 
       _seconds = seconds;
       _minutes = minutes;
       _hours = hours;
-  });
-}
-
-String timeString(time){
-  String timeStr = time.toString();
-  if (timeStr.length == 1){
-    timeStr = "0" + timeStr;
+    });
   }
 
-  return timeStr;
-}
+  String _timeString(time) {
+    var timeStr = time.toString();
+    if (timeStr.length == 1) {
+      timeStr = "0$timeStr";
+    }
+
+    return timeStr;
+  }
 }
