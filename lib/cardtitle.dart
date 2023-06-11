@@ -16,7 +16,7 @@ class CardTitle extends StatefulWidget {
 
 class _CardTitleState extends State<CardTitle> {
   // bool _isClicked = true;
-  final _titleController = TextEditingController(text: "Untitled Card");
+  final _titleController = TextEditingController(text: 'Untitled Card');
   bool _enabled = false;
   int count = 0;
   Color? _titleColor;
@@ -26,7 +26,7 @@ class _CardTitleState extends State<CardTitle> {
     return MouseRegion(
         onHover: (pointer) {
           setState(() {
-            _titleColor = const Color(0xFFeef2ef);
+            _titleColor = Theme.of(context).colorScheme.surfaceTint;
           });
         },
         onExit: (pointer) {

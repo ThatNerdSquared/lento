@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 class CardTimer extends StatefulWidget {
-  const CardTimer({super.key});
+  const CardTimer({super.key, required this.startingColour});
+
+  final Color startingColour;
 
   @override
   State<CardTimer> createState() => _CardTimerState();
@@ -15,23 +17,21 @@ class _CardTimerState extends State<CardTimer> {
   int _minutes = 0;
   int _hours = 0;
 
-  late String _secondsString = "0$_seconds";
-  late String _minutesString = "0$_minutes";
-  late String _hoursString = "0$_hours";
+  late String _secondsString = '0$_seconds';
+  late String _minutesString = '0$_minutes';
+  late String _hoursString = '0$_hours';
 
   bool _displayVisible = true;
   bool _editVisible = false;
   bool _isDisabled = false;
 
-  var _timerColor = Colors.grey[200];
+  late Color _timerColor = widget.startingColour;
   var _timerPadding = EdgeInsets.zero;
 
   double _containerWidth = 280.0;
   double _containerHeight = 100.0;
 
-  var _buttonText = const Text("Start");
-  var _buttonStyle = ElevatedButton.styleFrom(
-      foregroundColor: Colors.white, backgroundColor: const Color(0xFF85b718));
+  var _buttonText = const Text('Start Block');
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +39,12 @@ class _CardTimerState extends State<CardTimer> {
       MouseRegion(
           onHover: (pointer) {
             setState(() {
-              _timerColor = const Color(0xFFeef2ef);
+              _timerColor = Theme.of(context).colorScheme.surfaceTint;
             });
           },
           onExit: (pointer) {
             setState(() {
-              _timerColor = Colors.grey[200];
+              _timerColor = Theme.of(context).colorScheme.surface;
               _displayVisible = true;
               _editVisible = false;
               _secondsString = _seconds.toString();
@@ -52,15 +52,15 @@ class _CardTimerState extends State<CardTimer> {
               _hoursString = _hours.toString();
 
               if (_secondsString.length == 1) {
-                _secondsString = "0$_secondsString";
+                _secondsString = '0$_secondsString';
               }
 
               if (_minutesString.length == 1) {
-                _minutesString = "0$_minutesString";
+                _minutesString = '0$_minutesString';
               }
 
               if (_hoursString.length == 1) {
-                _hoursString = "0$_hoursString";
+                _hoursString = '0$_hoursString';
               }
 
               _timerPadding = EdgeInsets.zero;
@@ -99,7 +99,7 @@ class _CardTimerState extends State<CardTimer> {
                               ),
                             ),
                             const Text(
-                              ":",
+                              ':',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 40,
@@ -113,7 +113,7 @@ class _CardTimerState extends State<CardTimer> {
                               ),
                             ),
                             const Text(
-                              ":",
+                              ':',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 40,
@@ -135,7 +135,7 @@ class _CardTimerState extends State<CardTimer> {
                           Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text("Hours"),
+                                const Text('Hours'),
                                 NumberPicker(
                                   value: _hours,
                                   minValue: 0,
@@ -147,7 +147,7 @@ class _CardTimerState extends State<CardTimer> {
                           Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text("Minutes"),
+                                const Text('Minutes'),
                                 NumberPicker(
                                   value: _minutes,
                                   minValue: 0,
@@ -159,7 +159,7 @@ class _CardTimerState extends State<CardTimer> {
                           Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text("Seconds"),
+                                const Text('Seconds'),
                                 NumberPicker(
                                   value: _seconds,
                                   minValue: 0,
@@ -175,7 +175,9 @@ class _CardTimerState extends State<CardTimer> {
       const Padding(padding: EdgeInsets.only(bottom: 10.0)),
       ElevatedButton(
           onPressed: _isDisabled ? null : _startTimer,
-          style: _buttonStyle,
+          style: ElevatedButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.tertiary),
           child: _buttonText)
     ]);
   }
@@ -192,7 +194,7 @@ class _CardTimerState extends State<CardTimer> {
       setState(() {
         _isDisabled = true;
         _editVisible = false;
-        _buttonText = const Text("Session Started");
+        _buttonText = const Text('Session Started');
 
         if (_seconds > 0) {
           _seconds--;
@@ -215,7 +217,7 @@ class _CardTimerState extends State<CardTimer> {
 
       if (_seconds == 0 && _minutes == 0 && _hours == 0) {
         timer.cancel();
-        print("******"); // ignore: avoid_print
+        print('******'); // ignore: avoid_print
         print(presetHours); // ignore: avoid_print
         print(presetMinutes); // ignore: avoid_print
         print(presetSeconds); // ignore: avoid_print
@@ -228,10 +230,10 @@ class _CardTimerState extends State<CardTimer> {
   void _reset(hours, minutes, seconds) {
     setState(() {
       _isDisabled = false;
-      _buttonText = const Text("Start");
-      _buttonStyle = ElevatedButton.styleFrom(
-          foregroundColor: Colors.white,
-          backgroundColor: const Color(0xFF85b718));
+      _buttonText = const Text('Start Block');
+      // _buttonStyle = ElevatedButton.styleFrom(
+      //     foregroundColor: Colors.white,
+      //     backgroundColor: const Color(0xFF85b718));
       _hoursString = _timeString(hours);
       _minutesString = _timeString(minutes);
       _secondsString = _timeString(seconds);
@@ -245,7 +247,7 @@ class _CardTimerState extends State<CardTimer> {
   String _timeString(time) {
     var timeStr = time.toString();
     if (timeStr.length == 1) {
-      timeStr = "0$timeStr";
+      timeStr = '0$timeStr';
     }
 
     return timeStr;
