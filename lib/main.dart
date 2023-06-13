@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'card.dart';
 import 'config.dart';
+import 'model/cardmodel.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,10 +38,26 @@ class LentoHome extends StatefulWidget {
 class _LentoHomeState extends State<LentoHome> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: LentoCard(),
+    return Scaffold(
+        body: Center(
+            child: ChangeNotifierProvider(
+      create: (context) => LentoDeckModel(cards: [LentoCardModel()]),
+      child: Column(
+        children: [
+          SizedBox(
+              width: 350.0,
+              height: 450.0,
+              // child: PageView.builder(
+              //     itemBuilder: (context, index) => ChangeNotifierProvider(
+              //         create: (context) =>
+              //             Provider.of<LentoDeckModel>(context).cards[index],
+              //         child: const LentoCard())))
+              child: PageView.builder(
+                  itemBuilder: (context, index) => LentoCard(
+                      lentoCard:
+                          Provider.of<LentoDeckModel>(context).cards[index])))
+        ],
       ),
-    );
+    )));
   }
 }
