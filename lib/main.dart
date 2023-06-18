@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 
 import 'card.dart';
 import 'config.dart';
 import 'model/cardmodel.dart';
 
+final lentoDeckProvider =
+    StateNotifierProvider<LentoDeck, List<LentoCardData>>((ref) {
+  return LentoDeck(initialDeck: [
+    LentoCardData(cardId: uuID.v4()),
+    LentoCardData(cardId: uuID.v4(), cardName: 'Card 2'),
+    LentoCardData(cardId: uuID.v4(), cardName: 'code wrangling')
+  ]);
+});
+
+const uuID = Uuid();
+
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -26,38 +38,31 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class LentoHome extends StatefulWidget {
+class LentoHome extends ConsumerStatefulWidget {
   const LentoHome({super.key, required this.title});
 
   final String title;
 
   @override
-  State<LentoHome> createState() => _LentoHomeState();
+  LentoHomeState createState() => LentoHomeState();
 }
 
-class _LentoHomeState extends State<LentoHome> {
+class LentoHomeState extends ConsumerState<LentoHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-            child: ChangeNotifierProvider(
-      create: (context) => LentoDeckModel(cards: [LentoCardModel()]),
       child: Column(
         children: [
           SizedBox(
               width: 350.0,
               height: 450.0,
-              // child: PageView.builder(
-              //     itemBuilder: (context, index) => ChangeNotifierProvider(
-              //         create: (context) =>
-              //             Provider.of<LentoDeckModel>(context).cards[index],
-              //         child: const LentoCard())))
               child: PageView.builder(
                   itemBuilder: (context, index) => LentoCard(
-                      lentoCard:
-                          Provider.of<LentoDeckModel>(context).cards[index])))
+                      cardId: ref.read(lentoDeckProvider)[index].cardId,
+                      idx: index)))
         ],
       ),
-    )));
+    ));
   }
 }

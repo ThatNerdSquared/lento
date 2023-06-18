@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config.dart';
-import 'model/cardmodel.dart';
+import 'main.dart';
 
 /*
 TODO:
@@ -11,44 +11,46 @@ TODO:
 - Emoji picker?
 */
 
-class CardTitle extends StatelessWidget {
-  const CardTitle({super.key});
+class CardTitle extends ConsumerWidget {
+  final String cardId;
+  final int idx;
+
+  const CardTitle({super.key, required this.cardId, required this.idx});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<LentoCardModel>(builder: (context, card, child) {
-      Color? titleColor;
-      // var cardName = Provider.of<LentoCardModel>(context, listen: false).cardName;
-      // var updateCardTitle = Provider.of<LentoCardModel>(context, listen: false).updateCardTitle;
-      return StatefulBuilder(
-          builder: (context, setState) => MouseRegion(
-              onHover: (pointer) {
-                setState(() {
-                  titleColor = Theme.of(context).colorScheme.surfaceTint;
-                });
-              },
-              onExit: (pointer) {
-                setState(() {
-                  titleColor = Theme.of(context).colorScheme.primary;
-                });
-              },
-              child: GestureDetector(
-                  onTap: () {
-                    setState(() {});
-                  },
-                  child: Container(
-                      width: 280.0,
-                      height: 50.0,
-                      decoration: BoxDecoration(
-                          color: titleColor,
-                          borderRadius: Config.defaultBorderRadius),
-                      child: TextFormField(
-                          decoration: const InputDecoration(
-                              border: InputBorder.none, hintText: 'Card name'),
-                          textAlign: TextAlign.center,
-                          initialValue: card.cardName,
-                          onChanged: card.updateCardTitle)))));
-    });
+  Widget build(BuildContext context, WidgetRef ref) {
+    Color? titleColor;
+    return StatefulBuilder(
+        builder: (context, setState) => MouseRegion(
+            onHover: (pointer) {
+              setState(() {
+                titleColor = Theme.of(context).colorScheme.surfaceTint;
+              });
+            },
+            onExit: (pointer) {
+              setState(() {
+                titleColor = Theme.of(context).colorScheme.primary;
+              });
+            },
+            child: GestureDetector(
+                onTap: () {
+                  setState(() {});
+                },
+                child: Container(
+                    width: 280.0,
+                    height: 50.0,
+                    decoration: BoxDecoration(
+                        color: titleColor,
+                        borderRadius: Config.defaultBorderRadius),
+                    child: TextFormField(
+                        decoration: const InputDecoration(
+                            border: InputBorder.none, hintText: 'Card name'),
+                        textAlign: TextAlign.center,
+                        initialValue:
+                            ref.watch(lentoDeckProvider)[idx].cardName,
+                        onChanged: (value) => ref
+                            .read(lentoDeckProvider.notifier)
+                            .updateCardTitle(cardId, value))))));
   }
 }
 //     });

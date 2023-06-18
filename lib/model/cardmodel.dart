@@ -1,33 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
-class LentoDeckModel extends ChangeNotifier {
-  Uuid? activatedCard;
-  List<LentoCardModel> cards;
+/// Class that contorls a list of [LentoCardData].
+class LentoDeck extends StateNotifier<List<LentoCardData>> {
+  LentoDeck({List<LentoCardData>? initialDeck}) : super(initialDeck ?? []);
 
-  LentoDeckModel({this.activatedCard, required this.cards});
-}
-
-class LentoCardModel extends ChangeNotifier {
-  Uuid cardId;
-  String cardName;
-  int time;
-  List<BlockedWebsiteModel> blockedSites;
-
-  LentoCardModel(
-      {this.cardId = const Uuid(),
-      this.cardName = 'Untitled Card',
-      this.time = 0,
-      this.blockedSites = const []});
-
-  void updateCardTitle(String value) {
-    cardName = value;
-    print(cardName);
-    notifyListeners();
+  void updateCardTitle(String cardId, String newName) {
+    state = [
+      for (final card in state)
+        if (card.cardId == cardId)
+          LentoCardData(
+              cardId: cardId,
+              cardName: newName,
+              time: card.time,
+              blockedSites: card.blockedSites)
+        else
+          card
+    ];
   }
 }
 
-class BlockedWebsiteModel extends ChangeNotifier {
+/// Immutable data class for a Lento card.
+@immutable
+class LentoCardData {
+  final String cardId;
+  final String cardName;
+  final int time;
+  final List<BlockedWebsiteData> blockedSites;
+
+  const LentoCardData(
+      {required this.cardId,
+      this.cardName = 'Untitled Card',
+      this.time = 0,
+      this.blockedSites = const []});
+}
+
+class BlockedWebsiteData {
   Uuid itemId = const Uuid();
   // Uuid itemId;
   // Uri siteUrl = Uri(scheme: 'https', host: 'nathanyeung.ca');
