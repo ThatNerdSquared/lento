@@ -19,12 +19,15 @@ class CardTitle extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Color? titleColor;
+    var isCardActivated = ref.watch(lentoDeckProvider)[cardId]!.isActivated;
     return StatefulBuilder(
         builder: (context, setState) => MouseRegion(
             onHover: (pointer) {
-              setState(() {
-                titleColor = Theme.of(context).colorScheme.surfaceTint;
-              });
+              if (!isCardActivated) {
+                setState(() {
+                  titleColor = Theme.of(context).colorScheme.surfaceTint;
+                });
+              }
             },
             onExit: (pointer) {
               setState(() {
@@ -42,6 +45,7 @@ class CardTitle extends ConsumerWidget {
                         color: titleColor,
                         borderRadius: Config.defaultBorderRadius),
                     child: TextFormField(
+                        enabled: !isCardActivated,
                         decoration: const InputDecoration(
                             border: InputBorder.none, hintText: 'Card name'),
                         textAlign: TextAlign.center,

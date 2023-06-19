@@ -1,38 +1,40 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 import 'config.dart';
+import 'main.dart';
 
-class CardTimer extends StatefulWidget {
-  const CardTimer({super.key, required this.startingColour});
+class CardTimer extends ConsumerStatefulWidget {
+  const CardTimer(
+      {super.key, required this.cardId, required this.startingColour});
 
+  final String cardId;
   final Color startingColour;
 
   @override
-  State<CardTimer> createState() => _CardTimerState();
+  CardTimerState createState() => CardTimerState();
 }
 
-class _CardTimerState extends State<CardTimer> {
+class CardTimerState extends ConsumerState<CardTimer> {
   int _seconds = 0;
   int _minutes = 0;
   int _hours = 0;
 
-  bool _isBlockRunning = false;
   bool _isEditingTimer = false;
   late Color _timerColor = widget.startingColour;
 
-  double _containerWidth = 280.0;
-  double _containerHeight = 100.0;
-
   @override
   Widget build(BuildContext context) {
+    var isCardActivated =
+        ref.watch(lentoDeckProvider)[widget.cardId]!.isActivated;
     return Column(children: [
       MouseRegion(
           onHover: (pointer) {
             setState(() {
-              _isBlockRunning
+              isCardActivated
                   ? null
                   : _timerColor = Theme.of(context).colorScheme.surfaceTint;
             });
@@ -40,25 +42,20 @@ class _CardTimerState extends State<CardTimer> {
           onExit: (pointer) {
             setState(() {
               _timerColor = Theme.of(context).colorScheme.surface;
-
-              _containerWidth = 280.0;
-              _containerHeight = 100.0;
               _isEditingTimer = false;
             });
           },
           child: GestureDetector(
               onTap: () {
                 setState(() {
-                  if (!_isBlockRunning) {
-                    _containerWidth = 300.0;
-                    _containerHeight = 180.0;
+                  if (!isCardActivated) {
                     _isEditingTimer = true;
                   }
                 });
               },
               child: Container(
-                width: _containerWidth,
-                height: _containerHeight,
+                width: _isEditingTimer ? 300.0 : 280.0,
+                height: _isEditingTimer ? 180.0 : 100.0,
                 padding: EdgeInsets.zero,
                 decoration: BoxDecoration(
                     color: _timerColor,
@@ -159,11 +156,11 @@ class _CardTimerState extends State<CardTimer> {
               borderRadius: Config.defaultBorderRadius,
               boxShadow: [Config.defaultShadow]),
           child: ElevatedButton(
-              onPressed: _isBlockRunning ? null : _startTimer,
+              onPressed: isCardActivated ? null : _startTimer,
               style: ElevatedButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.primary,
                   backgroundColor: Theme.of(context).colorScheme.tertiary),
-              child: Text(_isBlockRunning ? 'Session Started' : 'Start Block')))
+              child: Text(isCardActivated ? 'Session Started' : 'Start Block')))
     ]);
   }
 
@@ -174,31 +171,31 @@ class _CardTimerState extends State<CardTimer> {
     print(presetHours); // ignore: avoid_print
     print(presetMinutes); //ignore: avoid_print
     print(presetSeconds); //ignore: avoid_print
-    setState(() {
-      _isBlockRunning = true;
-    });
+    ref.read(lentoDeckProvider.notifier).activateCard(widget.cardId);
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _isEditingTimer = false;
-        if (_seconds > 0) {
-          _seconds--;
-        }
-        if (_seconds == 0 && _minutes > 0) {
-          _minutes--;
-          _seconds = 59;
-        }
+      if (mounted) {
+        setState(() {
+          _isEditingTimer = false;
+          if (_seconds > 0) {
+            _seconds--;
+          }
+          if (_seconds == 0 && _minutes > 0) {
+            _minutes--;
+            _seconds = 59;
+          }
 
-        if (_minutes == 0 && _hours > 0) {
-          _hours--;
-          _minutes = 59;
-        }
-      });
+          if (_minutes == 0 && _hours > 0) {
+            _hours--;
+            _minutes = 59;
+          }
+        });
+      }
 
       if (_seconds == 0 && _minutes == 0 && _hours == 0) {
         timer.cancel();
+        ref.read(lentoDeckProvider.notifier).deactivateCard(widget.cardId);
         setState(() {
-          _isBlockRunning = false;
           _seconds = presetSeconds;
           _minutes = presetMinutes;
           _hours = presetHours;

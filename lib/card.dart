@@ -32,6 +32,7 @@ class LentoCard extends StatelessWidget {
                             cardId: cardId,
                           ),
                           CardTimer(
+                            cardId: cardId,
                             startingColour:
                                 Theme.of(context).colorScheme.surface,
                           )
