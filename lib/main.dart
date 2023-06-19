@@ -6,16 +6,17 @@ import 'card.dart';
 import 'config.dart';
 import 'model/cardmodel.dart';
 
-final lentoDeckProvider =
-    StateNotifierProvider<LentoDeck, List<LentoCardData>>((ref) {
-  return LentoDeck(initialDeck: [
-    LentoCardData(cardId: uuID.v4()),
-    LentoCardData(cardId: uuID.v4(), cardName: 'Card 2'),
-    LentoCardData(cardId: uuID.v4(), cardName: 'code wrangling')
-  ]);
-});
-
 const uuID = Uuid();
+
+final mockIds = [uuID.v4(), uuID.v4(), uuID.v4()];
+final lentoDeckProvider =
+    StateNotifierProvider<LentoDeck, Map<String, LentoCardData>>((ref) {
+  return LentoDeck(initialDeck: {
+    mockIds[0]: const LentoCardData(),
+    mockIds[1]: const LentoCardData(cardName: 'Card 2'),
+    mockIds[2]: const LentoCardData(cardName: 'code wrangling'),
+  });
+});
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -59,8 +60,9 @@ class LentoHomeState extends ConsumerState<LentoHome> {
               height: 450.0,
               child: PageView.builder(
                   itemBuilder: (context, index) => LentoCard(
-                      cardId: ref.read(lentoDeckProvider)[index].cardId,
-                      idx: index)))
+                        cardId:
+                            ref.read(lentoDeckProvider).keys.elementAt(index),
+                      )))
         ],
       ),
     ));

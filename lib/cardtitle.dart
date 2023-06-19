@@ -13,9 +13,8 @@ TODO:
 
 class CardTitle extends ConsumerWidget {
   final String cardId;
-  final int idx;
 
-  const CardTitle({super.key, required this.cardId, required this.idx});
+  const CardTitle({super.key, required this.cardId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -47,7 +46,7 @@ class CardTitle extends ConsumerWidget {
                             border: InputBorder.none, hintText: 'Card name'),
                         textAlign: TextAlign.center,
                         initialValue:
-                            ref.watch(lentoDeckProvider)[idx].cardName,
+                            ref.watch(lentoDeckProvider)[cardId]!.cardName,
                         onChanged: (value) => ref
                             .read(lentoDeckProvider.notifier)
                             .updateCardTitle(cardId, value))))));

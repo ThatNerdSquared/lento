@@ -7,9 +7,8 @@ import 'config.dart';
 /// A card in the Lento deck.
 class LentoCard extends StatelessWidget {
   final String cardId;
-  final int idx;
 
-  const LentoCard({super.key, required this.cardId, required this.idx});
+  const LentoCard({super.key, required this.cardId});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,6 @@ class LentoCard extends StatelessWidget {
                                 children: [
                           CardTitle(
                             cardId: cardId,
-                            idx: idx,
                           ),
                           CardTimer(
                             startingColour:
