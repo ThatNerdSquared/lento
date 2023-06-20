@@ -19,7 +19,7 @@ class CardTitle extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Color? titleColor;
-    var isCardActivated = ref.watch(lentoDeckProvider)[cardId]!.isActivated;
+    var isCardActivated = ref.watch(lentoDeckProvider.select((deck) => deck[cardId]!.isActivated));
     return StatefulBuilder(
         builder: (context, setState) => MouseRegion(
             onHover: (pointer) {
@@ -50,7 +50,7 @@ class CardTitle extends ConsumerWidget {
                             border: InputBorder.none, hintText: 'Card name'),
                         textAlign: TextAlign.center,
                         initialValue:
-                            ref.watch(lentoDeckProvider)[cardId]!.cardName,
+                            ref.watch(lentoDeckProvider.select((deck) => deck[cardId]!.cardName)),
                         onChanged: (value) => ref
                             .read(lentoDeckProvider.notifier)
                             .updateCardTitle(cardId, value))))));

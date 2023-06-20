@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+enum TimeSection { hours, minutes, seconds }
+
 class Config {
   static const BorderRadius defaultBorderRadius =
       BorderRadius.all(Radius.circular(20));

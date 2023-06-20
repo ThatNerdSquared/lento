@@ -23,7 +23,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
         cardId,
         (oldCard) => LentoCardData(
             cardName: newName,
-            time: oldCard.time,
+            blockDuration: oldCard.blockDuration,
             isActivated: oldCard.isActivated,
             blockedSites: oldCard.blockedSites));
   }
@@ -33,7 +33,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
         cardId,
         (oldCard) => LentoCardData(
             cardName: oldCard.cardName,
-            time: oldCard.time,
+            blockDuration: oldCard.blockDuration,
             isActivated: true,
             blockedSites: oldCard.blockedSites));
   }
@@ -43,8 +43,18 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
         cardId,
         (oldCard) => LentoCardData(
             cardName: oldCard.cardName,
-            time: oldCard.time,
+            blockDuration: oldCard.blockDuration,
             isActivated: false,
+            blockedSites: oldCard.blockedSites));
+  }
+
+  void updateCardTime(String cardId, int newBlockDuration) {
+    _findAndModifyCardAttribute(
+        cardId,
+        (oldCard) => LentoCardData(
+            cardName: oldCard.cardName,
+            blockDuration: newBlockDuration,
+            isActivated: oldCard.isActivated,
             blockedSites: oldCard.blockedSites));
   }
 }
@@ -53,13 +63,13 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
 @immutable
 class LentoCardData {
   final String cardName;
-  final int time;
+  final int blockDuration;
   final bool isActivated;
   final List<BlockedWebsiteData> blockedSites;
 
   const LentoCardData(
       {this.cardName = 'Untitled Card',
-      this.time = 0,
+      this.blockDuration = 0,
       this.isActivated = false,
       this.blockedSites = const []});
 }
