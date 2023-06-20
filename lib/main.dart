@@ -12,9 +12,16 @@ final mockIds = [uuID.v4(), uuID.v4(), uuID.v4()];
 final lentoDeckProvider =
     StateNotifierProvider<LentoDeck, Map<String, LentoCardData>>((ref) {
   return LentoDeck(initialDeck: {
-    mockIds[0]: const LentoCardData(),
-    mockIds[1]: const LentoCardData(cardName: 'Card 2'),
-    mockIds[2]: const LentoCardData(cardName: 'code wrangling'),
+    mockIds[0]: const LentoCardData(
+      blockDuration: CardTime.fromPresetTime(61),
+    ),
+    mockIds[1]: const LentoCardData(
+      cardName: 'Card 2',
+      blockDuration: CardTime.fromPresetTime(5),
+    ),
+    mockIds[2]: const LentoCardData(
+      cardName: 'code wrangling',
+    ),
   });
 });
 

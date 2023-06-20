@@ -44,28 +44,38 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
     _findAndModifyCardAttribute(
         cardId,
         (oldCard) => LentoCardData(
-            cardName: oldCard.cardName,
-            blockDuration: oldCard.blockDuration,
-            isActivated: false,
-            blockedSites: oldCard.blockedSites));
+              cardName: oldCard.cardName,
+              blockDuration:
+                  CardTime.fromPresetTime(oldCard.blockDuration.presetTime),
+              isActivated: false,
+              blockedSites: oldCard.blockedSites,
+            ));
   }
 
-  void updateCardTime(String cardId, TimeSection timeSection, int newValue) {
+  void updateCardTime({
+    required String cardId,
+    required int newValue,
+    TimeSection? timeSection,
+  }) {
     _findAndModifyCardAttribute(
         cardId,
         (oldCard) => LentoCardData(
             cardName: oldCard.cardName,
-            blockDuration: CardTime(
-                presetTime: oldCard.blockDuration.presetTime,
-                hours: timeSection == TimeSection.hours
-                    ? newValue
-                    : oldCard.blockDuration.hours,
-                minutes: timeSection == TimeSection.minutes
-                    ? newValue
-                    : oldCard.blockDuration.minutes,
-                seconds: timeSection == TimeSection.seconds
-                    ? newValue
-                    : oldCard.blockDuration.seconds),
+            blockDuration: timeSection == null
+                ? CardTime.fromTime(
+                    presetTime: oldCard.blockDuration.presetTime,
+                    newTime: newValue)
+                : CardTime(
+                    presetTime: oldCard.blockDuration.presetTime,
+                    hours: timeSection == TimeSection.hours
+                        ? newValue
+                        : oldCard.blockDuration.hours,
+                    minutes: timeSection == TimeSection.minutes
+                        ? newValue
+                        : oldCard.blockDuration.minutes,
+                    seconds: timeSection == TimeSection.seconds
+                        ? newValue
+                        : oldCard.blockDuration.seconds),
             isActivated: oldCard.isActivated,
             blockedSites: oldCard.blockedSites));
   }
@@ -103,6 +113,11 @@ class CardTime {
       : hours = presetTime ~/ 3600,
         minutes = (presetTime % 3600) ~/ 60,
         seconds = presetTime % 60;
+
+  const CardTime.fromTime({required this.presetTime, required newTime})
+      : hours = newTime ~/ 3600,
+        minutes = (newTime % 3600) ~/ 60,
+        seconds = newTime % 60;
 
   String get fmtHours => hours.toString().padLeft(2, '0');
   String get fmtMinutes => minutes.toString().padLeft(2, '0');

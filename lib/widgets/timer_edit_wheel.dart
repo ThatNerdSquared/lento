@@ -34,9 +34,11 @@ class TimerEditWheel extends ConsumerWidget {
         minValue: 0,
         maxValue: timeSection == TimeSection.hours ? 23 : 60,
         onChanged: (value) {
-          ref
-              .read(lentoDeckProvider.notifier)
-              .updateCardTime(cardId, timeSection, value);
+          ref.read(lentoDeckProvider.notifier).updateCardTime(
+                cardId: cardId,
+                newValue: value,
+                timeSection: timeSection,
+              );
         },
       )
     ]);

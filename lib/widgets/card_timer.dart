@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -105,43 +107,24 @@ class CardTimerState extends ConsumerState<CardTimer> {
   }
 
   void _startTimer() {
-    // var presetHours = _hours;
-    // var presetMinutes = _minutes;
-    // var presetSeconds = _seconds;
-    // print(presetHours); // ignore: avoid_print
-    // print(presetMinutes); //ignore: avoid_print
-    // print(presetSeconds); //ignore: avoid_print
-    // ref.read(lentoDeckProvider.notifier).activateCard(widget.cardId);
+    ref.read(lentoDeckProvider.notifier).activateCard(widget.cardId);
 
-    // Timer.periodic(const Duration(seconds: 1), (timer) {
-    //   if (mounted) {
-    //     setState(() {
-    //       _isEditingTimer = false;
-    //       if (_seconds > 0) {
-    //         _seconds--;
-    //       }
-    //       if (_seconds == 0 && _minutes > 0) {
-    //         _minutes--;
-    //         _seconds = 59;
-    //       }
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        var blockDuration = ref.read(lentoDeckProvider
+            .select((deck) => deck[widget.cardId]!.blockDuration));
+        var newDuration = blockDuration.gatheredSeconds - 1;
+        ref.read(lentoDeckProvider.notifier).updateCardTime(
+              cardId: widget.cardId,
+              newValue: newDuration,
+            );
 
-    //       if (_minutes == 0 && _hours > 0) {
-    //         _hours--;
-    //         _minutes = 59;
-    //       }
-    //     });
-    //   }
-
-    //   if (_seconds == 0 && _minutes == 0 && _hours == 0) {
-    //     timer.cancel();
-    //     ref.read(lentoDeckProvider.notifier).deactivateCard(widget.cardId);
-    //     setState(() {
-    //       _seconds = presetSeconds;
-    //       _minutes = presetMinutes;
-    //       _hours = presetHours;
-    //     });
-    //     print('timer complete'); // ignore: avoid_print
-    //   }
-    // });
+        if (newDuration == 0) {
+          timer.cancel();
+          ref.read(lentoDeckProvider.notifier).deactivateCard(widget.cardId);
+          print('timer complete'); // ignore: avoid_print
+        }
+      }
+    });
   }
 }
