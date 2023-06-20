@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'config.dart';
-import 'main.dart';
-import 'widgets/timer_edit_wheel.dart';
+import '../config.dart';
+import '../main.dart';
+import 'timer_edit_wheel.dart';
 
 class CardTime {
   late int hours;

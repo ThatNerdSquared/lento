@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'cardtimer.dart';
-import 'cardtitle.dart';
-import 'config.dart';
+import '../config.dart';
+import 'card_timer.dart';
+import 'card_title.dart';
 
 /// A card in the Lento deck.
 class LentoCard extends StatelessWidget {
