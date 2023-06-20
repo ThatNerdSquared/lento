@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../config.dart';
+
 /// Class that controls a list of [LentoCardData].
 class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
   LentoDeck({Map<String, LentoCardData>? initialDeck})
@@ -48,12 +50,22 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
             blockedSites: oldCard.blockedSites));
   }
 
-  void updateCardTime(String cardId, int newBlockDuration) {
+  void updateCardTime(String cardId, TimeSection timeSection, int newValue) {
     _findAndModifyCardAttribute(
         cardId,
         (oldCard) => LentoCardData(
             cardName: oldCard.cardName,
-            blockDuration: newBlockDuration,
+            blockDuration: CardTime(
+                presetTime: oldCard.blockDuration.presetTime,
+                hours: timeSection == TimeSection.hours
+                    ? newValue
+                    : oldCard.blockDuration.hours,
+                minutes: timeSection == TimeSection.minutes
+                    ? newValue
+                    : oldCard.blockDuration.minutes,
+                seconds: timeSection == TimeSection.seconds
+                    ? newValue
+                    : oldCard.blockDuration.seconds),
             isActivated: oldCard.isActivated,
             blockedSites: oldCard.blockedSites));
   }
@@ -63,15 +75,40 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
 @immutable
 class LentoCardData {
   final String cardName;
-  final int blockDuration;
+  final CardTime blockDuration;
   final bool isActivated;
   final List<BlockedWebsiteData> blockedSites;
 
   const LentoCardData(
       {this.cardName = 'Untitled Card',
-      this.blockDuration = 0,
+      this.blockDuration = const CardTime.fromPresetTime(0),
       this.isActivated = false,
       this.blockedSites = const []});
+}
+
+@immutable
+class CardTime {
+  final int presetTime;
+  final int hours;
+  final int minutes;
+  final int seconds;
+
+  const CardTime(
+      {required this.presetTime,
+      required this.hours,
+      required this.minutes,
+      required this.seconds});
+
+  const CardTime.fromPresetTime(this.presetTime)
+      : hours = presetTime ~/ 3600,
+        minutes = (presetTime % 3600) ~/ 60,
+        seconds = presetTime % 60;
+
+  String get fmtHours => hours.toString().padLeft(2, '0');
+  String get fmtMinutes => minutes.toString().padLeft(2, '0');
+  String get fmtSeconds => seconds.toString().padLeft(2, '0');
+
+  int get gatheredSeconds => hours * 60 * 60 + minutes * 60 + seconds;
 }
 
 class BlockedWebsiteData {

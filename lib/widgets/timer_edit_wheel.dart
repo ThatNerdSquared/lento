@@ -8,20 +8,17 @@ import '../main.dart';
 class TimerEditWheel extends ConsumerWidget {
   final String cardId;
   final TimeSection timeSection;
-  final int value;
-  final Function(int value) stateUpdateCallback;
-  final Function() gatheredSecondsGetter;
 
-  const TimerEditWheel(
-      {super.key,
-      required this.cardId,
-      required this.timeSection,
-      required this.value,
-      required this.stateUpdateCallback,
-      required this.gatheredSecondsGetter});
+  const TimerEditWheel({
+    super.key,
+    required this.cardId,
+    required this.timeSection,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    var blockDuration = ref
+        .watch(lentoDeckProvider.select((deck) => deck[cardId]!.blockDuration));
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text(switch (timeSection) {
         TimeSection.hours => 'Hours',
@@ -29,14 +26,17 @@ class TimerEditWheel extends ConsumerWidget {
         TimeSection.seconds => 'Seconds'
       }),
       NumberPicker(
-        value: value,
+        value: switch (timeSection) {
+          TimeSection.hours => blockDuration.hours,
+          TimeSection.minutes => blockDuration.minutes,
+          TimeSection.seconds => blockDuration.seconds,
+        },
         minValue: 0,
         maxValue: timeSection == TimeSection.hours ? 23 : 60,
-        onChanged: (newValue) {
-          stateUpdateCallback(newValue);
+        onChanged: (value) {
           ref
               .read(lentoDeckProvider.notifier)
-              .updateCardTime(cardId, gatheredSecondsGetter());
+              .updateCardTime(cardId, timeSection, value);
         },
       )
     ]);
