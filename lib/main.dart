@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import 'config.dart';
 import 'model/cardmodel.dart';
 import 'widgets/card.dart';
+import 'widgets/lento_toolbar.dart';
 
 const uuID = Uuid();
 
@@ -37,10 +38,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Lento',
       theme: ThemeData(
-          cardTheme: lentoCardTheme,
-          colorScheme: lentoLightColorScheme,
-          scaffoldBackgroundColor: lentoLightColorScheme.background,
-          shadowColor: lentoLightColorScheme.shadow),
+        cardTheme: lentoCardTheme,
+        colorScheme: lentoLightColorScheme,
+        scaffoldBackgroundColor: lentoLightColorScheme.background,
+        shadowColor: lentoLightColorScheme.shadow,
+      ),
       home: const LentoHome(title: 'Lento Home'),
     );
   }
@@ -56,22 +58,36 @@ class LentoHome extends ConsumerStatefulWidget {
 }
 
 class LentoHomeState extends ConsumerState<LentoHome> {
+  final PageController controller = PageController(
+    viewportFraction: 0.8,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
+            child: Padding(
+      padding: const EdgeInsets.only(top: Config.defaultElementSpacing),
       child: Column(
         children: [
-          SizedBox(
-              width: 350.0,
-              height: 450.0,
-              child: PageView.builder(
-                  itemBuilder: (context, index) => LentoCard(
-                        cardId:
-                            ref.read(lentoDeckProvider).keys.elementAt(index),
-                      )))
+          Flexible(
+              flex: 5,
+              child: Container(
+                  constraints: const BoxConstraints(
+                    maxWidth: 700.0,
+                    maxHeight: 800.0,
+                  ),
+                  child: PageView.builder(
+                      controller: controller,
+                      itemBuilder: (context, index) => LentoCard(
+                            cardId: ref
+                                .read(lentoDeckProvider)
+                                .keys
+                                .elementAt(index),
+                          )))),
+          const Flexible(flex: 1, child: LentoToolbar()),
         ],
       ),
-    ));
+    )));
   }
 }

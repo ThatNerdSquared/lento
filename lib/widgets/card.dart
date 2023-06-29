@@ -12,30 +12,28 @@ class LentoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: 350.0,
-        height: 450.0,
-        child: Container(
+    return LayoutBuilder(
+        builder: (context, constraints) => Container(
             decoration: const BoxDecoration(
                 borderRadius: Config.defaultBorderRadius,
                 boxShadow: [Config.defaultShadow]),
+            margin: const EdgeInsets.all(Config.defaultElementSpacing),
             child: Card(
                 child: Padding(
-                    padding: const EdgeInsets.all(Config.defaultElementSpacing),
-                    child: SingleChildScrollView(
-                        child: Center(
-                            child: Wrap(
-                                direction: Axis.vertical,
-                                spacing: Config.defaultElementSpacing,
-                                children: [
-                          CardTitle(
-                            cardId: cardId,
-                          ),
-                          CardTimer(
-                            cardId: cardId,
-                            startingColour:
-                                Theme.of(context).colorScheme.surface,
-                          )
-                        ])))))));
+              padding: const EdgeInsets.only(
+                top: Config.defaultElementSpacing * 2,
+              ),
+              child: CustomScrollView(slivers: [
+                SliverToBoxAdapter(
+                    child: CardTitle(
+                  cardId: cardId,
+                )),
+                SliverToBoxAdapter(
+                    child: CardTimer(
+                  cardId: cardId,
+                  startingColour: Theme.of(context).colorScheme.surface,
+                )),
+              ]),
+            ))));
   }
 }
