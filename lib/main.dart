@@ -58,6 +58,7 @@ class LentoHome extends ConsumerStatefulWidget {
 }
 
 class LentoHomeState extends ConsumerState<LentoHome> {
+  int pageViewIndex = 0;
   final PageController controller = PageController(
     viewportFraction: 0.8,
   );
@@ -79,13 +80,20 @@ class LentoHomeState extends ConsumerState<LentoHome> {
                   ),
                   child: PageView.builder(
                       controller: controller,
+                      onPageChanged: (value) => setState(() {
+                            pageViewIndex = value;
+                          }),
                       itemBuilder: (context, index) => LentoCard(
                             cardId: ref
                                 .read(lentoDeckProvider)
                                 .keys
                                 .elementAt(index),
                           )))),
-          const Flexible(flex: 1, child: LentoToolbar()),
+          Flexible(
+              flex: 1,
+              child: LentoToolbar(
+                currentCardIndex: pageViewIndex,
+              )),
         ],
       ),
     )));

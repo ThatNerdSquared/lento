@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uuid/uuid.dart';
 
 import '../config.dart';
+import '../main.dart';
 
 /// Class that controls a list of [LentoCardData].
 class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
@@ -10,7 +12,9 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
       : super(initialDeck ?? <String, LentoCardData>{});
 
   void _findAndModifyCardAttribute(
-      String cardId, Function(LentoCardData oldCard) modifierCallback) {
+    String cardId,
+    Function(LentoCardData oldCard) modifierCallback,
+  ) {
     state = state.map((key, value) {
       if (key == cardId) {
         return MapEntry(key, modifierCallback(value));
@@ -79,6 +83,14 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
             isActivated: oldCard.isActivated,
             blockedSites: oldCard.blockedSites));
   }
+
+  void addNewCard() {
+    state[uuID.v4()] = const LentoCardData();
+  }
+
+  void removeCard({required String cardId}) {
+    state.removeWhere((key, value) => key == cardId);
+  }
 }
 
 /// Immutable data class for a Lento card.
@@ -126,19 +138,18 @@ class CardTime {
   int get gatheredSeconds => hours * 60 * 60 + minutes * 60 + seconds;
 }
 
+@immutable
 class BlockedWebsiteData {
-  Uuid itemId = const Uuid();
-  // Uuid itemId;
-  // Uri siteUrl = Uri(scheme: 'https', host: 'nathanyeung.ca');
-  // bool isAccessRestricted;
-  // File iconPath;
-  // Uuid? associatedPopup;
+  final String itemId;
+  final Uri siteUrl;
+  final bool isAccessRestricted;
+  final File iconPath;
+  final String? associatedPopup;
 
-  // BlockedWebsiteModel({
-  //   this.cardId = const Uuid(),
-  //   this.siteUrl ,
-  //   this.isAccessRestricted = false,
-  //   required this.iconPath = File(''),
-
-  // });
+  const BlockedWebsiteData(
+      {required this.itemId,
+      required this.siteUrl,
+      this.isAccessRestricted = false,
+      required this.iconPath,
+      this.associatedPopup});
 }
