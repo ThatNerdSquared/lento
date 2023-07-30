@@ -10,20 +10,22 @@ import 'widgets/lento_toolbar.dart';
 const uuID = Uuid();
 
 final mockIds = [uuID.v4(), uuID.v4(), uuID.v4()];
+dynamic initialDeck = {
+      mockIds[0]: const LentoCardData(
+        blockDuration: CardTime.fromPresetTime(61),
+      ),
+      mockIds[1]: const LentoCardData(
+        cardName: 'Card 2',
+        blockDuration: CardTime.fromPresetTime(5),
+      ),
+      mockIds[2]: const LentoCardData(
+        cardName: 'code wrangling',
+      ),
+  };
 final lentoDeckProvider =
     StateNotifierProvider<LentoDeck, Map<String, LentoCardData>>((ref) {
-  return LentoDeck(initialDeck: {
-    mockIds[0]: const LentoCardData(
-      blockDuration: CardTime.fromPresetTime(61),
-    ),
-    mockIds[1]: const LentoCardData(
-      cardName: 'Card 2',
-      blockDuration: CardTime.fromPresetTime(5),
-    ),
-    mockIds[2]: const LentoCardData(
-      cardName: 'code wrangling',
-    ),
-  });
+      initialDeck;
+  return LentoDeck(initialDeck);
 });
 
 void main() {
@@ -59,6 +61,8 @@ class LentoHome extends ConsumerStatefulWidget {
 
 class LentoHomeState extends ConsumerState<LentoHome> {
   int pageViewIndex = 0;
+  int limitIndex = initialDeck.length;
+
   final PageController controller = PageController(
     viewportFraction: 0.8,
   );
@@ -81,13 +85,14 @@ class LentoHomeState extends ConsumerState<LentoHome> {
                   child: PageView.builder(
                       controller: controller,
                       onPageChanged: (value) => setState(() {
-                            pageViewIndex = value;
+                            pageViewIndex = value % limitIndex;
                           }),
-                      itemBuilder: (context, index) => LentoCard(
-                            cardId: ref
-                                .read(lentoDeckProvider)
-                                .keys
-                                .elementAt(index),
+                      itemBuilder: (context, index) =>
+                      LentoCard(
+                              cardId: ref
+                                  .read(lentoDeckProvider)
+                                  .keys
+                                  .elementAt(index % limitIndex), // why does this work? why does this make an infinite loop? https://stackoverflow.com/questions/49161719/is-there-a-way-to-have-an-infinite-loop-using-pageview-in-flutter 
                           )))),
           Flexible(
               flex: 1,
@@ -98,4 +103,6 @@ class LentoHomeState extends ConsumerState<LentoHome> {
       ),
     )));
   }
+
+
 }

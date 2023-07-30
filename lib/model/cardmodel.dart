@@ -8,8 +8,9 @@ import '../main.dart';
 
 /// Class that controls a list of [LentoCardData].
 class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
-  LentoDeck({Map<String, LentoCardData>? initialDeck})
+  LentoDeck(Map<String, LentoCardData>? initialDeck)
       : super(initialDeck ?? <String, LentoCardData>{});
+  
 
   void _findAndModifyCardAttribute(
     String cardId,
