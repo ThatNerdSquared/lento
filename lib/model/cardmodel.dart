@@ -10,7 +10,6 @@ import '../main.dart';
 class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
   LentoDeck(Map<String, LentoCardData>? initialDeck)
       : super(initialDeck ?? <String, LentoCardData>{});
-  
 
   void _findAndModifyCardAttribute(
     String cardId,
@@ -91,6 +90,20 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
 
   void removeCard({required String cardId}) {
     state.removeWhere((key, value) => key == cardId);
+  }
+
+  void addBlockedWebsite({
+    required String cardId,
+    required BlockedWebsiteData website,
+  }) {
+    _findAndModifyCardAttribute(
+        cardId,
+        (oldCard) => LentoCardData(
+              cardName: oldCard.cardName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: oldCard.isActivated,
+              blockedSites: [...oldCard.blockedSites, website],
+            ));
   }
 }
 

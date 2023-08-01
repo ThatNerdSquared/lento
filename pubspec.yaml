@@ -32,6 +32,8 @@ dependencies:
     sdk: flutter
   dropdown_button2: ^2.1.3
   numberpicker: ^2.1.2
+  pret_a_porter:
+    path: ../pret_a_porter
 
 
   # The following adds the Cupertino Icons font to your application.
