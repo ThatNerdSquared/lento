@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 
 import 'config.dart';
 import 'model/cardmodel.dart';
+import 'widgets/blocked_item_editor.dart';
 import 'widgets/card.dart';
 import 'widgets/lento_toolbar.dart';
 
@@ -11,20 +12,20 @@ const uuID = Uuid();
 
 final mockIds = [uuID.v4(), uuID.v4(), uuID.v4()];
 dynamic initialDeck = {
-      mockIds[0]: const LentoCardData(
-        blockDuration: CardTime.fromPresetTime(61),
-      ),
-      mockIds[1]: const LentoCardData(
-        cardName: 'Card 2',
-        blockDuration: CardTime.fromPresetTime(5),
-      ),
-      mockIds[2]: const LentoCardData(
-        cardName: 'code wrangling',
-      ),
-  };
+  mockIds[0]: const LentoCardData(
+    blockDuration: CardTime.fromPresetTime(61),
+  ),
+  mockIds[1]: const LentoCardData(
+    cardName: 'Card 2',
+    blockDuration: CardTime.fromPresetTime(5),
+  ),
+  mockIds[2]: const LentoCardData(
+    cardName: 'code wrangling',
+  ),
+};
 final lentoDeckProvider =
     StateNotifierProvider<LentoDeck, Map<String, LentoCardData>>((ref) {
-      initialDeck;
+  initialDeck;
   return LentoDeck(initialDeck);
 });
 
@@ -66,6 +67,7 @@ class LentoHomeState extends ConsumerState<LentoHome> {
   final PageController controller = PageController(
     viewportFraction: 0.8,
   );
+  String? isEditingItem;
 
   @override
   Widget build(BuildContext context) {
@@ -87,13 +89,19 @@ class LentoHomeState extends ConsumerState<LentoHome> {
                       onPageChanged: (value) => setState(() {
                             pageViewIndex = value % limitIndex;
                           }),
-                      itemBuilder: (context, index) =>
-                      LentoCard(
-                              cardId: ref
-                                  .read(lentoDeckProvider)
-                                  .keys
-                                  .elementAt(index % limitIndex), // why does this work? why does this make an infinite loop? https://stackoverflow.com/questions/49161719/is-there-a-way-to-have-an-infinite-loop-using-pageview-in-flutter 
-                          )))),
+                      itemBuilder: (context, index) {
+                        var cardId = ref
+                            .read(lentoDeckProvider)
+                            .keys
+                            .elementAt(index % limitIndex);
+                        return isEditingItem == cardId
+                            ? BlockedItemEditor(cardId: cardId)
+                            : LentoCard(
+                                cardId: cardId,
+                                startEditing: (id) => setState(() {
+                                      isEditingItem = id;
+                                    }));
+                      }))),
           Flexible(
               flex: 1,
               child: LentoToolbar(
@@ -103,6 +111,4 @@ class LentoHomeState extends ConsumerState<LentoHome> {
       ),
     )));
   }
-
-
 }
