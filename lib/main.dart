@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pret_a_porter/pret_a_porter.dart';
 import 'package:uuid/uuid.dart';
 
 import 'config.dart';
@@ -9,6 +11,7 @@ import 'widgets/card.dart';
 import 'widgets/lento_toolbar.dart';
 
 const uuID = Uuid();
+String platformAppSupportDir = '';
 
 final mockIds = [uuID.v4(), uuID.v4(), uuID.v4()];
 dynamic initialDeck = {
@@ -29,7 +32,9 @@ final lentoDeckProvider =
   return LentoDeck(initialDeck);
 });
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  platformAppSupportDir = (await getApplicationSupportDirectory()).path;
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -74,7 +79,7 @@ class LentoHomeState extends ConsumerState<LentoHome> {
     return Scaffold(
         body: Center(
             child: Padding(
-      padding: const EdgeInsets.only(top: Config.defaultElementSpacing),
+      padding: const EdgeInsets.only(top: PretConfig.defaultElementSpacing),
       child: Column(
         children: [
           Flexible(

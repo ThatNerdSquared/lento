@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pret_a_porter/pret_a_porter.dart';
 
 import '../config.dart';
 import '../main.dart';
@@ -73,12 +74,12 @@ class CardTimerState extends ConsumerState<CardTimer> {
                     constraints.maxWidth, _isEditingTimer),
               ),
               padding: const EdgeInsets.only(
-                top: Config.defaultElementSpacing * 3 / 2,
-                bottom: Config.defaultElementSpacing * 3 / 2,
+                top: PretConfig.defaultElementSpacing * 3 / 2,
+                bottom: PretConfig.defaultElementSpacing * 3 / 2,
               ),
               decoration: BoxDecoration(
                 color: _timerColor,
-                borderRadius: Config.defaultBorderRadius,
+                borderRadius: PretConfig.defaultBorderRadius,
               ),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -110,11 +111,11 @@ class CardTimerState extends ConsumerState<CardTimer> {
           ),
         ),
         const Padding(
-            padding: EdgeInsets.all(Config.defaultElementSpacing * 1 / 2)),
+            padding: EdgeInsets.all(PretConfig.defaultElementSpacing * 1 / 2)),
         Container(
             decoration: const BoxDecoration(
-                borderRadius: Config.defaultBorderRadius,
-                boxShadow: [Config.defaultShadow]),
+                borderRadius: PretConfig.defaultBorderRadius,
+                boxShadow: [PretConfig.defaultShadow]),
             child: ElevatedButton(
                 onPressed: isCardActivated ? null : _startTimer,
                 style: ElevatedButton.styleFrom(

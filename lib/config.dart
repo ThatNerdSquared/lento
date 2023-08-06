@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
+import 'package:pret_a_porter/pret_a_porter.dart';
+
+import 'main.dart';
 
 enum TimeSection { hours, minutes, seconds }
 
 class Config {
-  static const BorderRadius defaultBorderRadius =
-      BorderRadius.all(Radius.circular(20));
-  static const double defaultElementSpacing = 15.0;
   static const double defaultMarginPercentage = 0.15;
-  static const BoxShadow defaultShadow = BoxShadow(
-      color: Color.fromRGBO((0), 0, 0, 0.20),
-      offset: Offset(0, 4),
-      blurRadius: 20.0);
+
+  String get dataFilePath {
+    return p.join(
+      platformAppSupportDir,
+      'lentosettings.json',
+    );
+  }
+
+  String get iconDirPath {
+    return p.join(
+      platformAppSupportDir,
+      'icons',
+    );
+  }
 }
 
 const ColorScheme lentoLightColorScheme = ColorScheme(
@@ -31,5 +42,5 @@ const ColorScheme lentoLightColorScheme = ColorScheme(
 );
 
 CardTheme lentoCardTheme = const CardTheme(
-  shape: RoundedRectangleBorder(borderRadius: Config.defaultBorderRadius),
+  shape: RoundedRectangleBorder(borderRadius: PretConfig.defaultBorderRadius),
 );

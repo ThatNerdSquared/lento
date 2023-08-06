@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pret_a_porter/pret_a_porter.dart';
 
 import '../config.dart';
 import '../main.dart';
@@ -49,13 +50,13 @@ class CardTitleState extends ConsumerState<CardTitle> {
                 child: Container(
                     decoration: BoxDecoration(
                         color: titleColor,
-                        borderRadius: Config.defaultBorderRadius),
+                        borderRadius: PretConfig.defaultBorderRadius),
                     margin: EdgeInsets.only(
                       left:
                           Config.defaultMarginPercentage * constraints.maxWidth,
                       right:
                           Config.defaultMarginPercentage * constraints.maxWidth,
-                      bottom: Config.defaultElementSpacing,
+                      bottom: PretConfig.defaultElementSpacing,
                     ),
                     child: TextFormField(
                         enabled: !isCardActivated,

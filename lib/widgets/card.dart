@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
 
-import '../config.dart';
 import '../main.dart';
 import 'card_timer.dart';
 import 'card_title.dart';
@@ -23,14 +22,14 @@ class LentoCard extends ConsumerWidget {
     return LayoutBuilder(
         builder: (context, constraints) => Container(
               decoration: const BoxDecoration(
-                  borderRadius: Config.defaultBorderRadius,
-                  boxShadow: [Config.defaultShadow]),
-              margin: const EdgeInsets.all(Config.defaultElementSpacing),
+                  borderRadius: PretConfig.defaultBorderRadius,
+                  boxShadow: [PretConfig.defaultShadow]),
+              margin: const EdgeInsets.all(PretConfig.defaultElementSpacing),
               child: Card(
                 child: Padding(
                   padding: const EdgeInsets.only(
-                    top: Config.defaultElementSpacing * 2,
-                    bottom: Config.defaultElementSpacing,
+                    top: PretConfig.defaultElementSpacing * 2,
+                    bottom: PretConfig.defaultElementSpacing,
                   ),
                   child: Column(
                     children: [
