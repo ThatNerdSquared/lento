@@ -63,6 +63,11 @@ class CardTitleState extends ConsumerState<CardTitle> {
                         decoration: const InputDecoration(
                             border: InputBorder.none, hintText: 'Card name'),
                         textAlign: TextAlign.center,
+                        cursorColor: Colors.grey,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 30,
+                        ),
                         initialValue: ref.watch(lentoDeckProvider
                             .select((deck) => deck[widget.cardId]!.cardName)),
                         onChanged: (value) => ref

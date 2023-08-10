@@ -100,7 +100,12 @@ class LentoHomeState extends ConsumerState<LentoHome> {
                             .keys
                             .elementAt(index % limitIndex);
                         return isEditingItem == cardId
-                            ? BlockedItemEditor(cardId: cardId)
+                            ? BlockedItemEditor(
+                                cardId: cardId,
+                                endEditing: () => setState(() {
+                                  isEditingItem = null;
+                                }),
+                              )
                             : LentoCard(
                                 cardId: cardId,
                                 startEditing: (id) => setState(() {
