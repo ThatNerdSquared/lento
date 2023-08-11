@@ -5,6 +5,7 @@ import 'package:pret_a_porter/pret_a_porter.dart';
 import 'package:uuid/uuid.dart';
 
 import 'backend/card_data.dart';
+import 'backend/custom_popup_data.dart';
 import 'config.dart';
 import 'widgets/blocked_item_editor.dart';
 import 'widgets/card.dart';
@@ -13,8 +14,8 @@ import 'widgets/lento_toolbar.dart';
 const uuID = Uuid();
 String platformAppSupportDir = '';
 
-final mockIds = [uuID.v4(), uuID.v4(), uuID.v4()];
-dynamic initialDeck = {
+final mockIds = [uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4()];
+final mockDeck = {
   mockIds[0]: const LentoCardData(
     blockDuration: CardTime.fromPresetTime(61),
   ),
@@ -26,11 +27,22 @@ dynamic initialDeck = {
     cardName: 'code wrangling',
   ),
 };
+final mockPopups = {
+  mockIds[3]: const CustomPopup(
+    customMessage:
+        'An essential aspect of creativity is not being afraid to fail.',
+  ),
+  mockIds[4]: const CustomPopup(
+    customMessage:
+        'Don\'t get distracted!',
+  )
+};
 final lentoDeckProvider =
-    StateNotifierProvider<LentoDeck, Map<String, LentoCardData>>((ref) {
-  initialDeck;
-  return LentoDeck(initialDeck);
-});
+    StateNotifierProvider<LentoDeck, Map<String, LentoCardData>>(
+        (ref) => LentoDeck(mockDeck));
+final customPopupListProvider =
+    StateNotifierProvider<CustomPopupList, Map<String, CustomPopup>>(
+        (ref) => CustomPopupList(initialPopupList: mockPopups));
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,7 +79,7 @@ class LentoHome extends ConsumerStatefulWidget {
 
 class LentoHomeState extends ConsumerState<LentoHome> {
   int pageViewIndex = 0;
-  int limitIndex = initialDeck.length;
+  int limitIndex = mockDeck.length;
 
   final PageController controller = PageController(
     viewportFraction: 0.8,

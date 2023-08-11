@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
 
 import '../config.dart';
+import '../main.dart';
 
 enum BlockItemTypes { website, app }
 
@@ -29,6 +30,7 @@ class BlockedItemEditor extends ConsumerStatefulWidget {
 class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
   BlockItemTypes blockItemTypeSelection = BlockItemTypes.website;
   bool isAccessRestricted = false;
+  String? selectedPopupId;
 
   void onSubmitItem() {
     print('test');
@@ -36,6 +38,7 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
 
   @override
   Widget build(BuildContext context) {
+    var popups = ref.watch(customPopupListProvider);
     return LayoutBuilder(
         builder: (context, constraints) => Container(
               decoration: const BoxDecoration(
@@ -170,7 +173,52 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                                 isAccessRestricted = value;
                                               }))
                                     ],
-                                  )))
+                                  ))),
+                          const SliverPadding(
+                              padding: EdgeInsets.only(
+                                  top: PretConfig.defaultElementSpacing)),
+                          SliverToBoxAdapter(
+                              child: Container(
+                            margin: EdgeInsets.only(
+                              left: Config.defaultMarginPercentage *
+                                  constraints.maxWidth,
+                              right: Config.defaultMarginPercentage *
+                                  constraints.maxWidth,
+                            ),
+                            child: const Text('Add a custom popup message:'),
+                          )),
+                          const SliverPadding(
+                              padding: EdgeInsets.only(
+                                  top: PretConfig.defaultElementSpacing)),
+                          SliverList.builder(
+                            itemCount: popups.length,
+                            itemBuilder: (context, index) {
+                              var itemId = popups.keys.elementAt(index);
+                              var message = popups[itemId]!.customMessage;
+                              return Padding(
+                                  padding: EdgeInsets.only(
+                                    left: Config.defaultMarginPercentage *
+                                        constraints.maxWidth,
+                                    right: Config.defaultMarginPercentage *
+                                        constraints.maxWidth,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedPopupId != itemId
+                                            ? selectedPopupId = itemId
+                                            : selectedPopupId = null;
+                                      });
+                                    },
+                                    child: PretCard(
+                                      color: selectedPopupId == itemId
+                                          ? Colors.purple[50]
+                                          : null,
+                                      child: Text(message),
+                                    ),
+                                  ));
+                            },
+                          )
                         ],
                       ))
                     ],
