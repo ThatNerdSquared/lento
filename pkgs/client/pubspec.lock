@@ -326,7 +326,7 @@ packages:
   pret_a_porter:
     dependency: "direct main"
     description:
-      path: "../pret_a_porter"
+      path: "../../../pret_a_porter"
       relative: true
     source: path
     version: "0.0.1"
