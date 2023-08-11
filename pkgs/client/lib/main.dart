@@ -4,8 +4,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
 import 'package:uuid/uuid.dart';
 
+import 'backend/card_data.dart';
 import 'config.dart';
-import 'model/cardmodel.dart';
 import 'widgets/blocked_item_editor.dart';
 import 'widgets/card.dart';
 import 'widgets/lento_toolbar.dart';
