@@ -79,7 +79,7 @@ class LentoHomeState extends ConsumerState<LentoHome> {
     return Scaffold(
         body: Center(
             child: Padding(
-      padding: const EdgeInsets.only(top: PretConfig.defaultElementSpacing),
+      padding: const EdgeInsets.only(top: PretConfig.titleBarSafeArea),
       child: Column(
         children: [
           Flexible(
