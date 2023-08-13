@@ -51,12 +51,26 @@ class LentoCard extends ConsumerWidget {
                                 items: ref
                                     .watch(lentoDeckProvider)[cardId]!
                                     .blockedSites
+                                    .entries
                                     .map((item) => ListTile(
-                                          title: Text(item.siteUrl.toString()),
+                                          title: Text(
+                                              item.value.siteUrl.toString()),
                                         )),
                                 toggleTitle: 'Blocked Websites',
                               ),
-                            )
+                            ),
+                            SliverToBoxAdapter(
+                              child: PretToggleList(
+                                items: ref
+                                    .watch(lentoDeckProvider)[cardId]!
+                                    .blockedApps
+                                    .entries
+                                    .map((item) => ListTile(
+                                          title: Text(item.value.appName),
+                                        )),
+                                toggleTitle: 'Blocked Apps',
+                              ),
+                            ),
                           ])),
                       TextButton(
                         onPressed: () => startEditing(cardId),

@@ -33,8 +33,7 @@ final mockPopups = {
         'An essential aspect of creativity is not being afraid to fail.',
   ),
   mockIds[4]: const CustomPopup(
-    customMessage:
-        'Don\'t get distracted!',
+    customMessage: 'Don\'t get distracted!',
   )
 };
 final lentoDeckProvider =

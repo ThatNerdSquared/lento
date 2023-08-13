@@ -6,6 +6,8 @@ import 'main.dart';
 
 enum TimeSection { hours, minutes, seconds }
 
+enum BlockItemType { website, app }
+
 class Config {
   static const double defaultMarginPercentage = 0.15;
 
