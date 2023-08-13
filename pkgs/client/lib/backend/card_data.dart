@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -94,7 +92,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
 
   void addBlockedWebsite({
     required String cardId,
-    required BlockedWebsiteData website,
+    required BlockedWebsiteData websiteData,
   }) {
     _findAndModifyCardAttribute(
         cardId,
@@ -102,7 +100,23 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               cardName: oldCard.cardName,
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
-              blockedSites: [...oldCard.blockedSites, website],
+              blockedSites: {...oldCard.blockedSites, uuID.v4(): websiteData},
+              blockedApps: oldCard.blockedApps,
+            ));
+  }
+
+  void addBlockedApp({
+    required String cardId,
+    required BlockedAppData appData,
+  }) {
+    _findAndModifyCardAttribute(
+        cardId,
+        (oldCard) => LentoCardData(
+              cardName: oldCard.cardName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: oldCard.isActivated,
+              blockedSites: oldCard.blockedSites,
+              blockedApps: {...oldCard.blockedApps, uuID.v4(): appData},
             ));
   }
 }
@@ -113,13 +127,16 @@ class LentoCardData {
   final String cardName;
   final CardTime blockDuration;
   final bool isActivated;
-  final List<BlockedWebsiteData> blockedSites;
+  final Map<String, BlockedWebsiteData> blockedSites;
+  final Map<String, BlockedAppData> blockedApps;
 
-  const LentoCardData(
-      {this.cardName = 'Untitled Card',
-      this.blockDuration = const CardTime.fromPresetTime(0),
-      this.isActivated = false,
-      this.blockedSites = const []});
+  const LentoCardData({
+    this.cardName = 'Untitled Card',
+    this.blockDuration = const CardTime.fromPresetTime(0),
+    this.isActivated = false,
+    this.blockedSites = const {},
+    this.blockedApps = const {},
+  });
 }
 
 @immutable
@@ -152,18 +169,41 @@ class CardTime {
   int get gatheredSeconds => hours * 60 * 60 + minutes * 60 + seconds;
 }
 
+// I tried to consolidate the common fields in
+// these two data classes into a single BlockedItemData
+// class that they could extend, but there ended up
+// being enough duplication in the constructors that I
+// just gave up on it. Maybe there's a better way to do it?
+// Return to this later.
+
 @immutable
 class BlockedWebsiteData {
-  final String itemId;
   final Uri siteUrl;
+  final bool isEnabled;
   final bool isAccessRestricted;
-  final File iconPath;
-  final String? associatedPopup;
+  final String? customPopupId;
 
-  const BlockedWebsiteData(
-      {required this.itemId,
-      required this.siteUrl,
-      this.isAccessRestricted = false,
-      required this.iconPath,
-      this.associatedPopup});
+  const BlockedWebsiteData({
+    required this.siteUrl,
+    this.isEnabled = true,
+    this.isAccessRestricted = false,
+    this.customPopupId,
+  });
+}
+
+@immutable
+class BlockedAppData {
+  final String appName;
+  final Map<String, String> sourceIDs;
+  final bool isEnabled;
+  final bool isAccessRestricted;
+  final String? customPopupId;
+
+  const BlockedAppData({
+    required this.appName,
+    required this.sourceIDs,
+    this.isEnabled = true,
+    this.isAccessRestricted = false,
+    this.customPopupId,
+  });
 }
