@@ -65,6 +65,7 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
             );
         break;
     }
+    widget.endEditing();
   }
 
   @override
@@ -101,7 +102,6 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                               CupertinoButton.filled(
                                 onPressed: () {
                                   onSubmitItem(ref);
-                                  widget.endEditing();
                                 },
                                 child: Text(
                                   'OK',
