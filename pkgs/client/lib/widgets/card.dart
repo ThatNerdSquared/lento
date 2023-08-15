@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
 
-import '../config.dart';
 import '../main.dart';
 import 'blocklist_item.dart';
 import 'card_timer.dart';
 import 'card_title.dart';
+import 'togglelist.dart';
 
 /// A card in the Lento deck.
 class LentoCard extends ConsumerWidget {
@@ -49,55 +49,38 @@ class LentoCard extends ConsumerWidget {
                                   Theme.of(context).colorScheme.surface,
                             )),
                             SliverToBoxAdapter(
-                              child: Container(
-                                margin: EdgeInsets.only(
-                                  top: PretConfig.defaultElementSpacing,
-                                  left: Config.defaultMarginPercentage *
-                                      constraints.maxWidth,
-                                  right: Config.defaultMarginPercentage *
-                                      constraints.maxWidth,
-                                ),
-                                child: PretToggleList(
-                                  items: ref
-                                      .watch(lentoDeckProvider)[cardId]!
-                                      .blockedSites
-                                      .entries
-                                      .map(
-                                        (item) =>
-                                            BlockListItem.fromBlockedWebsite(
-                                                data: item.value),
-                                      ),
-                                  toggleTitle: 'Blocked Websites',
-                                  headerTextColor:
-                                      Theme.of(context).colorScheme.onSecondary,
-                                  headerColor:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
+                                child: Container(
+                              margin: const EdgeInsets.only(
+                                top: PretConfig.defaultElementSpacing,
                               ),
-                            ),
+                              child: ToggleList(
+                                cardId: cardId,
+                                toggleTitle: 'Blocked Websites',
+                                children: ref
+                                    .watch(lentoDeckProvider)[cardId]!
+                                    .blockedSites
+                                    .entries
+                                    .map((item) =>
+                                        BlockListItem.fromBlockedWebsite(
+                                            data: item.value))
+                                    .toList(),
+                              ),
+                            )),
                             SliverToBoxAdapter(
                                 child: Container(
-                              margin: EdgeInsets.only(
-                                top: PretConfig.tagPadding,
-                                left: Config.defaultMarginPercentage *
-                                    constraints.maxWidth,
-                                right: Config.defaultMarginPercentage *
-                                    constraints.maxWidth,
+                              margin: const EdgeInsets.only(
+                                top: PretConfig.thinElementSpacing,
                               ),
-                              child: PretToggleList(
-                                items: ref
+                              child: ToggleList(
+                                cardId: cardId,
+                                toggleTitle: 'Blocked Apps',
+                                children: ref
                                     .watch(lentoDeckProvider)[cardId]!
                                     .blockedApps
                                     .entries
                                     .map((item) => BlockListItem.fromBlockedApp(
-                                        data: item.value)),
-                                toggleTitle: 'Blocked Apps',
-                                headerTextColor:
-                                    Theme.of(context).colorScheme.onSecondary,
-                                headerColor:
-                                    Theme.of(context).colorScheme.secondary,
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.surface,
+                                        data: item.value))
+                                    .toList(),
                               ),
                             )),
                           ])),
