@@ -1,10 +1,10 @@
-import "dart:io";
-import 'package:lento/daemon_config.dart';
+import 'dart:io';
+import '../../daemon_config.dart';
 
- Future<void> _checkForDB() async {
-    final DB = File(await dbFilePath);
-    final doesFileExist = await DB.exists();
+ Future<void> checkForDB() async {
+    final db = File(dbFilePath);
+    final doesFileExist = await db.exists();
     if (!doesFileExist) {
-      DB.create();
+      db.create();
     }
   }
