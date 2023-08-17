@@ -5,13 +5,6 @@ import 'package:pret_a_porter/pret_a_porter.dart';
 import '../config.dart';
 import '../main.dart';
 
-/*
-TODO:
-- Text color
-- Text hover
-- Emoji picker?
-*/
-
 class CardTitle extends ConsumerStatefulWidget {
   final String cardId;
 

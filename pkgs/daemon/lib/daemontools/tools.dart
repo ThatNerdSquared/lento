@@ -1,5 +1,5 @@
 import 'dart:io';
-import '../../daemon_config.dart';
+import '../config.dart';
 
  Future<void> checkForDB() async {
     final db = File(dbFilePath);

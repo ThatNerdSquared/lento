@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:logging/logging.dart';
-import '../daemon_config.dart' as daemon_config;
+import 'config.dart' as daemon_config;
 import 'daemontools/db.dart' as db;
 import 'timer_task.dart' as timer_task;
 

@@ -27,6 +27,7 @@ void main(List<String> args) async {
       customMessage = args[1];
       customTitle = args[2];
     default:
+      // ignore: avoid_print
       print('Error parsing args!');
       exit(1);
   }
@@ -53,6 +54,7 @@ Future<void> showPopup(String? customMessage) async {
     alertStyle: AlertButtonStyle.yesNoCancel,
     iconStyle: IconStyle.information,
   );
+  // ignore: avoid_print
   print(clickedButton);
   exit(0);
 }

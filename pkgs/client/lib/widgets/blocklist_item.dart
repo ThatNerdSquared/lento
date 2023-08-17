@@ -24,6 +24,7 @@ class BlockListItem extends ConsumerWidget {
     return ListTile(
       leading: Checkbox.adaptive(
         value: isEnabled,
+        // ignore: avoid_print
         onChanged: (_) => print('untoggle'),
       ),
       title: Row(
