@@ -1,0 +1,28 @@
+name: daemon CI
+
+on:
+  push:
+  pull_request:
+
+defaults:
+  run:
+    working-directory: ./pkgs/daemon
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+      - name: Check Dart version
+        run: dart --version
+      - name: Install dependencies
+        run: dart pub get
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+      - name: Code analysis
+        run: dart analyze
+    # currently disabled because tests aren't up rn
+    # - name: Run tests
+    #   run: dart test

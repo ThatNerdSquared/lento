@@ -1,4 +1,4 @@
-name: Lento CI
+name: Desktop Client CI
 
 on:
   push:
@@ -25,10 +25,13 @@ jobs:
           cd .. && git clone git@github.com:ThatNerdSquared/pret_a_porter.git
       - name: Install dependencies
         run: flutter pub get
+        working-directory: ./pkgs/client
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed .
+        working-directory: ./pkgs/client
       - name: Code analysis
         run: flutter analyze
-    # currently disabled because tests aren't up rn
-    # - name: Run tests
-    #   run: flutter test
+        working-directory: ./pkgs/client
+      # currently disabled because tests aren't up rn
+      # - name: Run tests
+      #   run: flutter test

@@ -1,0 +1,30 @@
+name: notifhelper CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable" # or: 'beta', 'dev' or 'master'
+      - name: Check Flutter Version
+        run: flutter --version
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ./pkgs/notif_helper
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+        working-directory: ./pkgs/notif_helper
+      - name: Code analysis
+        run: flutter analyze
+        working-directory: ./pkgs/notif_helper
+    # currently disabled because tests aren't up rn
+    # - name: Run tests
+    #   run: flutter test
