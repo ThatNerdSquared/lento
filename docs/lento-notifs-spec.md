@@ -13,11 +13,14 @@
   - **hardblock popup**
     - singular "OK" option as DEFAULT
 - banners
-  - fire on repeated interval, as set by user PER CARD
+  - fire at different time points during the block, as set by user PER CARD
+  - can be set to fire at any point in the block
+    - slider allows setting at 5-minute increments (can be set at 5m, 10m, etc)
+  - two banners CANNOT fire at the same time
   - customization: title, message set PER BANNER
-    - whole list is showed in Notifications togglelist for each card
+    - banners are shown in the "Scheduled Events" togglelist for each card
     - each card can have different banners enabled/disabled
-    - editing happens in banner editor (title, message, time, test)
+    - editing happens in banner editor (title, message, time points on slider, test)
     - in future, could allow selection from provided set of sound effects
 
 ## implementation
@@ -27,7 +30,8 @@
   - **possible problem: flutter app with invisible/no window => how to implement?**
     - use [bitsdojo_window](https://pub.dev/packages/bitsdojo_window) to hide window
   - need to create app package that opens, taking config from stdin, and then spits out the result to stdout
-    - use `--dart-entrypoint-args` for passing in args
+    - use `--dart-entrypoint-args` for passing in args in dev
+    - args can be passed in normally as strings with the compiled executable
   - possible packages:
     - popups
       - `flutter_platform_alert` looks promising
