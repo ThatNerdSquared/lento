@@ -30,23 +30,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dropdown_button2: ^2.1.3
-  numberpicker: ^2.1.2
+  # UI components
   pret_a_porter:
     path: ../../../pret_a_porter
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  uuid: ^3.0.7
+  font_awesome_flutter: ^10.5.0
+  numberpicker: ^2.1.2
+  file_picker: ^5.3.3
+  expandable: ^5.0.1
+  # other
   flutter_riverpod: ^2.3.6
+  uuid: ^3.0.7
   path_provider: ^2.0.15
   path: ^1.8.3
-  font_awesome_flutter: ^10.5.0
   mime: ^1.0.4
   favicon: ^1.1.1
-  file_picker: ^5.3.3
 
 dev_dependencies:
   flutter_test:
