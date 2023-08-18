@@ -59,6 +59,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         cardTheme: lentoCardTheme,
         colorScheme: lentoLightColorScheme,
+        fontFamily: 'Montserrat',
         scaffoldBackgroundColor: lentoLightColorScheme.background,
         shadowColor: lentoLightColorScheme.shadow,
         splashFactory: NoSplash.splashFactory,
