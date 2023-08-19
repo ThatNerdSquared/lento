@@ -94,9 +94,13 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                 onPressed: widget.endEditing,
                                 child: Text(
                                   'Cancel',
-                                  style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.error),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelLarge!
+                                      .copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error),
                                 ),
                               ),
                               CupertinoButton.filled(
@@ -105,10 +109,13 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                 },
                                 child: Text(
                                   'OK',
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .tertiary),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelLarge!
+                                      .copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .tertiary),
                                 ),
                               )
                             ],
@@ -116,14 +123,12 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                           Expanded(
                               child: CustomScrollView(
                             slivers: [
-                              const SliverToBoxAdapter(
+                              SliverToBoxAdapter(
                                   child: Text(
-                                'Block a new item...',
+                                'Block something...',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 30,
-                                ),
+                                style:
+                                    Theme.of(context).textTheme.displayMedium,
                               )),
                               const SliverPadding(
                                   padding: EdgeInsets.only(
@@ -167,25 +172,48 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                                   : null,
                                               builder: (_) => Column(children: [
                                                     TextButton(
-                                                        onPressed: () async {
-                                                          var selection =
-                                                              await showAppPicker();
-                                                          setState(() {
-                                                            selectedApp =
-                                                                selection;
-                                                          });
-                                                        },
-                                                        child: const PretCard(
-                                                            child: Text(
-                                                                'Choose app...'))),
+                                                      onPressed: () async {
+                                                        var selection =
+                                                            await showAppPicker();
+                                                        setState(() {
+                                                          selectedApp =
+                                                              selection;
+                                                        });
+                                                      },
+                                                      style: ButtonStyle(
+                                                          backgroundColor:
+                                                              MaterialStatePropertyAll(
+                                                                  Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .tertiary),
+                                                          padding: const MaterialStatePropertyAll(
+                                                              EdgeInsets.all(
+                                                                  PretConfig
+                                                                      .defaultElementSpacing)),
+                                                          shape: const MaterialStatePropertyAll(
+                                                              RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      PretConfig
+                                                                          .thinBorderRadius))),
+                                                      child: const Text(
+                                                          'Choose app...'),
+                                                    ),
+                                                    const Padding(
+                                                        padding: EdgeInsets.all(
+                                                            PretConfig
+                                                                .minElementSpacing)),
                                                     Text(
                                                       selectedApp != null
                                                           ? basename(
                                                               selectedApp!.path)
                                                           : 'No app selected',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Theme.of(context)
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .labelMedium!
+                                                          .copyWith(
+                                                              color: Theme.of(
+                                                                      context)
                                                                   .colorScheme
                                                                   .tertiary),
                                                     )
@@ -200,6 +228,9 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                                   ? 'Please enter a URL to block!'
                                                   : null,
                                               textAlign: TextAlign.center,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelLarge,
                                               decoration: const InputDecoration(
                                                   border: InputBorder.none,
                                                   hintText:
@@ -218,13 +249,23 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                       ),
                                       child: Row(
                                         children: [
-                                          const Text('Restricted Access'),
-                                          const PretTooltip(
+                                          Text(
+                                            'Restricted Access',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelLarge,
+                                          ),
+                                          PretTooltip(
                                               maxWidth: 300,
                                               tooltipContent: Text(
-                                                  'Allow access to the blocked site or app in 15 minute intervals, instead of blocking it right away.'),
-                                              icon: FaIcon(FontAwesomeIcons
-                                                  .circleQuestion)),
+                                                'Allow access to the blocked site or app in 15 minute intervals, instead of blocking it right away.',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .labelSmall,
+                                              ),
+                                              icon: const FaIcon(
+                                                  FontAwesomeIcons
+                                                      .circleQuestion)),
                                           const Spacer(),
                                           CupertinoSwitch(
                                               value: isAccessRestricted,
@@ -245,8 +286,10 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                   right: Config.defaultMarginPercentage *
                                       constraints.maxWidth,
                                 ),
-                                child:
-                                    const Text('Add a custom popup message:'),
+                                child: Text(
+                                  'Add a custom popup message:',
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
                               )),
                               const SliverPadding(
                                   padding: EdgeInsets.only(
@@ -277,7 +320,12 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                                   .colorScheme
                                                   .tertiary
                                               : null,
-                                          child: Text(message),
+                                          child: Text(
+                                            message,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
                                         ),
                                       ));
                                 },

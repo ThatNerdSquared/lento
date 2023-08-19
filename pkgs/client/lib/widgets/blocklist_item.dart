@@ -30,7 +30,10 @@ class BlockListItem extends ConsumerWidget {
       title: Row(
         children: [
           const Icon(Icons.archive),
-          Text(itemTitle),
+          Text(
+            itemTitle,
+            style: Theme.of(context).textTheme.labelMedium,
+          ),
           if (isAccessRestricted)
             Icon(
               Icons.dangerous,

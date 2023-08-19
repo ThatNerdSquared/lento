@@ -87,7 +87,7 @@ class LentoCard extends ConsumerWidget {
                       TextButton(
                         onPressed: () => startEditing(cardId),
                         child: Text(
-                          '+ Add an app or website',
+                          '+ Block something...',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onSurface,
                           ),

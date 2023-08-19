@@ -46,3 +46,25 @@ const ColorScheme lentoLightColorScheme = ColorScheme(
 CardTheme lentoCardTheme = const CardTheme(
   shape: RoundedRectangleBorder(borderRadius: PretConfig.defaultBorderRadius),
 );
+
+TextTheme lentoTextTheme = const TextTheme(
+  displayLarge: TextStyle(
+    color: Colors.black,
+    fontSize: 48,
+    fontWeight: FontWeight.w600,
+  ),
+  displayMedium: TextStyle(
+    color: Colors.black,
+    fontSize: 36,
+    fontWeight: FontWeight.w600,
+  ),
+  displaySmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+  labelLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+  labelMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+  labelSmall: TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.1,
+  ),
+  bodyMedium: TextStyle(fontSize: 17, fontWeight: FontWeight.w400),
+);

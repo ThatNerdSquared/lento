@@ -57,10 +57,9 @@ class ToggleList extends ConsumerWidget {
                       const EdgeInsets.all(PretConfig.defaultElementSpacing),
                   child: Text(
                     toggleTitle,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).colorScheme.onSecondary,
-                    ),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
                   ),
                 ),
                 collapsed: Container(),

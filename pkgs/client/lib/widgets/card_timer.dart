@@ -94,10 +94,10 @@ class CardTimerState extends ConsumerState<CardTimer> {
                           ])
                             Text(
                               item,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 40,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayLarge!
+                                  .copyWith(fontWeight: FontWeight.w700),
                             )
                         ]
                       : [
@@ -116,13 +116,26 @@ class CardTimerState extends ConsumerState<CardTimer> {
             decoration: const BoxDecoration(
                 borderRadius: PretConfig.defaultBorderRadius,
                 boxShadow: [PretConfig.defaultShadow]),
-            child: ElevatedButton(
-                onPressed: isCardActivated ? null : _startTimer,
-                style: ElevatedButton.styleFrom(
-                    foregroundColor: Theme.of(context).colorScheme.primary,
-                    backgroundColor: Theme.of(context).colorScheme.tertiary),
-                child:
-                    Text(isCardActivated ? 'Session Started' : 'Start Block')))
+            child: Container(
+                decoration:
+                    const BoxDecoration(boxShadow: [PretConfig.defaultShadow]),
+                child: ElevatedButton(
+                    onPressed: isCardActivated ? null : _startTimer,
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStatePropertyAll(
+                          Theme.of(context).colorScheme.primary),
+                      backgroundColor: MaterialStatePropertyAll(
+                          Theme.of(context).colorScheme.tertiary),
+                      textStyle: MaterialStatePropertyAll(
+                          Theme.of(context).textTheme.displaySmall),
+                      padding: const MaterialStatePropertyAll(
+                          EdgeInsets.all(PretConfig.defaultElementSpacing)),
+                      shape: const MaterialStatePropertyAll(
+                          RoundedRectangleBorder(
+                              borderRadius: PretConfig.thinBorderRadius)),
+                    ),
+                    child: Text(
+                        isCardActivated ? 'Session Started' : 'Start Block'))))
       ]),
     );
   }

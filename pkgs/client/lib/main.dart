@@ -63,6 +63,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: lentoLightColorScheme.background,
         shadowColor: lentoLightColorScheme.shadow,
         splashFactory: NoSplash.splashFactory,
+        textTheme: lentoTextTheme,
       ),
       home: const LentoHome(title: 'Lento Home'),
     );
