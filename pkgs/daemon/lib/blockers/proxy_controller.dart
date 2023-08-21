@@ -6,4 +6,12 @@ class ProxyController{
     this.blockedSitesMap;
   }
 
+  void blockWebsites() {
+    
+  }
+
+  void cleanup() {
+    
+  }
+
 }

@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:logging/logging.dart';
+import 'blockers/appblocker.dart';
+import 'blockers/proxy_controller.dart';
 import 'config.dart' as daemon_config;
-import 'daemontools/db.dart' as db;
-import 'timer_task.dart' as timer_task;
+import 'db.dart' as db;
 
 class LentoDaemon {
   final log = Logger('Class: LentoDaemon');
@@ -13,23 +15,24 @@ class LentoDaemon {
   void entry() async {
     db.init();
 
-    timer_task.TimerTask? dbTimerTask = db.getTimerTask();
-
-    // below comment makes linter happy, otherwise returns 
-    // unnecesscary_null_comparison even though the null comparison is necesscary...
-
-    // ignore: unnecessary_null_comparison
-    if (dbTimerTask != null) { // daemon is killed while block ongoing
+    if (db.mainTimerLoopExists()) {
       log.info('Resuming block after crash');
-      dbTimerTask.start(dbTimerTask);
-    } else { // new block
-      // listen to messages coming from gui
+      cardInfo = db.buildCardInfo();
+      startBlock();
+    } else {
       log.info('Listening for cardData for new timerTask');
       final daemonServer = await ServerSocket.bind('localhost', 0);
       saveDaemonPortToSettings(daemonServer.port);
       log.info('DaemonServer on port ${daemonServer.port}');
       daemonServer.listen(handleConnection);
-      startBlock(cardInfo);
+      int blockDuration = cardInfo['block_duration'];
+      final blockStartTime = DateTime.now();
+      final blockEndTime = blockStartTime.add(Duration(seconds: blockDuration));
+      final bannerTriggerTimes = initBannerTriggerTimes();
+      cardInfo['block_end_time'] = blockEndTime;
+      cardInfo['banner_trigger_times'] = bannerTriggerTimes;
+      db.save('card_info', null, cardInfo);
+      startBlock();
     }
 
   }
@@ -38,7 +41,7 @@ class LentoDaemon {
     log.info('GUI connected');
 
     client.listen(
-      (cardInfoData){ // convert bytes to string to map
+      (cardInfoData){ // convert bytes to string to map 
         final cardInfoString = String.fromCharCodes(cardInfoData);
         log.info('Recieved cardInfo');
         cardInfo = json.decode(cardInfoString);
@@ -59,20 +62,54 @@ class LentoDaemon {
 
   }
 
-  void startBlock(Map cardInfo) {
-    task = timer_task.TimerTask(cardInfo);
-    task.init;
-    task.start(task);
-    log.info('Starting block: ${task.name}');
-    task.printBlockData();
+  void startBlock() {
+    final startTime = cardInfo['block_start_time'];
+    final endTime = cardInfo['block_end_time'];
+
+    final appBlocker = AppBlocker(cardInfo['apps']);
+    final proxy = ProxyController(cardInfo['websites']);
+
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+
+    if (startTime.difference(endTime).inSeconds > 0) {
+      appBlocker.blockApps();
+      proxy.blockWebsites();
+      checkBannerTrigger(startTime);
+      startTime.add(const Duration(seconds: 1));
+      db.save('time', 'block_start_time', startTime);
+    } else {
+      proxy.cleanup;
+      db.clear();
+      timer.cancel();
+    }
+    });
   }
 
   void saveDaemonPortToSettings(dynamic port) async {
     var jsonSettings = await File(daemon_config.lentoSettingsPath).readAsString();
-    var settingsMap = jsonDecode(jsonSettings);
-    settingsMap['daemon_port'] = port;
-    jsonSettings = json.encode(settingsMap);
+    Map settings = jsonDecode(jsonSettings);
+    settings['daemon_port'] = port;
+    jsonSettings = json.encode(settings);
     File(daemon_config.lentoSettingsPath).writeAsString(jsonSettings);
+  }
+
+  void checkBannerTrigger(DateTime startTime) {
+    List bannerTriggerTimes = cardInfo['banner_trigger_times'];
+    List bannerMessages = cardInfo['banner_messages'];
+    if (startTime.difference(bannerTriggerTimes[0]).inSeconds <= 1) {
+      // notif trigger
+    }
+
+    bannerTriggerTimes.removeAt(0);
+  }
+
+  List initBannerTriggerTimes() {
+    var bannerTriggerTimes = [];
+    for (int interval in cardInfo['banner_trigger_time_intervals']) {
+      bannerTriggerTimes.add(DateTime.now().add(Duration(seconds: interval)));
+    } 
+
+    return bannerTriggerTimes;
   }
 }
 
