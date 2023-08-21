@@ -10,7 +10,6 @@ environment:
 dependencies:
   sqlite3: ^2.1.0
   logging: ^1.2.0
-  sqlite3_flutter_libs: ^0.5.15
   collection: ^1.17.1
 
 dev_dependencies:
