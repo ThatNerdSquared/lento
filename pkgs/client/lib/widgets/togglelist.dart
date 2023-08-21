@@ -34,7 +34,7 @@ class ToggleList extends ConsumerWidget {
               borderRadius: PretConfig.thinBorderRadius,
               color: Theme.of(context).colorScheme.secondary,
             ),
-            height: 51,
+            height: 52,
           ),
           ExpandableTheme(
               data: const ExpandableThemeData(

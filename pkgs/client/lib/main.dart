@@ -6,12 +6,14 @@ import 'package:uuid/uuid.dart';
 
 import 'backend/card_data.dart';
 import 'backend/custom_popup_data.dart';
+import 'backend/icon_manager.dart';
 import 'config.dart';
 import 'widgets/blocked_item_editor.dart';
 import 'widgets/card.dart';
 import 'widgets/lento_toolbar.dart';
 
 const uuID = Uuid();
+final iconManager = IconManager();
 String platformAppSupportDir = '';
 
 final mockIds = [uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4()];

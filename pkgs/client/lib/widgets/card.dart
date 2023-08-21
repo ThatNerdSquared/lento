@@ -62,7 +62,9 @@ class LentoCard extends ConsumerWidget {
                                     .entries
                                     .map((item) =>
                                         BlockListItem.fromBlockedWebsite(
-                                            data: item.value))
+                                          itemID: item.key,
+                                          data: item.value,
+                                        ))
                                     .toList(),
                               ),
                             )),
@@ -79,7 +81,9 @@ class LentoCard extends ConsumerWidget {
                                     .blockedApps
                                     .entries
                                     .map((item) => BlockListItem.fromBlockedApp(
-                                        data: item.value))
+                                          itemID: item.key,
+                                          data: item.value,
+                                        ))
                                     .toList(),
                               ),
                             )),

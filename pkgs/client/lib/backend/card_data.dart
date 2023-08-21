@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -194,16 +196,18 @@ class BlockedWebsiteData {
 @immutable
 class BlockedAppData {
   final String appName;
-  final Map<String, String> sourceIDs;
+  final Map<String, String> sourcePaths;
   final bool isEnabled;
   final bool isAccessRestricted;
   final String? customPopupId;
 
   const BlockedAppData({
     required this.appName,
-    required this.sourceIDs,
+    required this.sourcePaths,
     this.isEnabled = true,
     this.isAccessRestricted = false,
     this.customPopupId,
   });
+
+  String? get currentSourcePath => sourcePaths[Platform.operatingSystem];
 }

@@ -58,7 +58,7 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
               cardId: widget.cardId,
               appData: BlockedAppData(
                 appName: basenameWithoutExtension(selectedApp!.path),
-                sourceIDs: {Platform.operatingSystem: selectedApp!.path},
+                sourcePaths: {Platform.operatingSystem: selectedApp!.path},
                 isAccessRestricted: isAccessRestricted,
                 customPopupId: selectedPopupId,
               ),
@@ -171,33 +171,40 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                                   ? 'Please choose an app to block!'
                                                   : null,
                                               builder: (_) => Column(children: [
-                                                    TextButton(
-                                                      onPressed: () async {
-                                                        var selection =
-                                                            await showAppPicker();
-                                                        setState(() {
-                                                          selectedApp =
-                                                              selection;
-                                                        });
-                                                      },
-                                                      style: ButtonStyle(
-                                                          backgroundColor:
-                                                              MaterialStatePropertyAll(
-                                                                  Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .tertiary),
-                                                          padding: const MaterialStatePropertyAll(
-                                                              EdgeInsets.all(
-                                                                  PretConfig
-                                                                      .defaultElementSpacing)),
-                                                          shape: const MaterialStatePropertyAll(
-                                                              RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      PretConfig
-                                                                          .thinBorderRadius))),
-                                                      child: const Text(
-                                                          'Choose app...'),
+                                                    Container(
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                              boxShadow: [
+                                                            PretConfig
+                                                                .defaultShadow
+                                                          ]),
+                                                      child: TextButton(
+                                                        onPressed: () async {
+                                                          var selection =
+                                                              await showAppPicker();
+                                                          setState(() {
+                                                            selectedApp =
+                                                                selection;
+                                                          });
+                                                        },
+                                                        style: ButtonStyle(
+                                                            backgroundColor:
+                                                                MaterialStatePropertyAll(Theme.of(
+                                                                        context)
+                                                                    .colorScheme
+                                                                    .tertiary),
+                                                            padding: const MaterialStatePropertyAll(
+                                                                EdgeInsets.all(
+                                                                    PretConfig
+                                                                        .defaultElementSpacing)),
+                                                            shape: const MaterialStatePropertyAll(
+                                                                RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        PretConfig
+                                                                            .thinBorderRadius))),
+                                                        child: const Text(
+                                                            'Choose app...'),
+                                                      ),
                                                     ),
                                                     const Padding(
                                                         padding: EdgeInsets.all(
