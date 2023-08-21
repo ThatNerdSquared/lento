@@ -4,7 +4,7 @@ import 'package:logging/logging.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'config.dart';
 
-bool intialized = false;
+bool initialized = false;
 final log = Logger('File: DB');
 
 /// Below is a summary of the information cardInfo stores.
@@ -14,9 +14,10 @@ final log = Logger('File: DB');
 /// cardInfo {
 /// <String> apps : {<String> proc_name : [<bool> is_soft_block, <bool> is_allowed, <String> popup_msg]},
 /// <String> websites : {<String> url: [<bool> is_soft_block, <bool> is_allowed, <String> popup_msg]},
-/// <String> banner_messages : [<String>], (only used in daemon.dart, not needed in db)
+/// <String> banner_titles : [<String>]
+/// <String> banner_messages : [<String>]
 /// <String> banner_trigger_times : [<DateTime>]
-/// *<String> blockDuration : <int>,
+/// *<String> block_duration : <int>,
 /// *<String> banner_trigger_time_intervals : [<int>], (only used in daemon.dart, not needed in db)
 /// ^<String> block_start_time : <DateTime>,
 /// ^<String> block_end_time: <DateTime>
@@ -31,9 +32,9 @@ Future<void> checkForDB() async {
 }
 
 void init() {
-  if (!intialized) {
+  if (!initialized) {
     checkForDB();
-    var db = sqlite3.open(dbFilePath);
+    final db = sqlite3.open(dbFilePath);
     db.execute('''
       PRAGMA user_version = 1;
 
@@ -52,6 +53,7 @@ void init() {
       );
 
       CREATE TABLE banner(
+        banner_title varchar(100),
         banner_message varchar(100),
         trigger_time varchar(50)
       );
@@ -64,14 +66,14 @@ void init() {
     ''');
 
     db.dispose();
-    intialized = true;
+    initialized = true;
   }
 }
 
 
 bool mainTimerLoopExists(){
   bool exists;
-  var db = sqlite3.open(dbFilePath);
+  final db = sqlite3.open(dbFilePath);
 
   if (db.select('SELECT count(*) FROM MainTimerLoop').isEmpty) {
     exists = false;
@@ -85,7 +87,7 @@ bool mainTimerLoopExists(){
 }
 
 void save(String table, dynamic row, dynamic data) {
-  var db = sqlite3.open(dbFilePath);
+  final db = sqlite3.open(dbFilePath);
   if (table == 'cardInfo') { // save cardInfo to db
     Map cardInfo = data;
 
@@ -117,17 +119,19 @@ void save(String table, dynamic row, dynamic data) {
       ''');
     }
 
-    List bannerMessages = cardInfo['banner_messages'].value;
-    List bannerTriggerTimes = cardInfo['banner_trigger_times'].value;
+    List bannerTitles = cardInfo['banner_titles'];
+    List bannerMessages = cardInfo['banner_messages'];
+    List bannerTriggerTimes = cardInfo['banner_trigger_times'];
 
-    for (var pair in IterableZip<dynamic>([bannerMessages, bannerTriggerTimes])) { 
+    for (var pair in IterableZip<dynamic>([bannerTitles, bannerMessages, bannerTriggerTimes])) { 
       // save banner messages and banner trigger times to db
-      String bannerMessage = pair[0];
-      var bannerTriggerTime = pair[1].toString();
+      String bannerTitle = pair[0];
+      String bannerMessage = pair[1];
+      var bannerTriggerTime = pair[2].toString();
 
       db.execute('''
-      INSERT INTO banner (banner_message, trigger_time)
-      VALUES ($bannerMessage, $bannerTriggerTime);
+      INSERT INTO banner (banner_title, banner_message, trigger_time)
+      VALUES ($bannerTitle, $bannerMessage, $bannerTriggerTime);
       ''');
     }
 
@@ -138,6 +142,8 @@ void save(String table, dynamic row, dynamic data) {
     INSERT INTO time (start_time, end_time)
     VALUES ($startTime, $endTime)
     ''');
+
+    db.dispose();
 
   } else { // save time to db
     var timeString = data.toString();
@@ -151,12 +157,76 @@ void save(String table, dynamic row, dynamic data) {
 }
 
 Map buildCardInfo() {
-  final cardInfo = {};
-  
+  final db = sqlite3.open(dbFilePath);
+  var cardInfo = {};
+
+  var apps = {}; // add apps to cardInfo from db
+  List dbAppBlockInfo = db.select('''
+  SELECT * FROM app_blocks
+  ''');
+
+  for (var appInfo in dbAppBlockInfo) {
+    String procName = appInfo['proc_name'];
+    int isSoftBlockInt = appInfo['is_soft_block'];
+    var isSoftBlock =  isSoftBlockInt == 0 ? false : true;
+    int isAllowedInt = appInfo['is_allowed'];
+    var isAllowed = isAllowedInt == 0 ? false : true;
+    String popupMessage = appInfo['popup_msg'];
+    
+    apps[procName] = [isSoftBlock, isAllowed, popupMessage];
+  }
+
+  cardInfo['apps'] = apps;
+
+  var websites = {}; // add websites to cardInfo from db
+  List dbWebsiteBlockInfo = db.select('''
+  SELECT * FROM website_blocks
+  ''');
+
+  for (var websiteInfo in dbWebsiteBlockInfo) {
+    String url = websiteInfo['url'];
+    int isSoftBlockInt = websiteInfo['is_soft_block'];
+    var isSoftBlock =  isSoftBlockInt == 0 ? false : true;
+    int isAllowedInt = websiteInfo['is_allowed'];
+    var isAllowed = isAllowedInt == 0 ? false : true;
+    String popupMessage = websiteInfo['popup_msg'];
+    
+    websites[url] = [isSoftBlock, isAllowed, popupMessage];
+  }
+
+  cardInfo['websites'] = websites;
+
+  var bannerTitles = [];
+  var bannerMessages = [];
+  var bannerTriggerTimes = [];
+
+  List dbBannerInfo = db.select('''
+  SELECT * FROM banner
+  ''');
+
+  for (var bannerInfo in dbBannerInfo) {
+    bannerTitles.add(bannerInfo['banner_title']);
+    bannerMessages.add(bannerInfo['banner_message']);
+    bannerTriggerTimes.add(bannerInfo['trigger_time']);
+  }
+
+  cardInfo['banner_titles'] = bannerTitles;
+  cardInfo['banner_messages'] = bannerMessages;
+  cardInfo['banner_trigger_times'] = bannerTriggerTimes;
+
+  List dbTimeInfo = db.select('''
+  SELECT * FROM time
+  ''');
+
+  cardInfo['start_time'] = DateTime.parse(dbTimeInfo[0]['start_time']);
+  cardInfo['end_time'] = DateTime.parse(dbTimeInfo[0]['end_time']);
+
+  db.dispose();
   return cardInfo;
 }
 
 void clear() {
-
+  final db = File(dbFilePath);
+  db.deleteSync();
+  initialized = false;
 }
-

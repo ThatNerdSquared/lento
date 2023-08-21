@@ -7,9 +7,11 @@ import 'blockers/proxy_controller.dart';
 import 'config.dart' as daemon_config;
 import 'db.dart' as db;
 
+Map cardInfo = {};
+
 class LentoDaemon {
   final log = Logger('Class: LentoDaemon');
-  Map cardInfo = {};
+  final notifHelperPath = './build/macos/Build/Products/Release/LentoNotifHelper.app/Contents/MacOS/LentoNotifHelper "banner" "test" "hw"';
   dynamic task;
 
   void entry() async {
@@ -94,13 +96,18 @@ class LentoDaemon {
   }
 
   void checkBannerTrigger(DateTime startTime) {
-    List bannerTriggerTimes = cardInfo['banner_trigger_times'];
+    List bannerTitles = cardInfo['banner_titles'];
     List bannerMessages = cardInfo['banner_messages'];
+    List bannerTriggerTimes = cardInfo['banner_trigger_times'];
+    var bannerTitle = bannerTitles[0];
+    var bannerMessage = bannerMessages[0];
     if (startTime.difference(bannerTriggerTimes[0]).inSeconds <= 1) {
-      // notif trigger
+      stdout.write('$notifHelperPath "banner" "$bannerTitle" "$bannerMessage"');
     }
 
-    bannerTriggerTimes.removeAt(0);
+    cardInfo['banner_titles'] = bannerTitles.removeAt(0);
+    cardInfo['banner_messages'] = bannerTriggerTimes.removeAt(0);
+    cardInfo['banner_trigger_times'] = bannerTriggerTimes.removeAt(0);
   }
 
   List initBannerTriggerTimes() {
