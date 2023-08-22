@@ -7,120 +7,128 @@ import 'blockers/proxy_controller.dart';
 import 'config.dart' as daemon_config;
 import 'db.dart' as db;
 
-Map cardInfo = {};
+
+/// Below is a summary of the information cardInfo stores.
+
+/// cardInfo {
+/// apps : {proc_name : {is_soft_block: <bool>, is_allowed: <bool>, popup_msg: <String>}},
+/// websites : {url: {is_soft_block: <bool>, is_allowed: <bool>, popup_msg: <String>}},
+/// bannerText : [{bannerTitle: bannerMessage}],
+/// blockDuration : <int>,
+/// bannerTriggerTimeIntervals : [<int>], ** only used/exists when new block starts (cardInfo is sent from gui)
+/// banenrTriggerTimes: [<DateTime>] ** only used/exists when a block is restarting (cardInfo is rebuilt frm DB)
+/// }
+/// 
 
 class LentoDaemon {
   final log = Logger('Class: LentoDaemon');
-  final notifHelperPath = './build/macos/Build/Products/Release/LentoNotifHelper.app/Contents/MacOS/LentoNotifHelper "banner" "test" "hw"';
-  dynamic task;
+  final notifHelperPath = 'placeholder';
+
 
   void entry() async {
-    db.init();
-
     if (db.mainTimerLoopExists()) {
       log.info('Resuming block after crash');
-      cardInfo = db.buildCardInfo();
-      startBlock();
+      final cardInfo = db.buildCardInfo();
+
+      final blockStartTime = DateTime.now();
+      final blockEndTime = blockStartTime.add(Duration(seconds: cardInfo['blockDuration']));
+      final bannerTriggerTimes = cardInfo['bannerTriggerTimes'];
+      // ignore: unused_local_variable
+
+      startBlock(cardInfo['apps'], cardInfo['websites'], blockEndTime, cardInfo['bannerInfo'], bannerTriggerTimes);
+  
     } else {
+      db.init();
       log.info('Listening for cardData for new timerTask');
       final daemonServer = await ServerSocket.bind('localhost', 0);
       saveDaemonPortToSettings(daemonServer.port);
       log.info('DaemonServer on port ${daemonServer.port}');
       daemonServer.listen(handleConnection);
-      int blockDuration = cardInfo['block_duration'];
-      final blockStartTime = DateTime.now();
-      final blockEndTime = blockStartTime.add(Duration(seconds: blockDuration));
-      final bannerTriggerTimes = initBannerTriggerTimes();
-      cardInfo['block_end_time'] = blockEndTime;
-      cardInfo['banner_trigger_times'] = bannerTriggerTimes;
-      db.save('card_info', null, cardInfo);
-      startBlock();
     }
-
   }
 
   void handleConnection(Socket client) {
     log.info('GUI connected');
 
-    client.listen(
-      (cardInfoData){ // convert bytes to string to map 
-        final cardInfoString = String.fromCharCodes(cardInfoData);
-        log.info('Recieved cardInfo');
-        cardInfo = json.decode(cardInfoString);
+    client.listen((cardInfoData) {
 
-        client.close();
-      },
+      final cardInfoString = String.fromCharCodes(cardInfoData); // convert bytes to string to map (cardInfo)
+      log.info('Recieved cardInfo');
+      Map cardInfo = json.decode(cardInfoString);
 
-      onError: (error){
-        log.shout(error);
+      final blockStartTime = DateTime.now();
+      final blockEndTime = blockStartTime.add(Duration(seconds: cardInfo['blockDuration']));
+      final bannerTriggerTimes = initBannerTriggerTimes(cardInfo['bannerTriggerTimeIntervals']);
+      // ignore: unused_local_variable
+      
+      db.saveAppData(cardInfo['apps']);
+      db.saveWebsiteData(cardInfo['websites']);
+      db.saveBannerData(cardInfo['bannerInfo'], bannerTriggerTimes);
+      db.saveTime(blockEndTime);
 
-        client.close();
-      },
+      startBlock(cardInfo['apps'], cardInfo['websites'], blockEndTime, cardInfo['bannerInfo'], bannerTriggerTimes);
 
-      onDone: (){
-        log.info('GUI offline');
-      }
-    );
+      client.close();
+    }, onError: (error) {
+      log.shout(error);
 
+      client.close();
+    }, onDone: () {
+      log.info('GUI offline');
+    });
   }
 
-  void startBlock() {
-    final startTime = cardInfo['block_start_time'];
-    final endTime = cardInfo['block_end_time'];
+  void startBlock(Map apps, Map websites, DateTime endTime, List bannerInfo, List bannerTriggerTimes) {
 
-    final appBlocker = AppBlocker(cardInfo['apps']);
-    final proxy = ProxyController(cardInfo['websites']);
+    final appBlocker = AppBlocker(apps);
+    final proxy = ProxyController(websites);
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
-
-    if (startTime.difference(endTime).inSeconds > 0) {
-      appBlocker.blockApps();
-      proxy.blockWebsites();
-      checkBannerTrigger(startTime);
-      startTime.add(const Duration(seconds: 1));
-      db.save('time', 'block_start_time', startTime);
-    } else {
-      proxy.cleanup;
-      db.clear();
-      timer.cancel();
-    }
+      if (DateTime.now().difference(endTime).inSeconds > 0) {
+        appBlocker.blockApps();
+        checkBannerTrigger(bannerInfo, bannerTriggerTimes);
+      } else {
+        proxy.cleanup();
+        db.clear();
+        timer.cancel();
+      }
     });
   }
 
   void saveDaemonPortToSettings(dynamic port) async {
-    var jsonSettings = await File(daemon_config.lentoSettingsPath).readAsString();
+    var jsonSettings =
+        await File(daemon_config.lentoSettingsPath).readAsString();
     Map settings = jsonDecode(jsonSettings);
     settings['daemon_port'] = port;
     jsonSettings = json.encode(settings);
     File(daemon_config.lentoSettingsPath).writeAsString(jsonSettings);
   }
 
-  void checkBannerTrigger(DateTime startTime) {
-    List bannerTitles = cardInfo['banner_titles'];
-    List bannerMessages = cardInfo['banner_messages'];
-    List bannerTriggerTimes = cardInfo['banner_trigger_times'];
-    var bannerTitle = bannerTitles[0];
-    var bannerMessage = bannerMessages[0];
-    if (startTime.difference(bannerTriggerTimes[0]).inSeconds <= 1) {
-      stdout.write('$notifHelperPath "banner" "$bannerTitle" "$bannerMessage"');
-    }
-
-    cardInfo['banner_titles'] = bannerTitles.removeAt(0);
-    cardInfo['banner_messages'] = bannerTriggerTimes.removeAt(0);
-    cardInfo['banner_trigger_times'] = bannerTriggerTimes.removeAt(0);
-  }
-
-  List initBannerTriggerTimes() {
+  List initBannerTriggerTimes(List bannerTriggerTimeIntervals) {
     var bannerTriggerTimes = [];
-    for (int interval in cardInfo['banner_trigger_time_intervals']) {
+    for (int interval in bannerTriggerTimeIntervals) {
       bannerTriggerTimes.add(DateTime.now().add(Duration(seconds: interval)));
-    } 
+    }
 
     return bannerTriggerTimes;
   }
+
+  void checkBannerTrigger(List bannerInfo, List bannerTriggerTimes) {
+    String bannerTitle = bannerInfo[0].keys.elementAt(0);
+    String bannerMessage = bannerInfo[0][bannerTitle];
+    DateTime bannerTriggerTime = bannerTriggerTimes[0];
+
+    if (DateTime.now().difference(bannerTriggerTime).inSeconds <= 1) {
+      Process.run(notifHelperPath, ['banner', bannerTitle, bannerMessage]);
+    }
+
+    bannerInfo.removeAt(0);
+    bannerTriggerTimes.removeAt(0);
+
+  }
 }
 
-void main(){
+void main() {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
