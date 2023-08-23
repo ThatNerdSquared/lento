@@ -157,10 +157,8 @@ void saveTime(DateTime endTime) {
   db.dispose();
 }
 
-Map buildCardInfo() {
+Map buildAppInfo() {
   final db = sqlite3.open(dbFilePath);
-  var cardInfo = {};
-
   var apps = {}; // add apps to cardInfo from db
   List dbAppBlockInfo = db.select('''
   SELECT * FROM app_blocks
@@ -177,8 +175,12 @@ Map buildCardInfo() {
     apps[procName] = [isSoftBlock, isAllowed, popupMessage];
   }
 
-  cardInfo['apps'] = apps;
+  db.dispose();
+  return apps;
+}
 
+Map buildWebsiteInfo() {
+  final db = sqlite3.open(dbFilePath);
   var websites = {}; // add websites to cardInfo from db
   List dbWebsiteBlockInfo = db.select('''
   SELECT * FROM website_blocks
@@ -195,8 +197,12 @@ Map buildCardInfo() {
     websites[url] = [isSoftBlock, isAllowed, popupMessage];
   }
 
-  cardInfo['websites'] = websites;
+  db.dispose();
+  return websites;
+}
 
+List buildBannerInfo() {
+  final db = sqlite3.open(dbFilePath);
   var bannerText = [];
   var bannerTriggerTimes = [];
 
@@ -209,25 +215,21 @@ Map buildCardInfo() {
     bannerTriggerTimes.add(DateTime.parse(bannerInfo['trigger_time']));
   }
 
-  cardInfo['bannerTitleMessage'] = bannerText;
-  cardInfo['banner_trigger_times'] = bannerTriggerTimes;
+  db.dispose();
+  return [bannerText, bannerTriggerTimes];
+}
 
+DateTime buildTimeInfo() {
+  final db = sqlite3.open(dbFilePath);
   List dbTimeInfo = db.select('''
   SELECT * FROM time
   ''');
 
-  cardInfo['endTime'] = DateTime.parse(dbTimeInfo[0]['end_time']);
-
   db.dispose();
-  return cardInfo;
+  return DateTime.parse(dbTimeInfo[0]['end_time']);
 }
 
-void clear() {
-  final db = sqlite3.open(dbFilePath);
-  db.execute('''
-  DELETE FROM app_blocks;
-  DELETE FROM website_blocks;
-  DELETE FROM banner;
-  DELETE FROM time;
-  ''');
+void reset() {
+  final db = File(dbFilePath);
+  db.deleteSync();
 }

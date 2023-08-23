@@ -26,16 +26,17 @@ class LentoDaemon {
   void entry() async {
     if (db.mainTimerLoopExists()) {
       log.info('Resuming block after crash');
-      final cardInfo = db.buildCardInfo(); // maybe not needed?
 
-      final blockStartTime = DateTime.now();
-      final blockEndTime =
-          blockStartTime.add(Duration(seconds: cardInfo['blockDuration']));
-      final bannerTriggerTimes = cardInfo['bannerTriggerTimes'];
+      final apps = db.buildAppInfo();
+      final websites = db.buildWebsiteInfo();
+      final blockEndTime = db.buildTimeInfo();
+      final bannerInfo = db.buildBannerInfo();
+      final bannerText = bannerInfo[0];
+      final bannerTriggerTimes = bannerInfo[1];
+
       // ignore: unused_local_variable
 
-      startBlock(cardInfo['apps'], cardInfo['websites'], blockEndTime,
-          cardInfo['bannerText'], bannerTriggerTimes);
+      startBlock(apps, websites, blockEndTime, bannerText, bannerTriggerTimes);
     } else {
       db.init();
       log.info('Listening for cardData for new timerTask');
@@ -89,7 +90,7 @@ class LentoDaemon {
         checkBannerTrigger(bannerText, bannerTriggerTimes);
       } else {
         proxy.cleanup();
-        db.clear();
+        db.reset();
         timer.cancel();
       }
     });

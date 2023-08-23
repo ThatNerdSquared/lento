@@ -14,14 +14,8 @@ class ProxyController {
   ProxyController(this.blockedSitesMap);
 
   void setup() async {
-    if (proxyPort == 0) {
-      var server = await serve(handler, 'localhost', 0);
-      log.info('Proxying at http://${server.address.host}:${server.port}');
-      proxyPort = server.port;
-    } else {
-      var server = await serve(handler, 'localhost', proxyPort);
-      log.info('Proxying at http://${server.address.host}:${server.port}');
-    }
+    var server = await serve(handler, 'localhost', 0);
+    log.info('Proxying at http://${server.address.host}:${server.port}');
   }
 
   FutureOr<Response> handler(Request request) async {
@@ -72,7 +66,7 @@ class ProxyController {
     }
   }
 
-  void cleanup(){
+  void cleanup() {
     server.close();
   }
 }
