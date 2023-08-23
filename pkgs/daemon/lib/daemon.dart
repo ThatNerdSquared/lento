@@ -17,7 +17,7 @@ import 'db.dart' as db;
 /// bannerTriggerTimeIntervals : [<int>], ** only used/exists when new block starts (exists when cardInfo is sent from gui)
 /// bannerTriggerTimes: [<DateTime>] ** only used/exists when a block is restarting (exists when cardInfo is rebuilt from DB)
 /// }
-/// 
+///
 /// lastOpened is set to DateTime.min() when cardInfo is received from GUI.
 
 class LentoDaemon {
@@ -26,7 +26,7 @@ class LentoDaemon {
   void entry() async {
     if (db.mainTimerLoopExists()) {
       log.info('Resuming block after crash');
-      final cardInfo = db.buildCardInfo();
+      final cardInfo = db.buildCardInfo(); // maybe not needed?
 
       final blockStartTime = DateTime.now();
       final blockEndTime =
@@ -88,7 +88,6 @@ class LentoDaemon {
         appBlocker.blockApps();
         checkBannerTrigger(bannerText, bannerTriggerTimes);
       } else {
-        proxy.cleanup();
         db.clear();
         timer.cancel();
       }
@@ -96,8 +95,7 @@ class LentoDaemon {
   }
 
   void saveDaemonPortToSettings(dynamic port) async {
-    var jsonSettings =
-        await File(lentoSettingsPath).readAsString();
+    var jsonSettings = await File(lentoSettingsPath).readAsString();
     Map settings = jsonDecode(jsonSettings);
     settings['daemon_port'] = port;
     jsonSettings = json.encode(settings);
@@ -113,13 +111,14 @@ class LentoDaemon {
     return bannerTriggerTimes;
   }
 
-  void checkBannerTrigger (List bannerText, List bannerTriggerTimes) {
+  void checkBannerTrigger(List bannerText, List bannerTriggerTimes) async {
     String bannerTitle = bannerText[0].keys.elementAt(0);
     String bannerMessage = bannerText[0][bannerTitle];
     DateTime bannerTriggerTime = bannerTriggerTimes[0];
 
     if (DateTime.now().difference(bannerTriggerTime).inSeconds <= 1) {
-      Process.run(notifHelperPath, ['banner', bannerTitle, bannerMessage]);
+      await Process.run(
+          notifHelperPath, ['banner', bannerTitle, bannerMessage]);
     }
 
     bannerText.removeAt(0);

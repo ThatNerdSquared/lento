@@ -15,7 +15,7 @@ import 'config.dart';
 /// }
 
 bool initialized = false;
-final log = Logger('File: DB');
+final log = Logger('File: db.dart');
 
 Future<void> checkForDB() async {
   final db = File(dbFilePath);
