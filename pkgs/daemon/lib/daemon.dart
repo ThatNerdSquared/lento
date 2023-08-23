@@ -88,6 +88,7 @@ class LentoDaemon {
         appBlocker.blockApps();
         checkBannerTrigger(bannerText, bannerTriggerTimes);
       } else {
+        proxy.cleanup();
         db.clear();
         timer.cancel();
       }

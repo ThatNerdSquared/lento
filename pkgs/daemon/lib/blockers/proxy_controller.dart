@@ -8,6 +8,7 @@ import '../config.dart';
 
 class ProxyController {
   final log = Logger('Class: ProxyController');
+  late Server server;
   Map blockedSitesMap = {};
 
   ProxyController(this.blockedSitesMap);
@@ -69,5 +70,9 @@ class ProxyController {
     } else {
       return proxyHandler(request.url.path)(request);
     }
+  }
+
+  void cleanup(){
+    server.close();
   }
 }
