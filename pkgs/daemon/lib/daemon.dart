@@ -13,7 +13,7 @@ import 'db.dart' as db;
 /// apps : {procName : {isSoftBlock: <bool>, lastOpened: <DateTime>, isAllowed: <bool>, popupMsg: <String>}},
 /// websites : {url: {isSoftBlock: <bool>, lastOpened: <DateTime>, isAllowed: <bool>, popupMsg: <String>}},
 /// bannerText : [{bannerTitle: bannerMessage}],
-/// blockDuration : <int>,
+/// blockDuration : <int>, ** only used/exists when new block starts (exists when cardInfo is sent from gui)
 /// bannerTriggerTimeIntervals : [<int>], ** only used/exists when new block starts (exists when cardInfo is sent from gui)
 /// bannerTriggerTimes: [<DateTime>] ** only used/exists when a block is restarting (exists when cardInfo is rebuilt from DB)
 /// }
@@ -81,6 +81,7 @@ class LentoDaemon {
       List bannerTriggerTimes) {
     final appBlocker = AppBlocker(apps);
     final proxy = ProxyController(websites);
+    proxy.setup();
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
       if (DateTime.now().difference(endTime).inSeconds > 0) {
@@ -112,7 +113,7 @@ class LentoDaemon {
     return bannerTriggerTimes;
   }
 
-  void checkBannerTrigger(List bannerText, List bannerTriggerTimes) {
+  void checkBannerTrigger (List bannerText, List bannerTriggerTimes) {
     String bannerTitle = bannerText[0].keys.elementAt(0);
     String bannerMessage = bannerText[0][bannerTitle];
     DateTime bannerTriggerTime = bannerTriggerTimes[0];
