@@ -1,14 +1,17 @@
 import 'dart:io';
+import '../config.dart';
 
-// class that contains all app-blocking functionality
+// Class that contains all app-blocking functionality.
+
+/// Below is a summary of blockedApps: 
+/// {procName : {isSoftBlock: <bool>, lastOpened: <DateTime>, isAllowed: <bool>, popupMsg: <String>}},
 
 class AppBlocker {
-  dynamic blockedAppItemsMap; // change type later
+  Map blockedApps = {};
 
-  AppBlocker(blockedAppItemsMap) {
-    this.blockedAppItemsMap;
+  AppBlocker(blockedApps) {
+    this.blockedApps;
   }
-  // blockedAppsMap contains procName: AppItem
 
   void blockApps() async {
     var killList = <String>[];
@@ -27,39 +30,33 @@ class AppBlocker {
       var firstSpace = trimmedLine.indexOf(' ');
       var procName = trimmedLine.substring(firstSpace + 1, trimmedLine.length);
 
-      if (blockedAppItemsMap.containsKey(procName)) {
-        var appItem = blockedAppItemsMap[procName];
+      if (blockedApps.containsKey(procName)) {
+        var app = blockedApps[procName];
 
-        if (!appItem.isSoftBlock) {
+        if (!app['isSoftBlock']) {
           var pid = trimmedLine.substring(0, firstSpace - 1);
           killList.add(pid);
+          var popupMessage = app['popupMessage'];
+          await Process.run(notifHelperPath, ['popup', procName, 'Lento has hard-blocked the app "$procName" during your work session. Your message: $popupMessage']);
         } else {
-          if (DateTime.now().difference(appItem.lastOpened).inSeconds > appItem.allowInterval) {
+          if (DateTime.now().difference(app['lastOpened']).inMinutes > 15) {
             var pid = trimmedLine.substring(0, firstSpace - 1);
             await Process.run('kill', [pid]);
-
-            // NotifsContoller, popupAppAllow
-
-            appItem.lastOpened = DateTime.now();
+            bool isAllowed = (await Process.run(notifHelperPath, ['popup', procName, 'Lento has soft-blocked the app "$procName" during your work session. Does usage need to be extended by 15 minutes?'])).stdout();
+             // fix procName issue and convert to bool issue
             
-            //app.popupAppAllow
-            // DBController update app record
-          } else {
-            // if app is not allowed, block
-          }   
+            if (isAllowed) {
+              await Process.run('open', ['a', procName]);
+              // fix procName issue
+            }
+
+            app['lastOpened'] = DateTime.now();
+            app['isAllowed'] = isAllowed;
+
+          }
         }
       }
     }
     await Process.run('kill', killList);
   }
-
-  // Map generateAppMap(Map blockedAppMap, {bool softBlock = false}){
-  //   var appMap = {};
-
-  //   for(var procName in blockedAppMap.keys) {
-  //     var appItem = blockedAppMap[procName];
-
-  //   }
-  //   return appMap;
-  // }
 }

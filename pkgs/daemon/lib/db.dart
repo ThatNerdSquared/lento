@@ -7,12 +7,11 @@ import 'config.dart';
 /// Below is a summary of the information cardInfo stores.
 
 /// cardInfo {
-/// apps : {proc_name : {is_soft_block: <bool>, is_allowed: <bool>, popup_msg: <String>}},
-/// websites : {url: {is_soft_block: <bool>, is_allowed: <bool>, popup_msg: <String>}},
+/// apps : {procName : {isSoftBlock: <bool>, lastOpened: <DateTime>, isAllowed: <bool>, popupMsg: <String>}},
+/// websites : {url: {isSoftBlock: <bool>, lastOpened: <DateTime>, isAllowed: <bool>, popupMsg: <String>}},
 /// bannerText : [{bannerTitle: bannerMessage}],
 /// blockDuration : <int>,
 /// bannerTriggerTimes : [<int>],
-/// 
 /// }
 
 bool initialized = false;
@@ -36,6 +35,7 @@ void init() {
       CREATE TABLE app_blocks(
         proc_name varchar(100),
         is_soft_block int,
+        last_opened varchar(50),
         is_allowed int,
         popup_msg varchar(100)
       );
@@ -43,6 +43,7 @@ void init() {
       CREATE TABLE website_blocks(
         url varchar(200),
         is_soft_block int,
+        last_opened varchar(50),
         is_allowed int, 
         popup_msg varchar(100)
       );
@@ -66,7 +67,8 @@ void init() {
 
 bool mainTimerLoopExists() {
   final db = sqlite3.open(dbFilePath);
-  final exists = db.select('SELECT count(*) FROM MainTimerLoop').isEmpty ? true: false;
+  final exists =
+      db.select('SELECT count(*) FROM MainTimerLoop').isEmpty ? true : false;
 
   return exists;
 }
@@ -74,17 +76,18 @@ bool mainTimerLoopExists() {
 void saveAppData(Map apps) {
   final db = sqlite3.open(dbFilePath);
   var appData = '';
-  for (var key in apps['apps'].keys) {
-      // save app data to db
-      var procName = key;
-      var isSoftBlock = apps['apps'][key][0];
-      var isSoftBlockInt = isSoftBlock ? 1 : 0;
-      var isAllowed = apps['apps'][key][1];
-      var isAllowedInt = isAllowed ? 1 : 0;
-      var popupMessage = apps['apps'][key][2];
-      
-      appData += 'INSERT INTO app_blocks (proc_name, is_soft_block, is_allowed, popup_msg) table VALUES ($procName, $isSoftBlockInt, $isAllowedInt, $popupMessage);\n';
+  for (var key in apps.keys) {
+    // save app data to db
+    var procName = key;
+    var isSoftBlock = apps[key][0];
+    var isSoftBlockInt = isSoftBlock ? 1 : 0;
+    var lastOpened = apps[key][1];
+    var isAllowed = apps[key][2];
+    var isAllowedInt = isAllowed ? 1 : 0;
+    var popupMessage = apps[key][3];
 
+    appData +=
+        'INSERT INTO app_blocks (proc_name, is_soft_block, last_opened, is_allowed, popup_msg) table VALUES ($procName, $isSoftBlockInt, $lastOpened, $isAllowedInt, $popupMessage);\n';
   }
 
   db.execute('''
@@ -99,17 +102,18 @@ void saveAppData(Map apps) {
 void saveWebsiteData(Map websites) {
   final db = sqlite3.open(dbFilePath);
   var websiteData = '';
-  for (var key in websites['websites'].keys) {
-      // save app data to db
-      var url = key;
-      var isSoftBlock = websites['websites'][key][0];
-      var isSoftBlockInt = isSoftBlock ? 1 : 0;
-      var isAllowed = websites['websites'][key][1];
-      var isAllowedInt = isAllowed ? 1 : 0;
-      var popupMessage = websites['websites'][key][2];
-      
-      websiteData += 'INSERT INTO website_blocks (url, is_soft_block, is_allowed, popup_msg) table VALUES ($url, $isSoftBlockInt, $isAllowedInt, $popupMessage);\n';
+  for (var key in websites.keys) {
+    // save app data to db
+    var url = key;
+    var isSoftBlock = websites[key][0];
+    var isSoftBlockInt = isSoftBlock ? 1 : 0;
+    var lastOpened = websites[key][1];
+    var isAllowed = websites[key][2];
+    var isAllowedInt = isAllowed ? 1 : 0;
+    var popupMessage = websites[key][3];
 
+    websiteData +=
+        'INSERT INTO website_blocks (url, is_soft_block, last_opened, is_allowed, popup_msg) table VALUES ($url, $isSoftBlockInt, $lastOpened, $isAllowedInt, $popupMessage);\n';
   }
 
   db.execute('''
@@ -121,15 +125,16 @@ void saveWebsiteData(Map websites) {
   db.dispose();
 }
 
-void saveBannerData(List bannerInfo, List bannerTriggerTimes) {
+void saveBannerData(List bannerText, List bannerTriggerTimes) {
   final db = sqlite3.open(dbFilePath);
   var bannerData = '';
-  for (var pair in IterableZip([bannerInfo, bannerTriggerTimes])) {
+  for (var pair in IterableZip([bannerText, bannerTriggerTimes])) {
     String bannerTitle = pair[0].keys().elementAt(0);
     String bannerMessage = pair[0][bannerTitle];
     var bannerTriggerTime = bannerTriggerTimes[0].toString();
 
-    bannerData += 'INSERT INTO banner (banner_title, banner_message, trigger_time) table VALUES ($bannerTitle, $bannerMessage, $bannerTriggerTime);\n';
+    bannerData +=
+        'INSERT INTO banner (banner_title, banner_message, trigger_time) table VALUES ($bannerTitle, $bannerMessage, $bannerTriggerTime);\n';
   }
 
   db.execute('''
