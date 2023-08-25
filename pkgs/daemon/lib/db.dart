@@ -7,8 +7,8 @@ import 'config.dart';
 /// Below is a summary of the information cardInfo stores.
 
 /// cardInfo {
-/// apps : {procName : {isSoftBlock: <bool>, lastOpened: <DateTime>, isAllowed: <bool>, popupMsg: <String>}},
-/// websites : {url: {isSoftBlock: <bool>, lastOpened: <DateTime>, isAllowed: <bool>, popupMsg: <String>}},
+/// apps : {procName : {isSoftBlock: <bool>, isAllowed: <bool>, popupMessage: <String>, lastOpened: <DateTime>}},
+/// websites : {url: {isSoftBlock: <bool>, isAllowed: <bool>, popupMessage: <String>, lastOpened: <DateTime>}},
 /// bannerText : [{bannerTitle: bannerMessage}],
 /// blockDuration : <int>,
 /// bannerTriggerTimes : [<int>],
@@ -17,103 +17,121 @@ import 'config.dart';
 bool initialized = false;
 final log = Logger('File: db.dart');
 
-Future<void> checkForDB() async {
-  final db = File(dbFilePath);
-  final doesFileExist = await db.exists();
-  if (!doesFileExist) {
-    db.create();
+Future<bool> checkForDB() async {
+  final dbFile = File(dbFilePath);
+  final doesFileExist = await dbFile.exists();
+  if (doesFileExist) {
+    final db = sqlite3.open(dbFilePath);
+    final timeExists = db.select('SELECT * FROM timer').isEmpty ? false : true;
+    db.dispose();
+    return timeExists;
+  } else {
+    return false;
   }
 }
 
 void init() {
-  if (!initialized) {
-    checkForDB();
-    final db = sqlite3.open(dbFilePath);
-    db.execute('''
-      PRAGMA user_version = 1;
+  final db = sqlite3.open(dbFilePath);
+  db.execute('''
+    PRAGMA user_version = 1;
 
-      CREATE TABLE app_blocks(
-        proc_name varchar(100),
-        is_soft_block int,
-        last_opened varchar(50),
-        is_allowed int,
-        popup_msg varchar(100)
-      );
+    CREATE TABLE app_blocks(
+      proc_name varchar(100),
+      is_soft_block int,
+      is_allowed int,
+      popup_msg varchar(200),
+      last_opened varchar(50)
+    );
 
-      CREATE TABLE website_blocks(
-        url varchar(200),
-        is_soft_block int,
-        last_opened varchar(50),
-        is_allowed int, 
-        popup_msg varchar(100)
-      );
+    CREATE TABLE website_blocks(
+      url varchar(200),
+      is_soft_block int,
+      is_allowed int, 
+      popup_msg varchar(200),
+      last_opened varchar(50)
+    );
 
-      CREATE TABLE banner(
-        banner_title varchar(100),
-        banner_message varchar(100),
-        trigger_time varchar(50)
-      );
+    CREATE TABLE banner(
+      banner_title varchar(100),
+      banner_message varchar(100),
+      trigger_time varchar(50)
+    );
 
-      CREATE TABLE time(
-        end_time varchar(50)
-      );
+    CREATE TABLE timer(
+      end_time varchar(50)
+    );
 
-    ''');
+  ''');
 
-    db.dispose();
-    initialized = true;
-  }
+  db.dispose();
 }
 
-bool mainTimerLoopExists() {
-  final db = sqlite3.open(dbFilePath);
-  final exists =
-      db.select('SELECT count(*) FROM MainTimerLoop').isEmpty ? true : false;
+Future<bool> mainTimerLoopExists() async {
+  if (await File(dbFilePath).exists()) {
+    final db = sqlite3.open(dbFilePath);
+    final exists = db.select('SELECT * FROM timer').isEmpty ? false : true;
 
-  return exists;
+    db.dispose();
+    return exists;
+  } else {
+    init();
+    print('made db');
+    return false;
+  }
 }
 
 void saveAppData(Map apps) {
   final db = sqlite3.open(dbFilePath);
   var appData = '';
-  for (var key in apps.keys) {
+  for (String procName in apps.keys) {
     // save app data to db
-    var procName = key;
-    var isSoftBlock = apps[key][0];
+    // log.info("*********");
+    // log.info(procName.toString());
+    bool isSoftBlock = apps[procName]['isSoftBlock'];
+    // log.info(isSoftBlock.toString());
     var isSoftBlockInt = isSoftBlock ? 1 : 0;
-    var lastOpened = apps[key][1];
-    var isAllowed = apps[key][2];
+    // log.info(isSoftBlockInt.toString());
+    bool isAllowed = apps[procName]['isAllowed'];
+    // log.info(isAllowed.toString());
     var isAllowedInt = isAllowed ? 1 : 0;
-    var popupMessage = apps[key][3];
+    // log.info(isAllowedInt.toString());
+    String popupMessage = apps[procName]['popupMessage'];
+    // log.info(popupMessage.toString());
+    var lastOpened = apps[procName]['lastOpened'].toString();
+    // log.info(lastOpened.toString());
 
     appData +=
-        'INSERT INTO app_blocks (proc_name, is_soft_block, last_opened, is_allowed, popup_msg) table VALUES ($procName, $isSoftBlockInt, $lastOpened, $isAllowedInt, $popupMessage);\n';
+        '''INSERT INTO app_blocks (proc_name, is_soft_block, is_allowed, popup_msg, last_opened)
+        VALUES ("$procName", $isSoftBlockInt, $isAllowedInt, "$popupMessage", "$lastOpened");\n''';
   }
+
+  /// always use double quotes when inserting strings to db via sqlite,
+  /// as double quotes allows a string like "O'Hara" to be inserting without
+  /// interfering with the quotes of the string (as opposed to 'O'Hara')
 
   db.execute('''
   BEGIN TRANSACTION;
   $appData
   COMMIT;
   ''');
-
   db.dispose();
 }
 
 void saveWebsiteData(Map websites) {
   final db = sqlite3.open(dbFilePath);
   var websiteData = '';
-  for (var key in websites.keys) {
+  for (String url in websites.keys) {
     // save app data to db
-    var url = key;
-    var isSoftBlock = websites[key][0];
+    bool isSoftBlock = websites[url]['isSoftBlock'];
     var isSoftBlockInt = isSoftBlock ? 1 : 0;
-    var lastOpened = websites[key][1];
-    var isAllowed = websites[key][2];
+    bool isAllowed = websites[url]['isAllowed'];
     var isAllowedInt = isAllowed ? 1 : 0;
-    var popupMessage = websites[key][3];
+    String popupMessage = websites[url]['popupMessage'];
+    var lastOpened = websites[url]['lastAsked'].toString();
 
     websiteData +=
-        'INSERT INTO website_blocks (url, is_soft_block, last_opened, is_allowed, popup_msg) table VALUES ($url, $isSoftBlockInt, $lastOpened, $isAllowedInt, $popupMessage);\n';
+        '''INSERT INTO website_blocks (url, is_soft_block, is_allowed, popup_msg, last_opened)
+        VALUES ("$url", $isSoftBlockInt, $isAllowedInt, "$popupMessage", "$lastOpened");\n''';
   }
 
   db.execute('''
@@ -129,16 +147,18 @@ void saveBannerData(List bannerText, List bannerTriggerTimes) {
   final db = sqlite3.open(dbFilePath);
   var bannerData = '';
   for (var pair in IterableZip([bannerText, bannerTriggerTimes])) {
-    String bannerTitle = pair[0].keys().elementAt(0);
-    String bannerMessage = pair[0][bannerTitle];
-    var bannerTriggerTime = bannerTriggerTimes[0].toString();
+    log.info(pair.elementAt(0));
+    String bannerTitle = pair.elementAt(0).keys.elementAt(0);
+    String bannerMessage = pair.elementAt(0)[bannerTitle];
+    var bannerTriggerTime = pair.elementAt(1).toString();
 
     bannerData +=
-        'INSERT INTO banner (banner_title, banner_message, trigger_time) table VALUES ($bannerTitle, $bannerMessage, $bannerTriggerTime);\n';
+        '''INSERT INTO banner (banner_title, banner_message, trigger_time)
+        VALUES ("$bannerTitle", "$bannerMessage", "$bannerTriggerTime");\n''';
   }
 
   db.execute('''
-  BEGIN TRANSACTION
+  BEGIN TRANSACTION;
   $bannerData
   COMMIT;
   ''');
@@ -150,8 +170,8 @@ void saveTime(DateTime endTime) {
   final db = sqlite3.open(dbFilePath);
   final endTimeString = endTime.toString();
   db.execute('''
-  INSERT INTO time (start_time, end_time)
-  VALUES ($endTimeString)
+  INSERT INTO timer (end_time)
+  VALUES ("$endTimeString");
   ''');
 
   db.dispose();
@@ -171,8 +191,14 @@ Map buildAppInfo() {
     int isAllowedInt = appInfo['is_allowed'];
     var isAllowed = isAllowedInt == 1 ? true : false;
     String popupMessage = appInfo['popup_msg'];
+    var lastOpened = DateTime.parse(appInfo['last_opened']);
 
-    apps[procName] = [isSoftBlock, isAllowed, popupMessage];
+    apps[procName] = {
+      'isSoftBlock': isSoftBlock,
+      'isAllowed': isAllowed,
+      'popupMessage': popupMessage,
+      'lastOpened': lastOpened
+    };
   }
 
   db.dispose();
@@ -194,7 +220,11 @@ Map buildWebsiteInfo() {
     var isAllowed = isAllowedInt == 1 ? true : false;
     String popupMessage = websiteInfo['popup_msg'];
 
-    websites[url] = [isSoftBlock, isAllowed, popupMessage];
+    websites[url] = {
+      'isSoftBlock': isSoftBlock,
+      'isAllowed': isAllowed,
+      'popupMessage': popupMessage
+    };
   }
 
   db.dispose();
@@ -222,7 +252,7 @@ List buildBannerInfo() {
 DateTime buildTimeInfo() {
   final db = sqlite3.open(dbFilePath);
   List dbTimeInfo = db.select('''
-  SELECT * FROM time
+  SELECT * FROM timer
   ''');
 
   db.dispose();

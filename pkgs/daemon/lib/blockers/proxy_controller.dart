@@ -8,14 +8,19 @@ import '../config.dart';
 
 class ProxyController {
   final log = Logger('Class: ProxyController');
-  late Server server;
+  late HttpServer server;
   Map blockedSitesMap = {};
 
   ProxyController(this.blockedSitesMap);
 
   void setup() async {
-    var server = await serve(handler, 'localhost', 0);
-    log.info('Proxying at http://${server.address.host}:${server.port}');
+    server = await serve(handler, 'localhost', 0);
+    var proxyPort = server.port.toString();
+    await Process.run(
+        'networksetup', ['-setwebproxy', 'wi-fi', 'localhost', proxyPort]);
+    await Process.run('networksetup',
+        ['-setsecurewebproxy', 'wi-fi', 'localhost', proxyPort]);
+    log.info('Proxying at http://${server.address.host}:$proxyPort');
   }
 
   FutureOr<Response> handler(Request request) async {
@@ -45,9 +50,7 @@ class ProxyController {
             'Lento has soft-blocked the website "$url" during your work session. Does usage need to be extended by 15 minutes?'
           ]))
               .stdout();
-          var isAllowed = isAllowedString == 'flutter: AlertButton.yesButton'
-              ? true
-              : false;
+          var isAllowed = isAllowedString == 'flutter: AlertButton.yesButton';
           blockedSitesMap[url]['lastOpened'] = DateTime.now();
           blockedSitesMap[url]['isAllowed'] = isAllowed;
           if (isAllowed) {

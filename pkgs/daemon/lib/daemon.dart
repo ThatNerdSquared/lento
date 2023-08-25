@@ -10,8 +10,8 @@ import 'db.dart' as db;
 /// Below is a summary of the information cardInfo stores.
 
 /// cardInfo {
-/// apps : {procName : {isSoftBlock: <bool>, lastOpened: <DateTime>, isAllowed: <bool>, popupMsg: <String>}},
-/// websites : {url: {isSoftBlock: <bool>, lastOpened: <DateTime>, isAllowed: <bool>, popupMsg: <String>}},
+/// apps : {procName : {isSoftBlock: <bool>, lastOpened: <DateTime>, isAllowed: <bool>, popupMessage: <String>}},
+/// websites : {url: {isSoftBlock: <bool>, lastOpened: <DateTime>, isAllowed: <bool>, popupMessage: <String>}},
 /// bannerText : [{bannerTitle: bannerMessage}],
 /// blockDuration : <int>, ** only used/exists when new block starts (exists when cardInfo is sent from gui)
 /// bannerTriggerTimeIntervals : [<int>], ** only used/exists when new block starts (exists when cardInfo is sent from gui)
@@ -24,7 +24,7 @@ class LentoDaemon {
   final log = Logger('Class: LentoDaemon');
 
   void entry() async {
-    if (db.mainTimerLoopExists()) {
+    if (await db.checkForDB()) {
       log.info('Resuming block after crash');
 
       final apps = db.buildAppInfo();
@@ -38,10 +38,9 @@ class LentoDaemon {
 
       startBlock(apps, websites, blockEndTime, bannerText, bannerTriggerTimes);
     } else {
-      db.init();
-      log.info('Listening for cardData for new timerTask');
+      log.info('Listening for cardData for new block');
       final daemonServer = await ServerSocket.bind('localhost', 0);
-      saveDaemonPortToSettings(daemonServer.port);
+      // saveDaemonPortToSettings(daemonServer.port);
       log.info('DaemonServer on port ${daemonServer.port}');
       daemonServer.listen(handleConnection);
     }
@@ -51,6 +50,10 @@ class LentoDaemon {
     log.info('GUI connected');
 
     client.listen((cardInfoData) {
+      final dbFile = File(dbFilePath);
+      dbFile.create();
+      db.init();
+
       final cardInfoString = String.fromCharCodes(
           cardInfoData); // convert bytes to string to map (cardInfo)
       log.info('Recieved cardInfo');
@@ -63,6 +66,28 @@ class LentoDaemon {
           initBannerTriggerTimes(cardInfo['bannerTriggerTimeIntervals']);
       // ignore: unused_local_variable
 
+      // add lastOpened to apps and websites
+
+      log.info('markar');
+
+      for (var key in cardInfo['apps'].keys) {
+        log.info('blyat');
+        cardInfo['apps'][key]['lastOpened'] =
+            DateTime.utc(-271821, 04, 20).toLocal();
+      }
+
+      for (var key in cardInfo['websites'].keys) {
+        log.info('blyat');
+        cardInfo['websites'][key]['lastOpened'] =
+            DateTime.utc(-271821, 04, 20).toLocal();
+      }
+
+      log.info('asjhdasjd');
+
+      print(cardInfo);
+      print(cardInfo['apps']['Spotify']['isSoftBlock']);
+      print(cardInfo['apps']['Spotify']['isSoftBlock'].runtimeType);
+
       db.saveAppData(cardInfo['apps']);
       db.saveWebsiteData(cardInfo['websites']);
       db.saveBannerData(cardInfo['bannerText'], bannerTriggerTimes);
@@ -70,6 +95,7 @@ class LentoDaemon {
 
       startBlock(cardInfo['apps'], cardInfo['websites'], blockEndTime,
           cardInfo['bannerText'], bannerTriggerTimes);
+      client.close();
     }, onError: (error) {
       log.shout(error);
       client.close();
@@ -80,18 +106,25 @@ class LentoDaemon {
 
   void startBlock(Map apps, Map websites, DateTime endTime, List bannerText,
       List bannerTriggerTimes) {
+    print(apps);
+    print('startBlock: $bannerText');
+    print('startBlock: $bannerTriggerTimes');
     final appBlocker = AppBlocker(apps);
-    final proxy = ProxyController(websites);
-    proxy.setup();
+    // final proxy = ProxyController(websites);
+    // proxy.setup();
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (DateTime.now().difference(endTime).inSeconds > 0) {
+      print('*******************************');
+      var diff = endTime.difference(DateTime.now()).inSeconds;
+      print('timeDiff: $diff');
+      if (endTime.difference(DateTime.now()).inSeconds > 0) {
         appBlocker.blockApps();
         checkBannerTrigger(bannerText, bannerTriggerTimes);
       } else {
-        proxy.cleanup();
+        // proxy.cleanup();
         db.reset();
         timer.cancel();
+        print('sup');
       }
     });
   }
@@ -113,18 +146,26 @@ class LentoDaemon {
     return bannerTriggerTimes;
   }
 
-  void checkBannerTrigger(List bannerText, List bannerTriggerTimes) async {
-    String bannerTitle = bannerText[0].keys.elementAt(0);
-    String bannerMessage = bannerText[0][bannerTitle];
-    DateTime bannerTriggerTime = bannerTriggerTimes[0];
-
-    if (DateTime.now().difference(bannerTriggerTime).inSeconds <= 1) {
-      await Process.run(
-          notifHelperPath, ['banner', bannerTitle, bannerMessage]);
+  void checkBannerTrigger(List bannerText, List bannerTriggerTimes) {
+    print('bannerText $bannerText');
+    print('bannerTriggerTimes $bannerTriggerTimes');
+    if (bannerText.isNotEmpty && bannerTriggerTimes.isNotEmpty) {
+      String bannerTitle = bannerText[0].keys.elementAt(0);
+      String bannerMessage = bannerText[0][bannerTitle];
+      DateTime bannerTriggerTime = bannerTriggerTimes[0];
+      var diff = bannerTriggerTime.difference(DateTime.now()).inSeconds;
+      print('DIFFERENCE $diff');
+      if (bannerTriggerTime.difference(DateTime.now()).inSeconds <= 1) {
+        print('auiasudusadu');
+        Process.run(notifHelperPath, ['banner', bannerTitle, bannerMessage]);
+        bannerText.removeAt(0);
+        bannerTriggerTimes.removeAt(0);
+      }
+      if (DateTime.now().difference(bannerTriggerTime).inSeconds > 0) {
+        bannerText.removeAt(0);
+        bannerTriggerTimes.removeAt(0);
+      }
     }
-
-    bannerText.removeAt(0);
-    bannerTriggerTimes.removeAt(0);
   }
 }
 
