@@ -110,8 +110,8 @@ class LentoDaemon {
     print('startBlock: $bannerText');
     print('startBlock: $bannerTriggerTimes');
     final appBlocker = AppBlocker(apps);
-    // final proxy = ProxyController(websites);
-    // proxy.setup();
+    final proxy = ProxyController(websites);
+    proxy.setup();
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
       print('*******************************');
@@ -120,8 +120,11 @@ class LentoDaemon {
       if (endTime.difference(DateTime.now()).inSeconds > 0) {
         appBlocker.blockApps();
         checkBannerTrigger(bannerText, bannerTriggerTimes);
+        //db.saveAppData(apps);
+        //db.saveWebsiteData(websites);
+        //db.saveBannerData(bannerText, bannerTriggerTimes);
       } else {
-        // proxy.cleanup();
+        proxy.cleanup();
         db.reset();
         timer.cancel();
         print('sup');

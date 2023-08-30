@@ -40,7 +40,8 @@ void init() {
       is_soft_block int,
       is_allowed int,
       popup_msg varchar(200),
-      last_opened varchar(50)
+      last_opened varchar(50),
+      perm_closed int
     );
 
     CREATE TABLE website_blocks(
@@ -48,7 +49,8 @@ void init() {
       is_soft_block int,
       is_allowed int, 
       popup_msg varchar(200),
-      last_opened varchar(50)
+      last_opened varchar(50),
+      perm_closed int
     );
 
     CREATE TABLE banner(
@@ -99,6 +101,7 @@ void saveAppData(Map apps) {
     // log.info(popupMessage.toString());
     var lastOpened = apps[procName]['lastOpened'].toString();
     // log.info(lastOpened.toString());
+    // var permClosed = apps[procName]['']
 
     appData +=
         '''INSERT INTO app_blocks (proc_name, is_soft_block, is_allowed, popup_msg, last_opened)
@@ -127,7 +130,7 @@ void saveWebsiteData(Map websites) {
     bool isAllowed = websites[url]['isAllowed'];
     var isAllowedInt = isAllowed ? 1 : 0;
     String popupMessage = websites[url]['popupMessage'];
-    var lastOpened = websites[url]['lastAsked'].toString();
+    var lastOpened = websites[url]['lastOpened'].toString();
 
     websiteData +=
         '''INSERT INTO website_blocks (url, is_soft_block, is_allowed, popup_msg, last_opened)

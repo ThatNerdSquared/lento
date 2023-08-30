@@ -1,72 +1,78 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:logging/logging.dart';
-import 'package:shelf/shelf.dart';
-import 'package:shelf/shelf_io.dart';
-import 'package:shelf_proxy/shelf_proxy.dart';
 import '../config.dart';
 
 class ProxyController {
   final log = Logger('Class: ProxyController');
   late HttpServer server;
-  Map blockedSitesMap = {};
+  Map blockedSites = {};
 
-  ProxyController(this.blockedSitesMap);
+  ProxyController(this.blockedSites);
 
   void setup() async {
-    server = await serve(handler, 'localhost', 0);
+    server = await HttpServer.bind('localhost', 0);
     var proxyPort = server.port.toString();
-    await Process.run(
+    Process.run(
         'networksetup', ['-setwebproxy', 'wi-fi', 'localhost', proxyPort]);
-    await Process.run('networksetup',
+    Process.run('networksetup',
         ['-setsecurewebproxy', 'wi-fi', 'localhost', proxyPort]);
     log.info('Proxying at http://${server.address.host}:$proxyPort');
-  }
+    
+    server.listen((final request) {
+      var localhost = Uri(path: 'localhost');
 
-  FutureOr<Response> handler(Request request) async {
-    var url = request.url.toString();
-    print('request.url.path: ${request.url.path}');
-    if (blockedSitesMap.containsKey(url)) {
-      log.info('WEBSITE: Blocked website $url detected');
-      if (!blockedSitesMap[url]['isSoftBlock']) {
-        log.info('WEBSITE: HARD blocked website $url detected');
-        var popupMessage = blockedSitesMap[url]['popupMessage'];
-        await Process.run(notifHelperPath, [
-          'popup',
-          '$url hard-blocked',
-          'Lento has hard-blocked the website "$url" during your work session. Your message: $popupMessage'
-        ]);
-        log.info('WEBSITE: HARD: $url blocked');
-        return Response.forbidden(null);
-      } else {
-        log.info('WEBSITE: SOFT blocked website $url detected');
-        if (DateTime.now()
-                .difference(blockedSitesMap[url]['lastOpened'])
-                .inMinutes >
-            15) {
-          String isAllowedString = (await Process.run(notifHelperPath, [
-            'popup',
-            '$url soft-blocked',
-            'Lento has soft-blocked the website "$url" during your work session. Does usage need to be extended by 15 minutes?'
-          ]))
-              .stdout();
-          var isAllowed = isAllowedString == 'flutter: AlertButton.yesButton';
-          blockedSitesMap[url]['lastOpened'] = DateTime.now();
-          blockedSitesMap[url]['isAllowed'] = isAllowed;
-          if (isAllowed) {
-            log.info('WEBSITE: SOFT: extended usage for $url');
-            return proxyHandler(request.url.path)(request);
-          } else {
-            log.info('WEBSITE: SOFT: $url blocked');
-            return Response.forbidden(null);
-          }
+      if (blockedSites.containsKey(request.uri.toString())) {
+        var uri = request.uri.toString();
+        log.info('WEBSITE: Blocked website $uri detected');
+        var website = blockedSites[uri];
+        print('website: $website');
+
+        if (!website['isSoftBlock']) {
+          log.info('WEBSITE: HARD blocked website $uri detected');
+          var popupMessage = website['popupMessage'];
+          Process.run(notifHelperPath, [
+            'banner', // change to popup later
+            '$uri hard-blocked',
+            'Lento has hard-blocked the website "$uri" during your work session. Your message: $popupMessage'
+          ]);
+          log.info('WEBSITE: HARD: $uri blocked');
+          request.response.redirect(localhost);
+          log.info('WEBSITE: HARD: $uri killed');
         } else {
-          return Response.ok(null);
+          log.info('WEBSITE: SOFT blocked website $uri detected');
+          if (website['permClosed'] != true) {
+            if (DateTime.now().difference(website['lastOpened']).inSeconds > 15) {
+              var isAllowedPopup = Process.runSync(notifHelperPath, [
+                'popup',
+                '$uri soft-blocked',
+                'Lento has soft-blocked the app "$uri" during your work session. Does usage need to be extended by 15 minutes?'
+              ]);
+              var isAllowedString = isAllowedPopup.stdout.trim();
+              var isAllowed = isAllowedString == 'flutter: AlertButton.yesButton';
+              print('isAllowed $isAllowed');
+              if (isAllowed) {
+                log.info('WEBSITE: SOFT: extended usage for $uri');
+              } else {
+                  log.info('WEBSITE: SOFT: $uri blocked');
+                  website['permClosed'] = true;
+                  Process.run(notifHelperPath, [
+                    'banner',
+                    '$uri soft-blocked',
+                    'Lento has blocked the website "$uri" for the rest of your work session.'
+                  ]);
+              }
+              website['lastOpened'] = DateTime.now();
+              website['isAllowed'] = isAllowed;
+            }
+          } else {
+            Process.run(notifHelperPath, [
+                'banner',
+                '$uri soft-blocked',
+                'Lento has blocked the app "$uri" for the rest of your work session.']);
+          }
         }
       }
-    } else {
-      return proxyHandler(request.url.path)(request);
-    }
+    });
   }
 
   void cleanup() {

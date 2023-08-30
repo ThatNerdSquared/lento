@@ -68,7 +68,7 @@ class AppBlocker {
       var app = blockedApps[procName];
       var diff = DateTime.now().difference(app['lastOpened']).inSeconds;
       print('SOFT BLOCK DIFF: $diff');
-      if (blockedApps[procName]['permClosed'] != true) {
+      if (app['permClosed'] != true) {
         if (DateTime.now().difference(app['lastOpened']).inSeconds > 15) {
           var isAllowedPopup = Process.runSync(notifHelperPath, [
             'popup',
@@ -84,13 +84,13 @@ class AppBlocker {
             Process.run('open', ['-a', procName]);
             print('FASHIONITA');
           } else {
-            log.info('APP: SOFT: $procName blocked');
-            blockedApps[procName]['permClosed'] = true;
-            Process.run(notifHelperPath, [
-            'banner',
-            '$procName soft-blocked',
-            'Lento has blocked the app "$procName" for the rest of your work session.'
-          ]);
+              log.info('APP: SOFT: $procName blocked');
+              app['permClosed'] = true;
+              Process.run(notifHelperPath, [
+              'banner',
+              '$procName soft-blocked',
+              'Lento has blocked the app "$procName" for the rest of your work session.'
+            ]);
           }
           app['lastOpened'] = DateTime.now();
           app['isAllowed'] = isAllowed;
