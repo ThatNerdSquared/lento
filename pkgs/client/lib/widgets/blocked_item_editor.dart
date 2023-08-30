@@ -240,8 +240,7 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                                   .labelLarge,
                                               decoration: const InputDecoration(
                                                   border: InputBorder.none,
-                                                  hintText:
-                                                      'https://youtube.com'),
+                                                  hintText: 'youtube.com'),
                                             ))),
                               const SliverPadding(
                                   padding: EdgeInsets.only(
