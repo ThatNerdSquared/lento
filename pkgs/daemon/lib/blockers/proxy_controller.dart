@@ -1,39 +1,40 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:logging/logging.dart';
-import 'package:shelf/shelf.dart';
-import 'package:shelf/shelf_io.dart';
-import 'package:shelf_proxy/shelf_proxy.dart';
+import 'package:socks5_proxy/enums/command_reply_code.dart';
+import 'package:socks5_proxy/socks_server.dart';
 import '../config.dart';
+import '../url_utils.dart';
 
 class ProxyController {
   final log = Logger('Class: ProxyController');
-  late HttpServer server;
+  late SocksServer socksServer;
+  late ServerSocket proxy;
   Map blockedSites = {};
 
   ProxyController(this.blockedSites);
 
   void setup() async {
-    server = await serve(
-      handler,
-      'localhost',
-      0,
-      securityContext: SecurityContext.defaultContext,
-    );
-    var proxyPort = server.port.toString();
+    socksServer = SocksServer();
+    socksServer.connections.listen(handler).onError(print);
+    await socksServer.bind(InternetAddress.loopbackIPv4, 0);
+    proxy = socksServer.proxies.values.elementAt(0);
+    final proxyPort = proxy.port.toString();
     await Process.run(
-        'networksetup', ['-setwebproxy', 'wi-fi', 'localhost', proxyPort]);
-    await Process.run('networksetup',
-        ['-setsecurewebproxy', 'wi-fi', 'localhost', proxyPort]);
-    log.info('Proxying at http://${server.address.host}:$proxyPort');
+      'networksetup',
+      ['-setsocksfirewallproxy', 'wi-fi', 'localhost', proxyPort],
+    );
+    log.info('Proxying at ${proxy.address}:$proxyPort');
   }
 
-  FutureOr<Response> handler(Request request) async {
-    final siteUrl = request.requestedUri.host;
-    print('~~~~~~');
-    print(request.requestedUri);
+  void handler(Connection connection) async {
+    // final siteUrl = request.requestedUri.host;
+    final siteUrl = getDomainFromHost(connection.desiredAddress.host);
+    print('&&^&&^&^&^^&^&^&^&&^&&^&^&^&^&^&^&^&^&^^&^&');
+    print('&&^&&^&^&^^&^&^&^&&^&&^&^&^&^&^&^&^&^&^^&^&');
     print(siteUrl);
-    print('~~~~~~');
+    print(blockedSites);
+    print('&&^&&^&^&^^&^&^&^&&^&&^&^&^&^&^&^&^&^&^^&^&');
+    print('&&^&&^&^&^^&^&^&^&&^&&^&^&^&^&^&^&^&^&^^&^&');
 
     if (blockedSites.containsKey(siteUrl)) {
       log.info('WEBSITE: Blocked website $siteUrl detected');
@@ -49,7 +50,7 @@ class ProxyController {
           'Lento has hard-blocked the website "$siteUrl" during your work session.\n$popupMessage'
         ]);
         log.info('WEBSITE: HARD: $siteUrl blocked');
-        return Response.forbidden(null);
+        await connection.reject(CommandReplyCode.connectionDenied);
       } else {
         log.info('WEBSITE: SOFT blocked website $siteUrl detected');
         if (website['permClosed'] != true) {
@@ -66,7 +67,7 @@ class ProxyController {
             website['isAllowed'] = isAllowed;
             if (isAllowed) {
               log.info('WEBSITE: SOFT: extended usage for $siteUrl');
-              return proxyHandler(request.requestedUri)(request);
+              await connection.forward();
             } else {
               log.info('WEBSITE: SOFT: $siteUrl blocked');
               website['permClosed'] = true;
@@ -75,29 +76,30 @@ class ProxyController {
                 '$siteUrl soft-blocked',
                 'Lento has blocked the website "$siteUrl" for the rest of your work session.'
               ]);
-              return Response.forbidden(null);
+              await connection.reject(CommandReplyCode.connectionDenied);
             }
           }
-          print('weird if conditional you got there mate');
-          return Response.forbidden(null);
+          await connection.reject(CommandReplyCode.connectionDenied);
         } else {
           Process.run(notifHelperPath, [
             'banner',
             '$siteUrl soft-blocked',
             'Lento has blocked the app "$siteUrl" for the rest of your work session.'
           ]);
-          return Response.forbidden(null);
+          await connection.reject(CommandReplyCode.connectionDenied);
         }
       }
     } else {
-      return proxyHandler(request.requestedUri)(request);
+      await connection.forward();
     }
   }
 
   void cleanup() async {
-    server.close();
-    await Process.run('networksetup', ['-setwebproxystate', 'wi-fi', 'off']);
+    proxy.close();
+    print('sheesh');
     await Process.run(
-        'networksetup', ['-setsecurewebproxystate', 'wi-fi', 'off']);
+      'networksetup',
+      ['-setsocksfirewallproxystate', 'wi-fi', 'off'],
+    );
   }
 }

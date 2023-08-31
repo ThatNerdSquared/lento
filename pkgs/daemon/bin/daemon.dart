@@ -1,6 +1,10 @@
-// import 'package:daemon/daemon.dart' as daemon;
+import 'package:daemon/daemon.dart';
+import 'package:logging/logging.dart';
 
-void main(List<String> arguments) {
-  // print('Hello world: ${daemon.calculate()}!');
-  print('Hello world');
+void main() {
+  Logger.root.level = Level.ALL; // defaults to Level.INFO
+  Logger.root.onRecord.listen((record) {
+    print('${record.level.name}: ${record.time}: ${record.message}');
+  });
+  LentoDaemon().entry();
 }

@@ -6,6 +6,7 @@ import 'blockers/appblocker.dart';
 import 'blockers/proxy_controller.dart';
 import 'config.dart';
 import 'db.dart' as db;
+import 'url_utils.dart';
 
 /// Below is a summary of the information cardInfo stores.
 
@@ -110,7 +111,17 @@ class LentoDaemon {
     print('startBlock: $bannerText');
     print('startBlock: $bannerTriggerTimes');
     final appBlocker = AppBlocker(apps);
-    final proxy = ProxyController(websites);
+    for (final item in websites.entries) {
+      print(item.key);
+      var test = Uri.parse(item.key);
+      print(test.host);
+      print(test.scheme);
+      print(test.path);
+    }
+    var processedSites = websites.map(
+      (key, value) => MapEntry(getDomainFromHost(Uri.parse(key).host), value),
+    );
+    final proxy = ProxyController(processedSites);
     proxy.setup();
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -172,10 +183,10 @@ class LentoDaemon {
   }
 }
 
-void main() {
-  Logger.root.level = Level.ALL; // defaults to Level.INFO
-  Logger.root.onRecord.listen((record) {
-    print('${record.level.name}: ${record.time}: ${record.message}');
-  });
-  LentoDaemon().entry();
-}
+// void main() {
+//   Logger.root.level = Level.ALL; // defaults to Level.INFO
+//   Logger.root.onRecord.listen((record) {
+//     print('${record.level.name}: ${record.time}: ${record.message}');
+//   });
+//   LentoDaemon().entry();
+// }
