@@ -17,7 +17,7 @@ class AppBlocker {
     var hardList = <String>[];
     var softList = <String>[];
     var softBlock = {};
-    log.info("appblocker");
+    log.info('appblocker');
     var processes = (await Process.run('ps', [
       '-acxo',
       'pid,comm',
@@ -84,9 +84,9 @@ class AppBlocker {
             Process.run('open', ['-a', procName]);
             print('FASHIONITA');
           } else {
-              log.info('APP: SOFT: $procName blocked');
-              app['permClosed'] = true;
-              Process.run(notifHelperPath, [
+            log.info('APP: SOFT: $procName blocked');
+            app['permClosed'] = true;
+            Process.run(notifHelperPath, [
               'banner',
               '$procName soft-blocked',
               'Lento has blocked the app "$procName" for the rest of your work session.'
@@ -97,9 +97,10 @@ class AppBlocker {
         }
       } else {
         Process.run(notifHelperPath, [
-            'banner',
-            '$procName soft-blocked',
-            'Lento has blocked the app "$procName" for the rest of your work session.']);
+          'banner',
+          '$procName soft-blocked',
+          'Lento has blocked the app "$procName" for the rest of your work session.'
+        ]);
       }
     }
   }
