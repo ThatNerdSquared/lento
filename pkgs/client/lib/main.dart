@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
 import 'package:uuid/uuid.dart';
+import 'package:window_size/window_size.dart';
 
 import 'backend/card_data.dart';
 import 'backend/custom_popup_data.dart';
@@ -47,6 +50,13 @@ final customPopupListProvider =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    const minHeight = 560.0;
+    const minWidth = 490.0;
+    setWindowMinSize(const Size(minWidth, minHeight));
+    setWindowMaxSize(Size.infinite);
+  }
+
   platformAppSupportDir = (await getApplicationSupportDirectory()).path;
   runApp(const ProviderScope(child: MyApp()));
 }

@@ -19,10 +19,17 @@ class LentoCard extends ConsumerWidget {
     required this.startEditing,
   });
 
+  Widget debug(dynamic item) {
+    const placeholder = Text('debug');
+    print(item.toString());
+    return placeholder;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return LayoutBuilder(
-        builder: (context, constraints) => Container(
+        builder: (context, constraints) => Center(
+                child: Container(
               decoration: const BoxDecoration(
                   borderRadius: PretConfig.defaultBorderRadius,
                   boxShadow: [PretConfig.defaultShadow]),
@@ -31,7 +38,7 @@ class LentoCard extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(
                     top: PretConfig.defaultElementSpacing * 2,
-                    bottom: PretConfig.defaultElementSpacing,
+                    bottom: PretConfig.defaultElementSpacing * 2,
                   ),
                   child: Column(
                     children: [
@@ -54,19 +61,44 @@ class LentoCard extends ConsumerWidget {
                                 top: PretConfig.defaultElementSpacing,
                               ),
                               child: ToggleList(
-                                cardId: cardId,
-                                toggleTitle: 'Blocked Websites',
-                                children: ref
-                                    .watch(lentoDeckProvider)[cardId]!
-                                    .blockedSites
-                                    .entries
-                                    .map((item) =>
-                                        BlockListItem.fromBlockedWebsite(
-                                          itemID: item.key,
-                                          data: item.value,
-                                        ))
-                                    .toList(),
-                              ),
+                                  cardId: cardId,
+                                  toggleTitle: 'Blocked Websites',
+                                  children: ref
+                                          .watch(lentoDeckProvider)[cardId]!
+                                          .blockedSites
+                                          .isEmpty
+                                      ? [
+                                          const Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                    padding: EdgeInsets.all(
+                                                        PretConfig
+                                                            .defaultElementSpacing),
+                                                    child: Text(
+                                                        'No blocked websites',
+                                                        style: TextStyle(
+                                                            fontStyle: FontStyle
+                                                                .italic,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: Color(
+                                                                0xFF565656)) // italicized lentoTextTheme.labelSmall
+                                                        ))
+                                              ])
+                                        ]
+                                      : ref
+                                          .watch(lentoDeckProvider)[cardId]!
+                                          .blockedSites
+                                          .entries
+                                          .map((item) =>
+                                              BlockListItem.fromBlockedWebsite(
+                                                itemID: item.key,
+                                                data: item.value,
+                                              ))
+                                          .toList()),
                             )),
                             SliverToBoxAdapter(
                                 child: Container(
@@ -77,14 +109,40 @@ class LentoCard extends ConsumerWidget {
                                 cardId: cardId,
                                 toggleTitle: 'Blocked Apps',
                                 children: ref
-                                    .watch(lentoDeckProvider)[cardId]!
-                                    .blockedApps
-                                    .entries
-                                    .map((item) => BlockListItem.fromBlockedApp(
-                                          itemID: item.key,
-                                          data: item.value,
-                                        ))
-                                    .toList(),
+                                        .watch(lentoDeckProvider)[cardId]!
+                                        .blockedApps
+                                        .isEmpty
+                                    ? [
+                                        const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                  padding: EdgeInsets.all(
+                                                      PretConfig
+                                                          .defaultElementSpacing),
+                                                  child: Text('No blocked apps',
+                                                      style: TextStyle(
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Color(
+                                                              0xFF565656)) // italicized lentoTextTheme.labelSmall
+                                                      ))
+                                            ])
+                                      ]
+                                    : ref
+                                        .watch(lentoDeckProvider)[cardId]!
+                                        .blockedApps
+                                        .entries
+                                        .map((item) =>
+                                            BlockListItem.fromBlockedApp(
+                                              itemID: item.key,
+                                              data: item.value,
+                                            ))
+                                        .toList(),
                               ),
                             )),
                           ])),
@@ -101,6 +159,6 @@ class LentoCard extends ConsumerWidget {
                   ),
                 ),
               ),
-            ));
+            )));
   }
 }
