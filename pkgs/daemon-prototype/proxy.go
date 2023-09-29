@@ -7,31 +7,43 @@ import (
 	"github.com/nwtgck/go-socks"
 )
 
-func handleConn(conn net.Conn) {
+type LentoProxy struct {
+	socksServer socks.Server
+	listener    net.Listener
 }
 
-func main() {
+func (proxy LentoProxy) handleConn(conn net.Conn) {
+	print(conn)
+	go proxy.socksServer.ServeConn(conn)
+}
+
+func (proxy *LentoProxy) initSOCKS() {
 	socksConf := &socks.Config{}
 	socksServer, err := socks.New(socksConf)
 	if err != nil {
 		panic(err)
 	}
-
+	proxy.socksServer = *socksServer
 	l, err := net.Listen("tcp", "127.0.0.1:")
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println(
 		"Proxying on port",
 		l.Addr().(*net.TCPAddr).Port,
 	)
-	if err != nil {
-		panic(err)
-	}
+	proxy.listener = l
+}
+
+func main() {
+	lproxy := LentoProxy{}
+	lproxy.initSOCKS()
 	for {
-		conn, err := l.Accept()
+		conn, err := lproxy.listener.Accept()
 		if err != nil {
 			panic(err)
 		}
 		fmt.Println("accepted")
-		// go handleConn(conn)
-		go socksServer.ServeConn(conn)
+		lproxy.handleConn(conn)
 	}
 }
