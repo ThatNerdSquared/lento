@@ -23,6 +23,5 @@ jobs:
         run: dart format --output=none --set-exit-if-changed .
       - name: Code analysis
         run: dart analyze
-    # currently disabled because tests aren't up rn
-    # - name: Run tests
-    #   run: dart test
+      - name: Run tests
+        run: dart test

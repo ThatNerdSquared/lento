@@ -19,12 +19,6 @@ class LentoCard extends ConsumerWidget {
     required this.startEditing,
   });
 
-  Widget debug(dynamic item) {
-    const placeholder = Text('debug');
-    print(item.toString());
-    return placeholder;
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return LayoutBuilder(

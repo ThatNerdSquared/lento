@@ -45,6 +45,11 @@ dependencies:
   mime: ^1.0.4
   favicon: ^1.1.1
   http: ^0.13.6
+  window_size:
+    git:
+      url: https://github.com/google/flutter-desktop-embedding.git
+      path: plugins/window_size
+      ref: 6c66ad2
 
 dev_dependencies:
   flutter_test:

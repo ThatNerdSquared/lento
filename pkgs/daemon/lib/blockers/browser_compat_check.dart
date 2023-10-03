@@ -1,29 +1,32 @@
 import 'dart:io';
 
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 
 void ensureFirefoxCompat() {
-  final lentoConfigPayload = [
-    '// DO NOT REMOVE - AUTOMATICALLY ADDED BY LENTO TO ENSURE BLOCK COMPATABILITY',
-    'user_pref("network.proxy.default_pac_script_socks_version", 5);',
-  ];
-  final profilesDir = getFirefoxProfilesDir();
+  final profilesDir = _getFirefoxProfilesDir();
   for (final dir in profilesDir.listSync().whereType<Directory>()) {
     final userJsFile = File(p.join(dir.path, 'user.js'));
     if (!userJsFile.existsSync()) {
       userJsFile.createSync();
-      return userJsFile.writeAsStringSync(lentoConfigPayload.join('\n'));
     }
     var userJsText = userJsFile.readAsLinesSync();
-    if (!Set.of(userJsText).containsAll(lentoConfigPayload)) {
-      userJsFile.writeAsStringSync(
-        (userJsText + lentoConfigPayload).join('\n'),
-      );
-    }
+    userJsFile.writeAsStringSync(addPayloadToUserJS(userJsText));
   }
 }
 
-Directory getFirefoxProfilesDir() {
+@visibleForTesting
+String addPayloadToUserJS(List<String> userJS) {
+  final lentoConfigPayload = [
+    '// DO NOT REMOVE - AUTOMATICALLY ADDED BY LENTO TO ENSURE BLOCK COMPATABILITY',
+    'user_pref("network.proxy.default_pac_script_socks_version", 5);',
+  ];
+  return Set.of(userJS).containsAll(lentoConfigPayload)
+      ? userJS.join('\n')
+      : (userJS + lentoConfigPayload).join('\n');
+}
+
+Directory _getFirefoxProfilesDir() {
   final envVars = Platform.environment;
   switch (Platform.operatingSystem) {
     case 'macos':
