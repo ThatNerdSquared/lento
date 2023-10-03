@@ -28,15 +28,11 @@ class ProxyController {
     log.info('Proxying at ${proxy.address}:$proxyPort');
   }
 
+  // a mistake i overlooked before (that we should probably write a test for):
+  // forgetting to return an `await connection.*`, which causes an attempted
+  // operation on a connection that no longer exists.
   void handler(Connection connection) async {
-    // final siteUrl = request.requestedUri.host;
     final siteUrl = getDomainFromHost(connection.desiredAddress.host);
-    print('&&^&&^&^&^^&^&^&^&&^&&^&^&^&^&^&^&^&^&^^&^&');
-    print('&&^&&^&^&^^&^&^&^&&^&&^&^&^&^&^&^&^&^&^^&^&');
-    print(siteUrl);
-    print(blockedSites);
-    print('&&^&&^&^&^^&^&^&^&&^&&^&^&^&^&^&^&^&^&^^&^&');
-    print('&&^&&^&^&^^&^&^&^&&^&&^&^&^&^&^&^&^&^&^^&^&');
 
     if (!blockedSites.containsKey(siteUrl)) {
       return await connection.forward();
@@ -44,7 +40,6 @@ class ProxyController {
 
     log.info('WEBSITE: Blocked website $siteUrl detected');
     final website = blockedSites[siteUrl];
-    print('website: $website');
 
     if (!website['isSoftBlock']) {
       log.info('WEBSITE: HARD blocked website $siteUrl detected');
@@ -73,7 +68,7 @@ class ProxyController {
         website['isAllowed'] = isAllowed;
         if (isAllowed) {
           log.info('WEBSITE: SOFT: extended usage for $siteUrl');
-          await connection.forward();
+          return await connection.forward();
         } else {
           log.info('WEBSITE: SOFT: $siteUrl blocked');
           website['permClosed'] = true;
@@ -82,26 +77,26 @@ class ProxyController {
             '$siteUrl soft-blocked',
             'Lento has blocked the website "$siteUrl" for the rest of your work session.'
           ]);
-          await connection.reject(CommandReplyCode.connectionDenied);
+          return await connection.reject(CommandReplyCode.connectionDenied);
         }
       }
-      await connection.reject(CommandReplyCode.connectionDenied);
+      return await connection.reject(CommandReplyCode.connectionDenied);
     } else {
       Process.run(notifHelperPath, [
         'banner',
         '$siteUrl soft-blocked',
         'Lento has blocked the app "$siteUrl" for the rest of your work session.'
       ]);
-      await connection.reject(CommandReplyCode.connectionDenied);
+      return await connection.reject(CommandReplyCode.connectionDenied);
     }
   }
 
   void cleanup() async {
-    proxy.close();
-    print('sheesh');
     await Process.run(
       'networksetup',
       ['-setsocksfirewallproxystate', 'wi-fi', 'off'],
     );
+    proxy.close();
+    log.info('Proxy takedown complete.');
   }
 }
