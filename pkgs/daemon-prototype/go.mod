@@ -3,6 +3,7 @@ module lento/daemon
 go 1.19
 
 require github.com/nwtgck/go-socks v0.1.0
+require	github.com/google/uuid v1.3.1
 
 require (
 	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect

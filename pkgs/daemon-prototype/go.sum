@@ -1,3 +1,5 @@
+github.com/google/uuid v1.3.1 h1:KjJaJ9iWZ3jOFZIf1Lqf4laDRCasjl0BCmnEGxkdLb4=
+github.com/google/uuid v1.3.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/nwtgck/go-socks v0.1.0 h1:tyiyFHhvcRez3UfQ8HVOv0+aKVat5zt/RT7SG8aaG0Q=
 github.com/nwtgck/go-socks v0.1.0/go.mod h1:TJyaIsmzydZE5qNvglbCrdCWigpDITLqY7d8ve6TXnE=
 golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 h1:qWPm9rbaAMKs8Bq/9LRpbMqxWRVUAQwMI9fVrssnTfw=
