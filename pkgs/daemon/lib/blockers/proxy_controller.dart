@@ -4,6 +4,7 @@ import 'package:socks5_proxy/enums/command_reply_code.dart';
 import 'package:socks5_proxy/socks_server.dart';
 import '../config.dart';
 import '../url_utils.dart';
+import 'browser_compat_check.dart';
 
 class ProxyController {
   final log = Logger('Class: ProxyController');
@@ -23,6 +24,7 @@ class ProxyController {
       'networksetup',
       ['-setsocksfirewallproxy', 'wi-fi', 'localhost', proxyPort],
     );
+    ensureFirefoxCompat();
     log.info('Proxying at ${proxy.address}:$proxyPort');
   }
 
