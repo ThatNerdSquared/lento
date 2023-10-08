@@ -3,3 +3,4 @@ const lentoSettingsPath = '';
 const notifHelperPath =
     '../notif_helper/build/macos/Build/Products/Release/LentoNotifHelper.app/Contents/MacOS/LentoNotifHelper';
 int proxyPort = 0;
+int restrictionBypassTTL = 15;

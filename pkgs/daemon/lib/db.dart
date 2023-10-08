@@ -89,7 +89,7 @@ void saveAppData(Map apps) {
     // save app data to db
     // log.info("*********");
     // log.info(procName.toString());
-    bool isSoftBlock = apps[procName]['isSoftBlock'];
+    bool isSoftBlock = apps[procName]['isRestrictedAccess'];
     // log.info(isSoftBlock.toString());
     var isSoftBlockInt = isSoftBlock ? 1 : 0;
     // log.info(isSoftBlockInt.toString());

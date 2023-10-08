@@ -20,17 +20,17 @@ void main(List<String> args) async {
   final cardInfo = {
     'apps': {
       'Spotify': {
-        'isSoftBlock': false,
+        'isRestrictedAccess': false,
         'isAllowed': false,
         'popupMessage': 'spotify-popup'
       },
       'thonny': {
-        'isSoftBlock': true,
+        'isRestrictedAccess': true,
         'isAllowed': false,
         'popupMessage': 'thonny-popup'
       },
       'Roblox': {
-        'isSoftBlock': true,
+        'isRestrictedAccess': true,
         'isAllowed': false,
         'popupMessage': 'roblox-popup'
       }

@@ -20,10 +20,6 @@ String _callNotifHelper(
   ])).stdout.toString().trim();
 }
 
-void showPopup(String title, String msg) {
-  _callNotifHelper(NotifType.popup, title, msg);
-}
-
 bool promptUserToUnblock(String blockedItemName) {
   final response = _callNotifHelper(
     NotifType.question,
@@ -33,15 +29,13 @@ bool promptUserToUnblock(String blockedItemName) {
   return response == 'flutter: AlertButton.yesButton';
 }
 
-void showBlockedItemPopup(
-    {required String blockedItemName, String? popupMsg}) async {
+void showBlockedItemPopup({
+  required String blockedItemName,
+  required String? popupMsg,
+}) async {
   _callNotifHelper(
     NotifType.popup,
     '$blockedItemName blocked',
     'Lento has blocked "$blockedItemName" during your focus session.\n$popupMsg',
   );
-}
-
-void showBanner(String title, String msg) {
-  _callNotifHelper(NotifType.banner, title, msg);
 }

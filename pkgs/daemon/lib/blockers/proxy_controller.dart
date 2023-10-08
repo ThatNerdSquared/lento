@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:socks5_proxy/enums/command_reply_code.dart';
 import 'package:socks5_proxy/socks_server.dart';
+import '../config.dart';
 import '../notifs.dart';
 import 'browser_compat_check.dart';
 import 'platform_proxy_settings.dart';
@@ -81,7 +82,7 @@ class ProxyController {
         'WEBSITE: RESTRICTED: restricted website $detectedSiteUrl detected');
     if (!detectedSite.canBypassRestriction ||
         DateTime.now().difference(detectedSite.lastChallenged!).inMinutes >
-            15) {
+            restrictionBypassTTL) {
       return await challengeRestrictedAccess(
         detectedSiteUrl,
         detectedSite,
@@ -117,8 +118,9 @@ class ProxyController {
       detectedSite.lastChallenged = DateTime.now();
       return await connection.reject(CommandReplyCode.connectionDenied);
     }
-    detectedSite.lastChallenged = DateTime.now();
     log.info('WEBSITE: RESTRICTED: extended usage for $detectedSiteUrl');
+    detectedSite.setChallenged();
+    detectedSite.canBypassRestriction = true;
     return await connection.forward();
   }
 

@@ -64,25 +64,6 @@ class LentoDaemon {
           blockStartTime.add(Duration(seconds: cardInfo['blockDuration']));
       final bannerTriggerTimes =
           initBannerTriggerTimes(cardInfo['bannerTriggerTimeIntervals']);
-      // ignore: unused_local_variable
-
-      // add lastOpened to apps and websites
-
-      log.info('markar');
-
-      for (var key in cardInfo['apps'].keys) {
-        log.info('blyat');
-        cardInfo['apps'][key]['lastOpened'] =
-            DateTime.utc(-271821, 04, 20).toLocal();
-      }
-
-      for (var key in cardInfo['websites'].keys) {
-        log.info('blyat');
-        cardInfo['websites'][key]['lastOpened'] =
-            DateTime.utc(-271821, 04, 20).toLocal();
-      }
-
-      log.info('asjhdasjd');
 
       print(cardInfo);
       print(cardInfo['apps']['Spotify']['isSoftBlock']);
