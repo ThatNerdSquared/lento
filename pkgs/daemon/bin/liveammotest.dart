@@ -36,19 +36,19 @@ void main(List<String> args) async {
       }
     },
     'websites': {
-      'https://example.com/': {
+      'example.com': {
         'isRestrictedAccess': false,
         'isAllowed': false,
         'popupMessage': 'cheese',
         'lastOpened': '2023-09-01 21:18:54.579347'
       },
-      'https://www.charlie.com/': {
+      'www.charlie.com': {
         'isRestrictedAccess': true,
         'isAllowed': false,
         'popupMessage': 'lardmamn',
         'lastOpened': '2023-09-01 21:18:54.579347'
       },
-      'http://neverssl.com/': {
+      'neverssl.com': {
         'isRestrictedAccess': false,
         'isAllowed': false,
         'popupMessage': 'hehehehehehe',

@@ -49,7 +49,11 @@ void main(List<String> args) async {
   }
 }
 
-Future<void> showPopup(String? customMessage, String? customTitle, isQuestion) async {
+Future<void> showPopup(
+  String? customMessage,
+  String? customTitle,
+  isQuestion,
+) async {
   final clickedButton = await FlutterPlatformAlert.showAlert(
     windowTitle: customTitle ?? "_defaultTitle",
     text: customMessage ?? "_defaultMessage",

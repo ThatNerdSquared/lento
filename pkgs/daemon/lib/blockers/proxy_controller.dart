@@ -39,7 +39,7 @@ class ProxyController {
   ProxyController(Map websites) {
     blockedSites = websites.map((key, value) {
       return MapEntry(
-          Uri.parse(key),
+          Uri(host: key),
           BlockedWebsiteItem(
             isRestrictedAccess: value['isRestrictedAccess'],
             popupMessage: value['popupMessage'],
@@ -93,14 +93,10 @@ class ProxyController {
 
   /// as much as i hate needing to use this function to check if a given url
   /// is the same as a blocked one, it's the only way i can think of to do it.
-  /// `site.host` give us the host, but from there's not really a good way to
-  /// cut out subdomains, especially considering the different types of TLDs, etc.
+  /// there's not really a good way to cut out subdomains, especially
+  /// considering the different types of TLDs, etc.
   ///
   /// besides, i think this also works if you want to block a specific subdomain?
-  //
-  // possible tests
-  // - check that this works on .co.uk domains
-  // - check that this works for subdomain-specific blocks
   Uri? detectBlockedSite(String rawURL) {
     for (final site in blockedSites.keys) {
       if (rawURL.contains(site.host)) {
