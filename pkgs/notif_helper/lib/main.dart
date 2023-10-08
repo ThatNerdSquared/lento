@@ -41,17 +41,19 @@ void main(List<String> args) async {
       }
       break;
     case "popup":
-      await showPopup(customMessage);
+      await showPopup(customMessage, customTitle, false);
+    case "question-popup":
+      await showPopup(customMessage, null, true);
     default:
       exit(0);
   }
 }
 
-Future<void> showPopup(String? customMessage) async {
+Future<void> showPopup(String? customMessage, String? customTitle, isQuestion) async {
   final clickedButton = await FlutterPlatformAlert.showAlert(
-    windowTitle: 'This ia title',
-    text: 'This is body\ncustom msg: $customMessage',
-    alertStyle: AlertButtonStyle.yesNoCancel,
+    windowTitle: customTitle ?? "_defaultTitle",
+    text: customMessage ?? "_defaultMessage",
+    alertStyle: isQuestion ? AlertButtonStyle.yesNoCancel : AlertButtonStyle.ok,
     iconStyle: IconStyle.information,
   );
   // ignore: avoid_print
@@ -60,7 +62,6 @@ Future<void> showPopup(String? customMessage) async {
 }
 
 Future<void> showBanner(String? customMessage, String? customTitle) async {
-  //notifs
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   const InitializationSettings initializationSettings = InitializationSettings(
     macOS: DarwinInitializationSettings(),
