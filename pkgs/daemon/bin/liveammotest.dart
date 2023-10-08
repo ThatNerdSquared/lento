@@ -37,19 +37,19 @@ void main(List<String> args) async {
     },
     'websites': {
       'https://example.com/': {
-        'isSoftBlock': false,
+        'isRestrictedAccess': false,
         'isAllowed': false,
         'popupMessage': 'cheese',
         'lastOpened': '2023-09-01 21:18:54.579347'
       },
       'https://www.charlie.com/': {
-        'isSoftBlock': true,
+        'isRestrictedAccess': true,
         'isAllowed': false,
         'popupMessage': 'lardmamn',
         'lastOpened': '2023-09-01 21:18:54.579347'
       },
       'http://neverssl.com/': {
-        'isSoftBlock': false,
+        'isRestrictedAccess': false,
         'isAllowed': false,
         'popupMessage': 'hehehehehehe',
         'lastOpened': '2023-09-01 21:18:54.579347'

@@ -125,7 +125,7 @@ void saveWebsiteData(Map websites) {
   var websiteData = '';
   for (String url in websites.keys) {
     // save app data to db
-    bool isSoftBlock = websites[url]['isSoftBlock'];
+    bool isSoftBlock = websites[url]['isRestrictedAccess'];
     var isSoftBlockInt = isSoftBlock ? 1 : 0;
     bool isAllowed = websites[url]['isAllowed'];
     var isAllowedInt = isAllowed ? 1 : 0;

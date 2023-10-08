@@ -6,7 +6,6 @@ import 'blockers/appblocker.dart';
 import 'blockers/proxy_controller.dart';
 import 'config.dart';
 import 'db.dart' as db;
-import 'url_utils.dart';
 
 /// Below is a summary of the information cardInfo stores.
 
@@ -105,24 +104,19 @@ class LentoDaemon {
     });
   }
 
-  void startBlock(Map apps, Map websites, DateTime endTime, List bannerText,
-      List bannerTriggerTimes) {
+  Future<void> startBlock(
+    Map apps,
+    Map websites,
+    DateTime endTime,
+    List bannerText,
+    List bannerTriggerTimes,
+  ) async {
     print(apps);
     print('startBlock: $bannerText');
     print('startBlock: $bannerTriggerTimes');
     final appBlocker = AppBlocker(apps);
-    for (final item in websites.entries) {
-      print(item.key);
-      var test = Uri.parse(item.key);
-      print(test.host);
-      print(test.scheme);
-      print(test.path);
-    }
-    var processedSites = websites.map(
-      (key, value) => MapEntry(getDomainFromHost(Uri.parse(key).host), value),
-    );
-    final proxy = ProxyController(processedSites);
-    proxy.setup();
+    final proxy = ProxyController(websites);
+    await proxy.setup();
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
       print('*******************************');
