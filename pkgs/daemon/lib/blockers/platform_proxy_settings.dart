@@ -2,7 +2,7 @@ import 'dart:io';
 
 PlatformProxySettings getPlatformProxySettings() =>
     switch (Platform.operatingSystem) {
-      'macos' => MacosPlatformProxySettings(),
+      'macos' => MacosProxySettings(),
       _ => throw UnimplementedError(
           'Platform proxy settings for ${Platform.operatingSystem} not yet supported!',
         )
@@ -14,7 +14,7 @@ abstract class PlatformProxySettings {
   void disableProxy();
 }
 
-class MacosPlatformProxySettings extends PlatformProxySettings {
+class MacosProxySettings extends PlatformProxySettings {
   @override
   void enableProxy(int proxyPort) {
     Process.runSync(

@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:logging/logging.dart';
 import 'blockers/appblocker.dart';
-import 'blockers/proxy_controller.dart';
+import 'blockers/platform_process_manager.dart';
+import 'blockers/platform_proxy_settings.dart';
+import 'blockers/proxy.dart';
 import 'config.dart';
 import 'db.dart' as db;
+import 'notifs.dart';
 
 /// Below is a summary of the information cardInfo stores.
 
@@ -95,8 +98,20 @@ class LentoDaemon {
     print(apps);
     print('startBlock: $bannerText');
     print('startBlock: $bannerTriggerTimes');
-    final appBlocker = AppBlocker(apps);
-    final proxy = ProxyController(websites);
+
+    final proxySettings = getPlatformProxySettings();
+    final processManager = getPlatformProcessManager();
+    final notifManager = NotifManager();
+    final appBlocker = AppBlocker(
+      apps: apps,
+      processManager: processManager,
+      notifManager: notifManager,
+    );
+    final proxy = LentoProxy(
+      websites: websites,
+      proxySettings: proxySettings,
+      notifManager: notifManager,
+    );
     await proxy.setup();
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -157,11 +172,3 @@ class LentoDaemon {
     }
   }
 }
-
-// void main() {
-//   Logger.root.level = Level.ALL; // defaults to Level.INFO
-//   Logger.root.onRecord.listen((record) {
-//     print('${record.level.name}: ${record.time}: ${record.message}');
-//   });
-//   LentoDaemon().entry();
-// }

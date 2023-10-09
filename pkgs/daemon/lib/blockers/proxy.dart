@@ -31,22 +31,26 @@ class BlockedWebsiteItem {
   }
 }
 
-class ProxyController {
+class LentoProxy {
   final log = Logger('Class: ProxyController');
   late SocksServer socksServer;
   late ServerSocket proxy;
   Map<Uri, BlockedWebsiteItem> blockedSites = {};
+  NotifManager notifManager;
+  PlatformProxySettings proxySettings;
 
-  ProxyController(Map websites) {
-    blockedSites = websites.map((key, value) {
-      return MapEntry(
-          Uri(host: key),
-          BlockedWebsiteItem(
-            isRestrictedAccess: value['isRestrictedAccess'],
-            popupMessage: value['popupMessage'],
-          ));
-    });
-  }
+  LentoProxy({
+    required Map websites,
+    required this.proxySettings,
+    required this.notifManager,
+  }) : blockedSites = websites.map((key, value) {
+          return MapEntry(
+              Uri(host: key),
+              BlockedWebsiteItem(
+                isRestrictedAccess: value['isRestrictedAccess'],
+                popupMessage: value['popupMessage'],
+              ));
+        });
 
   Future<void> setup() async {
     socksServer = SocksServer();
@@ -54,7 +58,7 @@ class ProxyController {
     await socksServer.bind(InternetAddress.loopbackIPv4, 0);
     proxy = socksServer.proxies.values.elementAt(0);
     final proxyPort = proxy.port;
-    getPlatformProxySettings().enableProxy(proxyPort);
+    proxySettings.enableProxy(proxyPort);
     ensureFirefoxCompat();
     log.info('Proxying at ${proxy.address}:$proxyPort');
   }
@@ -69,7 +73,7 @@ class ProxyController {
     if (!detectedSite.isRestrictedAccess) {
       log.info('WEBSITE: BLOCKED: $detectedSiteUrl blocked');
       if (!detectedSite.wasRecentlyChallenged()) {
-        showBlockedItemPopup(
+        notifManager.showBlockedItemPopup(
           blockedItemName: detectedSiteUrl.host,
           popupMsg: detectedSite.popupMessage,
         );
@@ -113,7 +117,7 @@ class ProxyController {
     Connection connection,
   ) async {
     if (detectedSite.wasRecentlyChallenged() ||
-        !promptUserToUnblock(detectedSiteUrl.host)) {
+        !notifManager.promptUserToUnblock(detectedSiteUrl.host)) {
       log.info('WEBSITE: RESTRICTED: $detectedSiteUrl blocked');
       detectedSite.lastChallenged = DateTime.now();
       return await connection.reject(CommandReplyCode.connectionDenied);
@@ -125,7 +129,7 @@ class ProxyController {
   }
 
   void cleanup() async {
-    getPlatformProxySettings().disableProxy();
+    proxySettings.disableProxy();
     proxy.close();
     log.info('Proxy takedown complete.');
   }

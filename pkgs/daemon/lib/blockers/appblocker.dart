@@ -20,9 +20,14 @@ class BlockedAppItem {
 class AppBlocker {
   final log = Logger('Class: AppBlocker');
   Map<String, BlockedAppItem> blockedApps = {};
+  PlatformProcessManager processManager;
+  NotifManager notifManager;
 
-  AppBlocker(Map apps)
-      : blockedApps = apps.map((key, value) => MapEntry(
+  AppBlocker({
+    required Map apps,
+    required this.processManager,
+    required this.notifManager,
+  }) : blockedApps = apps.map((key, value) => MapEntry(
               key,
               BlockedAppItem(
                   isRestrictedAccess: value['isRestrictedAccess'],
@@ -31,24 +36,23 @@ class AppBlocker {
 
   void blockApps() async {
     final detectedRestrictedApps = <ProcessInfo>[];
-    final pm = getPlatformProcessManager();
-    final processes = pm.rawProcesses();
+    final processes = processManager.rawProcesses();
 
     for (final rawline in processes) {
-      final process = pm.processInfo(rawline);
+      final process = processManager.processInfo(rawline);
 
       if (!blockedApps.containsKey(process.name)) continue;
       final detectedApp = blockedApps[process.name]!;
 
       if (!detectedApp.canBypassRestriction) {
-        pm.killProcess(process);
+        processManager.killProcess(process);
         if (detectedApp.isRestrictedAccess) {
           log.info('APP: RESTRICTED: restricted app ${process.name} detected');
           detectedRestrictedApps.add(process);
           continue;
         }
         log.info('APP: BLOCKED: ${process.name} blocked');
-        showBlockedItemPopup(
+        notifManager.showBlockedItemPopup(
           blockedItemName: process.name,
           popupMsg: detectedApp.popupMessage,
         );
@@ -61,9 +65,10 @@ class AppBlocker {
           DateTime.now().difference(detectedApp.lastChallenged!).inMinutes >
               restrictionBypassTTL;
       // why does await Process.run not work if Process.runSync works?
-      if (invalidRestrictionBypass && !promptUserToUnblock(process.name)) {
+      if (invalidRestrictionBypass &&
+          !notifManager.promptUserToUnblock(process.name)) {
         log.info('APP: RESTRICTED: ${process.name} blocked');
-        showBlockedItemPopup(
+        notifManager.showBlockedItemPopup(
           blockedItemName: process.name,
           popupMsg: detectedApp.popupMessage,
         );
@@ -72,7 +77,7 @@ class AppBlocker {
       log.info('APP: RESTRICTED: extended usage for ${process.name}');
       detectedApp.lastChallenged = DateTime.now();
       detectedApp.canBypassRestriction = true;
-      pm.restartProcess(process);
+      processManager.restartProcess(process);
     }
   }
 }
