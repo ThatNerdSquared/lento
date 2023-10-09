@@ -19,6 +19,8 @@ jobs:
         run: dart --version
       - name: Install dependencies
         run: dart pub get
+      - name: Generate mock code
+        run: dart run build_runner build
       - name: Check formatting
         run: dart format --output=none --set-exit-if-changed .
       - name: Code analysis
