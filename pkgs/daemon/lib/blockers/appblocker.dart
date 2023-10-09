@@ -30,8 +30,10 @@ class AppBlocker {
   }) : blockedApps = apps.map((key, value) => MapEntry(
               key,
               BlockedAppItem(
-                  isRestrictedAccess: value['isRestrictedAccess'],
-                  popupMessage: value['popupMessage']),
+                isRestrictedAccess: value['isRestrictedAccess'],
+                popupMessage: value['popupMessage'],
+                canBypassRestriction: value['canBypassRestriction'] ?? false,
+              ),
             ));
 
   void blockApps() async {

@@ -19,40 +19,22 @@ void main(List<String> args) async {
 
   final cardInfo = {
     'apps': {
-      'Spotify': {
-        'isRestrictedAccess': false,
-        'isAllowed': false,
-        'popupMessage': 'spotify-popup'
-      },
-      'thonny': {
-        'isRestrictedAccess': true,
-        'isAllowed': false,
-        'popupMessage': 'thonny-popup'
-      },
-      'Roblox': {
-        'isRestrictedAccess': true,
-        'isAllowed': false,
-        'popupMessage': 'roblox-popup'
-      }
+      'Spotify': {'isRestrictedAccess': false, 'popupMessage': 'spotify-popup'},
+      'thonny': {'isRestrictedAccess': true, 'popupMessage': 'thonny-popup'},
+      'Roblox': {'isRestrictedAccess': true, 'popupMessage': 'roblox-popup'}
     },
     'websites': {
       'example.com': {
         'isRestrictedAccess': false,
-        'isAllowed': false,
         'popupMessage': 'cheese',
-        'lastOpened': '2023-09-01 21:18:54.579347'
       },
       'www.charlie.com': {
         'isRestrictedAccess': true,
-        'isAllowed': false,
         'popupMessage': 'lardmamn',
-        'lastOpened': '2023-09-01 21:18:54.579347'
       },
       'neverssl.com': {
         'isRestrictedAccess': false,
-        'isAllowed': false,
         'popupMessage': 'hehehehehehe',
-        'lastOpened': '2023-09-01 21:18:54.579347'
       }
     },
     'bannerText': [

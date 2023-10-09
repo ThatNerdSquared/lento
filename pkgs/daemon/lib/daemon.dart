@@ -72,10 +72,12 @@ class LentoDaemon {
       print(cardInfo['apps']['Spotify']['isSoftBlock']);
       print(cardInfo['apps']['Spotify']['isSoftBlock'].runtimeType);
 
+      /*
       db.saveAppData(cardInfo['apps']);
       db.saveWebsiteData(cardInfo['websites']);
       db.saveBannerData(cardInfo['bannerText'], bannerTriggerTimes);
       db.saveTime(blockEndTime);
+      */
 
       startBlock(cardInfo['apps'], cardInfo['websites'], blockEndTime,
           cardInfo['bannerText'], bannerTriggerTimes);
