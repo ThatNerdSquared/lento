@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'config.dart';
+import 'notifs.dart';
 
 /// Below is a summary of the information cardInfo stores.
 
@@ -16,6 +17,7 @@ import 'config.dart';
 
 bool initialized = false;
 final log = Logger('File: db.dart');
+bool isForTest = false;
 
 Future<bool> checkForDB() async {
   final dbFile = File(dbFilePath);
@@ -30,8 +32,13 @@ Future<bool> checkForDB() async {
   }
 }
 
-void init() {
-  final db = sqlite3.open(dbFilePath);
+Database _openDB() {
+  return sqlite3.open(isForTest ? testDbFilePath : dbFilePath);
+}
+
+void init({bool isTest = false}) {
+  isForTest = isTest;
+  final db = _openDB();
   db.execute('''
     PRAGMA user_version = 1;
 
@@ -53,10 +60,11 @@ void init() {
       perm_closed int
     );
 
-    CREATE TABLE banner(
-      banner_title varchar(100),
-      banner_message varchar(100),
-      trigger_time varchar(50)
+    CREATE TABLE $bannerQueueTable(
+      queueNum int,
+      title varchar(100),
+      message varchar(100),
+      triggerTime varchar(50)
     );
 
     CREATE TABLE timer(
@@ -64,7 +72,7 @@ void init() {
     );
 
   ''');
-
+  log.info('DB initialized.');
   db.dispose();
 }
 
@@ -83,7 +91,7 @@ Future<bool> mainTimerLoopExists() async {
 }
 
 void saveAppData(Map apps) {
-  final db = sqlite3.open(dbFilePath);
+  final db = _openDB();
   var appData = '';
   for (String procName in apps.keys) {
     // save app data to db
@@ -121,7 +129,7 @@ void saveAppData(Map apps) {
 }
 
 void saveWebsiteData(Map websites) {
-  final db = sqlite3.open(dbFilePath);
+  final db = _openDB();
   var websiteData = '';
   for (String url in websites.keys) {
     // save app data to db
@@ -147,7 +155,7 @@ void saveWebsiteData(Map websites) {
 }
 
 void saveBannerData(List bannerText, List bannerTriggerTimes) {
-  final db = sqlite3.open(dbFilePath);
+  final db = _openDB();
   var bannerData = '';
   for (var pair in IterableZip([bannerText, bannerTriggerTimes])) {
     log.info(pair.elementAt(0));
@@ -170,7 +178,7 @@ void saveBannerData(List bannerText, List bannerTriggerTimes) {
 }
 
 void saveTime(DateTime endTime) {
-  final db = sqlite3.open(dbFilePath);
+  final db = _openDB();
   final endTimeString = endTime.toString();
   db.execute('''
   INSERT INTO timer (end_time)
@@ -181,7 +189,7 @@ void saveTime(DateTime endTime) {
 }
 
 Map buildAppInfo() {
-  final db = sqlite3.open(dbFilePath);
+  final db = _openDB();
   var apps = {}; // add apps to cardInfo from db
   List dbAppBlockInfo = db.select('''
   SELECT * FROM app_blocks
@@ -209,7 +217,7 @@ Map buildAppInfo() {
 }
 
 Map buildWebsiteInfo() {
-  final db = sqlite3.open(dbFilePath);
+  final db = _openDB();
   var websites = {}; // add websites to cardInfo from db
   List dbWebsiteBlockInfo = db.select('''
   SELECT * FROM website_blocks
@@ -235,7 +243,7 @@ Map buildWebsiteInfo() {
 }
 
 List buildBannerInfo() {
-  final db = sqlite3.open(dbFilePath);
+  final db = _openDB();
   var bannerText = [];
   var bannerTriggerTimes = [];
 
@@ -253,7 +261,7 @@ List buildBannerInfo() {
 }
 
 DateTime buildTimeInfo() {
-  final db = sqlite3.open(dbFilePath);
+  final db = _openDB();
   List dbTimeInfo = db.select('''
   SELECT * FROM timer
   ''');
@@ -263,6 +271,43 @@ DateTime buildTimeInfo() {
 }
 
 void reset() {
-  final db = File(dbFilePath);
+  final db = File(isForTest ? testDbFilePath : dbFilePath);
   db.deleteSync();
+}
+
+void saveBannerQueue(List<BannerNotif> bannerQueue) {
+  final db = _openDB();
+  final cmd = [
+    'INSERT INTO $bannerQueueTable (queueNum, title, message, triggerTime) VALUES'
+  ];
+  var queueNum = 1;
+  for (final banner in bannerQueue) {
+    final terminator = queueNum == bannerQueue.length ? ';' : ',';
+    cmd.add(
+        '($queueNum, "${banner.title}", "${banner.message}", "${banner.triggerTime.toIso8601String()}")$terminator');
+    queueNum += 1;
+  }
+  db.execute(cmd.join('\n'));
+  db.dispose();
+}
+
+List<BannerNotif> getBannerQueue() {
+  final db = _openDB();
+  List rawBanners = db.select('SELECT * FROM $bannerQueueTable');
+  db.dispose();
+  return rawBanners
+      .map((rb) => BannerNotif(
+          title: rb['title'],
+          message: rb['message'],
+          triggerTime: DateTime.parse(rb['triggerTime'])))
+      .toList();
+}
+
+void popBannerOffQueue() {
+  final db = _openDB();
+  db.execute('''
+  DELETE FROM $bannerQueueTable WHERE queueNum = (SELECT min(queueNum) FROM $bannerQueueTable);
+  ''');
+  log.info('Top banner popped off queue.');
+  db.dispose();
 }

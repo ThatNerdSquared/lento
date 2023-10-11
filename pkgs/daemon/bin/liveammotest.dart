@@ -37,12 +37,19 @@ void main(List<String> args) async {
         'popupMessage': 'hehehehehehe',
       }
     },
-    'bannerText': [
-      {'oppenheimer': 'david'},
-      {'charlie': '[censored]'}
-    ],
+    'banners': {
+      '6667e5cf-8cd2-499e-9414-ce6531aaf3d0': {
+        'title': 'banner1 title',
+        'message': 'banner1 msg',
+        'triggerTimes': [30, 60],
+      },
+      '38e03105-7723-4df3-b635-e0cd54571a9d': {
+        'title': 'banner2 title',
+        'message': 'banner2 msg',
+        'triggerTimes': [50],
+      }
+    },
     'blockDuration': 70,
-    'bannerTriggerTimeIntervals': [30, 60],
   };
 
   print(cardInfo.toString());
