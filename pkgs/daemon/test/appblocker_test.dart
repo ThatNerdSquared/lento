@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:daemon/blockers/appblocker.dart';
 import 'package:daemon/blockers/platform_process_manager.dart';
+import 'package:daemon/db.dart' as db;
 import 'package:daemon/notifs.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
 @GenerateNiceMocks([
@@ -36,11 +40,16 @@ void main() {
     when(mockProcessManager.rawProcesses()).thenReturn([fakeRawProcess]);
     when(mockProcessManager.processInfo(fakeRawProcess))
         .thenReturn(fakeProcessInfo);
+    final tempDB =
+        File(p.join(Directory.systemTemp.createTempSync().path, 'lento.db'));
+    db.init(path: tempDB.path);
   });
 
+  tearDown(db.reset);
+
   test('blocked app is killed with popup', () {
+    db.saveAppData(fakeApps);
     final appBlocker = AppBlocker(
-      apps: fakeApps,
       processManager: mockProcessManager,
       notifManager: mockNotifManager,
     );
@@ -52,9 +61,9 @@ void main() {
 
   test('restricted app is reopened with approval', () {
     when(mockNotifManager.promptUserToUnblock(fakeAppName)).thenReturn(true);
+    db.saveAppData(fakeRestrictedApps);
 
     final appBlocker = AppBlocker(
-      apps: fakeRestrictedApps,
       processManager: mockProcessManager,
       notifManager: mockNotifManager,
     );
@@ -69,9 +78,9 @@ void main() {
 
   test('restricted app remains closed if no approval given', () {
     when(mockNotifManager.promptUserToUnblock(fakeAppName)).thenReturn(false);
+    db.saveAppData(fakeRestrictedApps);
 
     final appBlocker = AppBlocker(
-      apps: fakeRestrictedApps,
       processManager: mockProcessManager,
       notifManager: mockNotifManager,
     );
@@ -85,14 +94,14 @@ void main() {
   });
 
   test('previously allowed restricted app is not affected', () {
+    db.saveAppData({
+      fakeAppName: {
+        'isRestrictedAccess': true,
+        'popupMessage': fakePopupMsg,
+        'canBypassRestriction': true,
+      }
+    });
     final appBlocker = AppBlocker(
-      apps: {
-        fakeAppName: {
-          'isRestrictedAccess': true,
-          'popupMessage': fakePopupMsg,
-          'canBypassRestriction': true,
-        }
-      },
       processManager: mockProcessManager,
       notifManager: mockNotifManager,
     );

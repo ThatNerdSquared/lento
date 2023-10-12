@@ -18,13 +18,11 @@ void main() {
     );
   });
 
-  group('verify inserted socks version is 5', () {
-    test('verify version is 5 with new user.js', () {
-      expect(addPayloadToUserJS([]), endsWith('5);'));
-    });
+  test('verify inserted socks version is 5 with new user.js', () {
+    expect(addPayloadToUserJS([]), endsWith('5);'));
+  });
 
-    test('verify version is 5 with existing user.js', () {
-      expect(addPayloadToUserJS(['console.log(var)']), endsWith('5);'));
-    });
+  test('verify inserted socks version is 5 with existing user.js', () {
+    expect(addPayloadToUserJS(['console.log(var)']), endsWith('5);'));
   });
 }

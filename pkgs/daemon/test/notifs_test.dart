@@ -1,12 +1,19 @@
+import 'dart:io';
+
 import 'package:clock/clock.dart';
 import 'package:daemon/db.dart' as db;
 import 'package:daemon/notifs.dart';
+import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
 void main() {
   final mockNowDate = DateTime.now();
 
-  setUp(() => db.init(isTest: true));
+  setUp(() {
+    final tempDB =
+        File(p.join(Directory.systemTemp.createTempSync().path, 'lento.db'));
+    db.init(path: tempDB.path);
+  });
 
   tearDown(db.reset);
 

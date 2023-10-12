@@ -1,54 +1,50 @@
 import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
+import 'package:meta/meta.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'config.dart';
 import 'notifs.dart';
 
-/// Below is a summary of the information cardInfo stores.
+// i tried to make these extension methods, but for some reason
+// it didn't work and idk why so they're just funcs for now
+bool toBool(int x) => x == 1;
+// ignore: avoid_positional_boolean_parameters
+int toInt(bool x) => (x ? 1 : 0);
 
-/// cardInfo {
-/// apps : {procName : {isSoftBlock: <bool>, isAllowed: <bool>, popupMessage: <String>, lastOpened: <DateTime>}},
-/// websites : {url: {isSoftBlock: <bool>, isAllowed: <bool>, popupMessage: <String>, lastOpened: <DateTime>}},
-/// bannerText : [{bannerTitle: bannerMessage}],
-/// blockDuration : <int>,
-/// bannerTriggerTimes : [<int>],
-/// }
+@immutable
+class BlockedAppItem {
+  final String name;
+  final bool isRestrictedAccess;
+  final String? popupMessage;
+  final DateTime? lastChallenged;
+  final bool canBypassRestriction;
+
+  BlockedAppItem({
+    required this.name,
+    required this.isRestrictedAccess,
+    required this.popupMessage,
+    required this.lastChallenged,
+    required this.canBypassRestriction,
+  });
+}
 
 bool initialized = false;
 final log = Logger('File: db.dart');
-bool isForTest = false;
+String dbPath = '';
 
-Future<bool> checkForDB() async {
-  final dbFile = File(dbFilePath);
-  final doesFileExist = await dbFile.exists();
-  if (doesFileExist) {
-    final db = sqlite3.open(dbFilePath);
-    final timeExists = db.select('SELECT * FROM timer').isEmpty ? false : true;
-    db.dispose();
-    return timeExists;
-  } else {
-    return false;
-  }
-}
-
-Database _openDB() {
-  return sqlite3.open(isForTest ? testDbFilePath : dbFilePath);
-}
-
-void init({bool isTest = false}) {
-  isForTest = isTest;
-  final db = _openDB();
+void init({required String path}) {
+  dbPath = path;
+  final db = sqlite3.open(dbPath);
   db.execute('''
     PRAGMA user_version = 1;
 
-    CREATE TABLE app_blocks(
-      proc_name varchar(100),
-      is_soft_block int,
-      is_allowed int,
-      popup_msg varchar(200),
-      last_opened varchar(50),
-      perm_closed int
+    CREATE TABLE $blockedAppsTable(
+      name varchar(100),
+      isRestrictedAccess int,
+      popupMessage varchar(100),
+      lastChallenged varchar(50),
+      canBypassRestriction int
     );
 
     CREATE TABLE website_blocks(
@@ -76,44 +72,30 @@ void init({bool isTest = false}) {
   db.dispose();
 }
 
-Future<bool> mainTimerLoopExists() async {
-  if (await File(dbFilePath).exists()) {
-    final db = sqlite3.open(dbFilePath);
-    final exists = db.select('SELECT * FROM timer').isEmpty ? false : true;
-
-    db.dispose();
-    return exists;
-  } else {
-    init();
-    print('made db');
+bool mainTimerLoopExists() {
+  if (!File(defaultDBFilePath).existsSync()) {
     return false;
   }
+  final db = sqlite3.open(dbPath);
+  final exists = db.select('SELECT * FROM timer').isEmpty;
+  db.dispose();
+  return !exists;
 }
 
 void saveAppData(Map apps) {
-  final db = _openDB();
-  var appData = '';
-  for (String procName in apps.keys) {
-    // save app data to db
-    // log.info("*********");
-    // log.info(procName.toString());
-    bool isSoftBlock = apps[procName]['isRestrictedAccess'];
-    // log.info(isSoftBlock.toString());
-    var isSoftBlockInt = isSoftBlock ? 1 : 0;
-    // log.info(isSoftBlockInt.toString());
-    bool isAllowed = apps[procName]['isAllowed'];
-    // log.info(isAllowed.toString());
-    var isAllowedInt = isAllowed ? 1 : 0;
-    // log.info(isAllowedInt.toString());
-    String popupMessage = apps[procName]['popupMessage'];
-    // log.info(popupMessage.toString());
-    var lastOpened = apps[procName]['lastOpened'].toString();
-    // log.info(lastOpened.toString());
-    // var permClosed = apps[procName]['']
+  final db = sqlite3.open(dbPath);
+  final appInsertCmds = [];
 
-    appData +=
-        '''INSERT INTO app_blocks (proc_name, is_soft_block, is_allowed, popup_msg, last_opened)
-        VALUES ("$procName", $isSoftBlockInt, $isAllowedInt, "$popupMessage", "$lastOpened");\n''';
+  for (final name in apps.keys) {
+    final isRestrictedAccess = toInt(apps[name]['isRestrictedAccess']);
+    final popupMessage = apps[name]['popupMessage'];
+    final lastChallenged = apps[name]['lastChallenged'];
+    final canBypassRestriction = apps[name]['canBypassRestriction'] ?? 0;
+
+    appInsertCmds.add(
+      '''INSERT INTO $blockedAppsTable (name, isRestrictedAccess, popupMessage, lastChallenged, canBypassRestriction)
+        VALUES ("$name", $isRestrictedAccess, "$popupMessage", "$lastChallenged", $canBypassRestriction);''',
+    );
   }
 
   /// always use double quotes when inserting strings to db via sqlite,
@@ -122,17 +104,16 @@ void saveAppData(Map apps) {
 
   db.execute('''
   BEGIN TRANSACTION;
-  $appData
+  ${appInsertCmds.join('\n')}
   COMMIT;
   ''');
   db.dispose();
 }
 
 void saveWebsiteData(Map websites) {
-  final db = _openDB();
+  final db = sqlite3.open(dbPath);
   var websiteData = '';
   for (String url in websites.keys) {
-    // save app data to db
     bool isSoftBlock = websites[url]['isRestrictedAccess'];
     var isSoftBlockInt = isSoftBlock ? 1 : 0;
     bool isAllowed = websites[url]['isAllowed'];
@@ -155,7 +136,7 @@ void saveWebsiteData(Map websites) {
 }
 
 void saveBannerData(List bannerText, List bannerTriggerTimes) {
-  final db = _openDB();
+  final db = sqlite3.open(dbPath);
   var bannerData = '';
   for (var pair in IterableZip([bannerText, bannerTriggerTimes])) {
     log.info(pair.elementAt(0));
@@ -177,8 +158,8 @@ void saveBannerData(List bannerText, List bannerTriggerTimes) {
   db.dispose();
 }
 
-void saveTime(DateTime endTime) {
-  final db = _openDB();
+void saveEndTime(DateTime endTime) {
+  final db = sqlite3.open(dbPath);
   final endTimeString = endTime.toString();
   db.execute('''
   INSERT INTO timer (end_time)
@@ -189,7 +170,7 @@ void saveTime(DateTime endTime) {
 }
 
 Map buildAppInfo() {
-  final db = _openDB();
+  final db = sqlite3.open(dbPath);
   var apps = {}; // add apps to cardInfo from db
   List dbAppBlockInfo = db.select('''
   SELECT * FROM app_blocks
@@ -217,7 +198,7 @@ Map buildAppInfo() {
 }
 
 Map buildWebsiteInfo() {
-  final db = _openDB();
+  final db = sqlite3.open(dbPath);
   var websites = {}; // add websites to cardInfo from db
   List dbWebsiteBlockInfo = db.select('''
   SELECT * FROM website_blocks
@@ -243,7 +224,7 @@ Map buildWebsiteInfo() {
 }
 
 List buildBannerInfo() {
-  final db = _openDB();
+  final db = sqlite3.open(dbPath);
   var bannerText = [];
   var bannerTriggerTimes = [];
 
@@ -260,9 +241,9 @@ List buildBannerInfo() {
   return [bannerText, bannerTriggerTimes];
 }
 
-DateTime buildTimeInfo() {
-  final db = _openDB();
-  List dbTimeInfo = db.select('''
+DateTime getEndTime() {
+  final db = sqlite3.open(dbPath);
+  final dbTimeInfo = db.select('''
   SELECT * FROM timer
   ''');
 
@@ -271,12 +252,12 @@ DateTime buildTimeInfo() {
 }
 
 void reset() {
-  final db = File(isForTest ? testDbFilePath : dbFilePath);
+  final db = File(dbPath);
   db.deleteSync();
 }
 
 void saveBannerQueue(List<BannerNotif> bannerQueue) {
-  final db = _openDB();
+  final db = sqlite3.open(dbPath);
   final cmd = [
     'INSERT INTO $bannerQueueTable (queueNum, title, message, triggerTime) VALUES'
   ];
@@ -292,8 +273,8 @@ void saveBannerQueue(List<BannerNotif> bannerQueue) {
 }
 
 List<BannerNotif> getBannerQueue() {
-  final db = _openDB();
-  List rawBanners = db.select('SELECT * FROM $bannerQueueTable');
+  final db = sqlite3.open(dbPath);
+  final rawBanners = db.select('SELECT * FROM $bannerQueueTable');
   db.dispose();
   return rawBanners
       .map((rb) => BannerNotif(
@@ -304,10 +285,53 @@ List<BannerNotif> getBannerQueue() {
 }
 
 void popBannerOffQueue() {
-  final db = _openDB();
+  final db = sqlite3.open(dbPath);
   db.execute('''
   DELETE FROM $bannerQueueTable WHERE queueNum = (SELECT min(queueNum) FROM $bannerQueueTable);
   ''');
   log.info('Top banner popped off queue.');
+  db.dispose();
+}
+
+bool isNotBlockedApp(String appName) {
+  final db = sqlite3.open(dbPath);
+  final blockedAppNames = db.select('SELECT name FROM $blockedAppsTable');
+  db.dispose();
+  return !blockedAppNames.rows.any((e) => e[0] == appName);
+}
+
+BlockedAppItem getBlockedApp(String appName) {
+  final db = sqlite3.open(dbPath);
+  final blockedApp = db.select(
+    'SELECT * FROM $blockedAppsTable WHERE name = "$appName"',
+  )[0];
+  db.dispose();
+  return BlockedAppItem(
+    name: blockedApp['name'],
+    isRestrictedAccess: toBool(blockedApp['isRestrictedAccess']),
+    popupMessage: blockedApp['popupMessage'],
+    lastChallenged: blockedApp['lastChallenged'] == 'null'
+        ? null
+        : DateTime.parse(blockedApp['lastChallenged']),
+    canBypassRestriction: toBool(blockedApp['canBypassRestriction']),
+  );
+}
+
+void recordAppChallenge(BlockedAppItem app) {
+  final db = sqlite3.open(dbPath);
+  db.execute(
+    'UPDATE $blockedAppsTable SET lastChallenged = "${DateTime.now()}" WHERE name = "${app.name}"',
+  );
+  db.dispose();
+}
+
+void setRestrictionBypass({
+  required BlockedAppItem app,
+  required bool canBypassRestriction,
+}) {
+  final db = sqlite3.open(dbPath);
+  db.execute(
+    'UPDATE $blockedAppsTable SET canBypassRestriction = ${toInt(canBypassRestriction)} WHERE name = "${app.name}"',
+  );
   db.dispose();
 }
