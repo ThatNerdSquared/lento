@@ -56,7 +56,7 @@ class AppBlocker {
       }
       log.info('APP: RESTRICTED: extended usage for ${process.name}');
       db.recordAppChallenge(detectedApp);
-      db.setRestrictionBypass(app: detectedApp, canBypassRestriction: true);
+      db.setAppRestrictionBypass(app: detectedApp, canBypassRestriction: true);
       processManager.restartProcess(process);
     }
   }

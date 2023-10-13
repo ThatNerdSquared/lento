@@ -81,7 +81,6 @@ class LentoDaemon {
       notifManager: notifManager,
     );
     final proxy = LentoProxy(
-      websites: websites!,
       proxySettings: proxySettings,
       notifManager: notifManager,
     );
@@ -90,7 +89,7 @@ class LentoDaemon {
     if (newBlock && !nullArgs) {
       final bannerQueue = notifManager.buildBannerQueue(banners);
       db.saveAppData(apps);
-      // db.saveWebsiteData(websites);
+      db.saveWebsiteData(websites);
       db.saveBannerQueue(bannerQueue);
       db.saveEndTime(blockEndTime);
     }

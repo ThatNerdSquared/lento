@@ -7,3 +7,4 @@ int restrictionBypassTTL = 15;
 
 const bannerQueueTable = 'bannerQueue';
 const blockedAppsTable = 'blockedApps';
+const blockedSitesTable = 'blockedSites';

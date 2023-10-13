@@ -3,54 +3,22 @@ import 'package:logging/logging.dart';
 import 'package:socks5_proxy/enums/command_reply_code.dart';
 import 'package:socks5_proxy/socks_server.dart';
 import '../config.dart';
+import '../db.dart' as db;
 import '../notifs.dart';
 import 'browser_compat_check.dart';
 import 'platform_proxy_settings.dart';
-
-class BlockedWebsiteItem {
-  final bool isRestrictedAccess;
-  final String? popupMessage;
-  DateTime? lastChallenged;
-  bool canBypassRestriction;
-
-  BlockedWebsiteItem(
-      {required this.isRestrictedAccess,
-      required this.popupMessage,
-      this.lastChallenged,
-      this.canBypassRestriction = false});
-
-  /// Used to avoid showing popups repeatedly, which happens when
-  /// a blocked site sends multiple requests from loading assets, etc
-  bool wasRecentlyChallenged() {
-    return lastChallenged != null &&
-        DateTime.now().difference(lastChallenged!).inSeconds < 3;
-  }
-
-  void setChallenged() {
-    lastChallenged = DateTime.now();
-  }
-}
 
 class LentoProxy {
   final log = Logger('Class: ProxyController');
   late SocksServer socksServer;
   late ServerSocket proxy;
-  Map<Uri, BlockedWebsiteItem> blockedSites = {};
   NotifManager notifManager;
   PlatformProxySettings proxySettings;
 
   LentoProxy({
-    required Map websites,
     required this.proxySettings,
     required this.notifManager,
-  }) : blockedSites = websites.map((key, value) {
-          return MapEntry(
-              Uri(host: key),
-              BlockedWebsiteItem(
-                isRestrictedAccess: value['isRestrictedAccess'],
-                popupMessage: value['popupMessage'],
-              ));
-        });
+  });
 
   Future<void> setup() async {
     socksServer = SocksServer();
@@ -64,11 +32,12 @@ class LentoProxy {
   }
 
   void handler(Connection connection) async {
-    final detectedSiteUrl = detectBlockedSite(connection.desiredAddress.host);
+    final detectedSiteUrl =
+        db.detectBlockedSite(connection.desiredAddress.host);
     if (detectedSiteUrl == null) {
       return await connection.forward();
     }
-    final detectedSite = blockedSites[detectedSiteUrl]!;
+    final detectedSite = db.getBlockedSite(detectedSiteUrl);
 
     if (!detectedSite.isRestrictedAccess) {
       log.info('WEBSITE: BLOCKED: $detectedSiteUrl blocked');
@@ -102,29 +71,29 @@ class LentoProxy {
   /// considering the different types of TLDs, etc.
   ///
   /// besides, i think this also works if you want to block a specific subdomain?
-  Uri? detectBlockedSite(String rawURL) {
-    for (final site in blockedSites.keys) {
-      if (rawURL.contains(site.host)) {
-        return site;
-      }
-    }
-    return null;
-  }
+  // Uri? detectBlockedSite(String rawURL) {
+  //   for (final site in blockedSites.keys) {
+  //     if (rawURL.contains(site.host)) {
+  //       return site;
+  //     }
+  //   }
+  //   return null;
+  // }
 
   Future<void> challengeRestrictedAccess(
     Uri detectedSiteUrl,
-    BlockedWebsiteItem detectedSite,
+    db.BlockedWebsiteItem detectedSite,
     Connection connection,
   ) async {
     if (detectedSite.wasRecentlyChallenged() ||
         !notifManager.promptUserToUnblock(detectedSiteUrl.host)) {
       log.info('WEBSITE: RESTRICTED: $detectedSiteUrl blocked');
-      detectedSite.lastChallenged = DateTime.now();
+      db.recordSiteChallenge(detectedSite);
       return await connection.reject(CommandReplyCode.connectionDenied);
     }
     log.info('WEBSITE: RESTRICTED: extended usage for $detectedSiteUrl');
-    detectedSite.setChallenged();
-    detectedSite.canBypassRestriction = true;
+    db.recordSiteChallenge(detectedSite);
+    db.setSiteRestrictionBypass(site: detectedSite, canBypassRestriction: true);
     return await connection.forward();
   }
 

@@ -12,6 +12,10 @@ bool toBool(int x) => x == 1;
 // ignore: avoid_positional_boolean_parameters
 int toInt(bool x) => (x ? 1 : 0);
 
+bool initialized = false;
+final log = Logger('File: db.dart');
+String dbPath = '';
+
 @immutable
 class BlockedAppItem {
   final String name;
@@ -29,9 +33,33 @@ class BlockedAppItem {
   });
 }
 
-bool initialized = false;
-final log = Logger('File: db.dart');
-String dbPath = '';
+@immutable
+class BlockedWebsiteItem {
+  final Uri url;
+  final bool isRestrictedAccess;
+  final String? popupMessage;
+  final DateTime? lastChallenged;
+  final bool canBypassRestriction;
+
+  BlockedWebsiteItem({
+    required this.url,
+    required this.isRestrictedAccess,
+    required this.popupMessage,
+    required this.lastChallenged,
+    required this.canBypassRestriction,
+  });
+
+  /// Used to avoid showing popups repeatedly, which happens when
+  /// a blocked site sends multiple requests from loading assets, etc
+  bool wasRecentlyChallenged() {
+    return lastChallenged != null &&
+        DateTime.now().difference(lastChallenged!).inSeconds < 3;
+  }
+
+  void setChallenged() {
+    // lastChallenged = DateTime.now();
+  }
+}
 
 void init({required String path}) {
   dbPath = path;
@@ -47,13 +75,12 @@ void init({required String path}) {
       canBypassRestriction int
     );
 
-    CREATE TABLE website_blocks(
+    CREATE TABLE $blockedSitesTable(
       url varchar(200),
-      is_soft_block int,
-      is_allowed int, 
-      popup_msg varchar(200),
-      last_opened varchar(50),
-      perm_closed int
+      isRestrictedAccess int,
+      popupMessage varchar(100),
+      lastChallenged varchar(50),
+      canBypassRestriction int
     );
 
     CREATE TABLE $bannerQueueTable(
@@ -112,23 +139,22 @@ void saveAppData(Map apps) {
 
 void saveWebsiteData(Map websites) {
   final db = sqlite3.open(dbPath);
-  var websiteData = '';
+  final siteInsertCmds = [];
   for (String url in websites.keys) {
-    bool isSoftBlock = websites[url]['isRestrictedAccess'];
-    var isSoftBlockInt = isSoftBlock ? 1 : 0;
-    bool isAllowed = websites[url]['isAllowed'];
-    var isAllowedInt = isAllowed ? 1 : 0;
-    String popupMessage = websites[url]['popupMessage'];
-    var lastOpened = websites[url]['lastOpened'].toString();
+    final isRestrictedAccess = toInt(websites[url]['isRestrictedAccess']);
+    final popupMessage = websites[url]['popupMessage'];
+    final lastChallenged = websites[url]['lastChallenged'];
+    final canBypassRestriction = websites[url]['canBypassRestriction'] ?? 0;
 
-    websiteData +=
-        '''INSERT INTO website_blocks (url, is_soft_block, is_allowed, popup_msg, last_opened)
-        VALUES ("$url", $isSoftBlockInt, $isAllowedInt, "$popupMessage", "$lastOpened");\n''';
+    siteInsertCmds.add(
+      '''INSERT INTO $blockedSitesTable (url, isRestrictedAccess, popupMessage, lastChallenged, canBypassRestriction)
+        VALUES ("$url", $isRestrictedAccess, "$popupMessage", "$lastChallenged", $canBypassRestriction);''',
+    );
   }
 
   db.execute('''
   BEGIN TRANSACTION;
-  $websiteData
+  ${siteInsertCmds.join('\n')}
   COMMIT;
   ''');
 
@@ -325,13 +351,61 @@ void recordAppChallenge(BlockedAppItem app) {
   db.dispose();
 }
 
-void setRestrictionBypass({
+void setAppRestrictionBypass({
   required BlockedAppItem app,
   required bool canBypassRestriction,
 }) {
   final db = sqlite3.open(dbPath);
   db.execute(
     'UPDATE $blockedAppsTable SET canBypassRestriction = ${toInt(canBypassRestriction)} WHERE name = "${app.name}"',
+  );
+  db.dispose();
+}
+
+Uri? detectBlockedSite(String rawURL) {
+  final db = sqlite3.open(dbPath);
+  final blockedSiteURLs = db.select('SELECT url FROM $blockedSitesTable');
+  db.dispose();
+  for (final row in blockedSiteURLs.rows) {
+    if (rawURL.contains(row.first.toString())) {
+      return Uri(host: row.first.toString());
+    }
+  }
+  return null;
+}
+
+BlockedWebsiteItem getBlockedSite(Uri siteURL) {
+  final db = sqlite3.open(dbPath);
+  final blockedSite = db.select(
+    'SELECT * FROM $blockedSitesTable WHERE url = "${siteURL.host}"',
+  )[0];
+  db.dispose();
+  return BlockedWebsiteItem(
+    url: siteURL,
+    isRestrictedAccess: toBool(blockedSite['isRestrictedAccess']),
+    popupMessage: blockedSite['popupMessage'],
+    lastChallenged: blockedSite['lastChallenged'] == 'null'
+        ? null
+        : DateTime.parse(blockedSite['lastChallenged']),
+    canBypassRestriction: toBool(blockedSite['canBypassRestriction']),
+  );
+}
+
+void recordSiteChallenge(BlockedWebsiteItem site) {
+  final db = sqlite3.open(dbPath);
+  db.execute(
+    'UPDATE $blockedSitesTable SET lastChallenged = "${DateTime.now()}" WHERE url = "${site.url.toString()}"',
+  );
+  db.dispose();
+}
+
+void setSiteRestrictionBypass({
+  required BlockedWebsiteItem site,
+  required bool canBypassRestriction,
+}) {
+  final db = sqlite3.open(dbPath);
+  db.execute(
+    'UPDATE $blockedSitesTable SET canBypassRestriction = ${toInt(canBypassRestriction)} WHERE url = "${site.url.toString()}"',
   );
   db.dispose();
 }
