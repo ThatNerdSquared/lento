@@ -1,0 +1,63 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "client",
+            "cwd": "pkgs/client",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "client (profile mode)",
+            "cwd": "pkgs/client",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "client (release mode)",
+            "cwd": "pkgs/client",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "daemon (dev mode)",
+            "cwd": "pkgs/daemon",
+            "request": "launch",
+            "type": "dart",
+            "program": "bin/daemon.dart",
+            "args": ["--devmode"]
+        },
+        {
+            "name": "daemon (release mode)",
+            "cwd": "pkgs/daemon",
+            "request": "launch",
+            "type": "dart",
+            "program": "bin/daemon.dart"
+        },
+        {
+            "name": "notif_helper",
+            "cwd": "pkgs/notif_helper",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "notif_helper (profile mode)",
+            "cwd": "pkgs/notif_helper",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "notif_helper (release mode)",
+            "cwd": "pkgs/notif_helper",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

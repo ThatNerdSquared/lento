@@ -12,15 +12,21 @@ import 'notifs.dart';
 
 class LentoDaemon {
   final log = Logger('Class: LentoDaemon');
+  bool devModeEnabled;
+
+  LentoDaemon({required devMode}) : devModeEnabled = devMode ?? false;
 
   void entry() async {
+    devModeEnabled
+        ? log.info('Dev mode enabled. Using alternate notifhelper path.')
+        : null;
     if (db.mainTimerLoopExists()) {
       log.info('Resuming block after crash...');
-      startBlock(newBlock: false);
+      startBlock();
     } else {
       log.info('Listening for new block data...');
       final daemonServer = await ServerSocket.bind('localhost', 0);
-      // saveDaemonPortToSettings(daemonServer.port);
+      saveDaemonPortToSettings(daemonServer.port);
       log.info('DaemonServer on port ${daemonServer.port}.');
       daemonServer.listen(handleConnection);
     }
@@ -32,19 +38,20 @@ class LentoDaemon {
     client.listen((cardInfoData) {
       db.init(path: defaultDBFilePath);
 
-      final cardInfoString = String.fromCharCodes(
-        cardInfoData,
-      );
+      final cardInfoString = String.fromCharCodes(cardInfoData);
       Map cardInfo = json.decode(cardInfoString);
       log.info('Received cardInfo.');
 
-      startBlock(
-        newBlock: true,
-        apps: cardInfo['apps'],
-        websites: cardInfo['websites'],
-        duration: cardInfo['blockDuration'],
-        banners: cardInfo['banners'],
+      final bannerQueue = NotifManager.buildBannerQueue(cardInfo['banners']);
+      db.saveAppData(cardInfo['apps']);
+      db.saveWebsiteData(cardInfo['websites']);
+      db.saveBannerQueue(bannerQueue);
+      final endTime = DateTime.now().add(
+        Duration(seconds: cardInfo['blockDuration']),
       );
+      db.saveEndTime(endTime);
+
+      startBlock(endTime: endTime);
       client.close();
     }, onError: (error) {
       log.shout(error);
@@ -54,28 +61,12 @@ class LentoDaemon {
     });
   }
 
-  Future<void> startBlock({
-    required bool newBlock,
-    Map? apps,
-    Map? websites,
-    int? duration,
-    Map? banners,
-  }) async {
-    final nullArgs =
-        apps == null || websites == null || duration == null || banners == null;
-    if (newBlock && nullArgs) {
-      throw ArgumentError('New blocks must provide block data!');
-    }
-
-    final blockEndTime = duration != null
-        ? DateTime.now().add(
-            Duration(seconds: duration),
-          )
-        : db.getEndTime();
+  Future<void> startBlock({DateTime? endTime}) async {
+    final blockEndTime = endTime ?? db.getEndTime();
 
     final proxySettings = getPlatformProxySettings();
     final processManager = getPlatformProcessManager();
-    final notifManager = NotifManager();
+    final notifManager = NotifManager(devModeEnabled: devModeEnabled);
     final appBlocker = AppBlocker(
       processManager: processManager,
       notifManager: notifManager,
@@ -86,37 +77,33 @@ class LentoDaemon {
     );
     await proxy.setup();
 
-    if (newBlock && !nullArgs) {
-      final bannerQueue = notifManager.buildBannerQueue(banners);
-      db.saveAppData(apps);
-      db.saveWebsiteData(websites);
-      db.saveBannerQueue(bannerQueue);
-      db.saveEndTime(blockEndTime);
-    }
-
     Timer.periodic(const Duration(seconds: 1), (timer) {
       print('*******************************');
-      var diff = blockEndTime.difference(DateTime.now()).inSeconds;
-      log.info('$diff seconds left in block.');
-      if (blockEndTime.difference(DateTime.now()).inSeconds > 0) {
+      final remainingTime = blockEndTime.difference(DateTime.now()).inSeconds;
+      log.info('$remainingTime seconds left in block.');
+      if (remainingTime > 0) {
         appBlocker.blockApps();
         final bannerQueue = db.getBannerQueue();
         final bannerToFire = notifManager.checkForTriggeredBanners(bannerQueue);
         bannerToFire != null ? notifManager.fireBanner(bannerToFire) : null;
       } else {
+        timer.cancel();
         proxy.cleanup();
         db.reset();
-        timer.cancel();
         log.info('Block teardown complete.');
       }
     });
   }
 
-  void saveDaemonPortToSettings(int port) async {
-    var jsonSettings = await File(lentoSettingsPath).readAsString();
-    Map settings = jsonDecode(jsonSettings);
-    settings['daemon_port'] = port;
-    jsonSettings = json.encode(settings);
-    File(lentoSettingsPath).writeAsString(jsonSettings);
+  Future<void> saveDaemonPortToSettings(int port) async {
+    final settingsFile = File(lentoSettingsPath);
+    if (await settingsFile.exists()) {
+      final rawJSON = await File(lentoSettingsPath).readAsString();
+      final settings = jsonDecode(rawJSON);
+      settings['daemonPort'] = port;
+      return settingsFile.writeAsStringSync(json.encode(settings));
+    }
+    await settingsFile.create();
+    await settingsFile.writeAsString('{"daemonPort": $port}');
   }
 }

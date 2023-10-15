@@ -20,7 +20,7 @@ void main() {
   test('return empty list when conversion to queue performed on empty map', () {
     final res = withClock(
       Clock(() => mockNowDate),
-      () => NotifManager().buildBannerQueue({}),
+      () => NotifManager.buildBannerQueue({}),
     );
     expect([], res);
   });
@@ -35,7 +35,7 @@ void main() {
     };
     final res = withClock(
       Clock(() => mockNowDate),
-      () => NotifManager().buildBannerQueue(banners),
+      () => NotifManager.buildBannerQueue(banners),
     );
     expect(res, isList);
     expect(res, hasLength(1));
@@ -59,7 +59,7 @@ void main() {
     };
     final res = withClock(
       Clock(() => mockNowDate),
-      () => NotifManager().buildBannerQueue(banners),
+      () => NotifManager.buildBannerQueue(banners),
     );
     expect(res, hasLength(2));
     expect(res[0].triggerTime, mockNowDate.add(Duration(seconds: 1)));
@@ -83,7 +83,7 @@ void main() {
     };
     final res = withClock(
       Clock(() => mockNowDate),
-      () => NotifManager().buildBannerQueue(banners),
+      () => NotifManager.buildBannerQueue(banners),
     );
     expect(res, hasLength(4));
     expect(res[0].triggerTime, mockNowDate.add(Duration(seconds: 20)));
@@ -96,7 +96,9 @@ void main() {
     expect(
         withClock(
           Clock(() => mockNowDate),
-          () => NotifManager().checkForTriggeredBanners([]),
+          () => NotifManager(
+            devModeEnabled: false,
+          ).checkForTriggeredBanners([]),
         ),
         isNull);
     final dbRes = db.getBannerQueue();
@@ -112,8 +114,10 @@ void main() {
     ];
     db.saveBannerQueue(fakeBanners);
 
-    final res = withClock(Clock(() => mockNowDate),
-        () => NotifManager().checkForTriggeredBanners(fakeBanners));
+    final res = withClock(
+        Clock(() => mockNowDate),
+        () => NotifManager(devModeEnabled: false)
+            .checkForTriggeredBanners(fakeBanners));
     final dbRes = db.getBannerQueue();
     expect(res, isNull);
     expect(dbRes, hasLength(1));
@@ -130,8 +134,10 @@ void main() {
     ];
     db.saveBannerQueue(fakeBanners);
 
-    final res = withClock(Clock(() => mockNowDate),
-        () => NotifManager().checkForTriggeredBanners(fakeBanners));
+    final res = withClock(
+        Clock(() => mockNowDate),
+        () => NotifManager(devModeEnabled: false)
+            .checkForTriggeredBanners(fakeBanners));
     final dbRes = db.getBannerQueue();
     expect(res, TypeMatcher<BannerNotif>());
     expect(res!.title, 'title1');
@@ -151,8 +157,10 @@ void main() {
     ];
     db.saveBannerQueue(fakeBanners);
 
-    final res = withClock(Clock(() => mockNowDate),
-        () => NotifManager().checkForTriggeredBanners(fakeBanners));
+    final res = withClock(
+        Clock(() => mockNowDate),
+        () => NotifManager(devModeEnabled: false)
+            .checkForTriggeredBanners(fakeBanners));
     final dbRes = db.getBannerQueue();
     expect(res, TypeMatcher<BannerNotif>());
     expect(res!.title, 'title-1');

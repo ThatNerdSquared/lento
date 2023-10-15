@@ -24,13 +24,28 @@ class BannerNotif {
 
 class NotifManager {
   final log = Logger('NotifManager');
+  bool devModeEnabled;
+
+  NotifManager({required this.devModeEnabled});
+
+  String _getNotifHelperPath() {
+    if (devModeEnabled) return devNotifHelperPath();
+    switch (Platform.operatingSystem) {
+      case 'macos':
+        return macOSNotifHelperPath;
+      default:
+        throw Exception(
+          'notifhelper path not specified for ${Platform.operatingSystem}!',
+        );
+    }
+  }
 
   String _callNotifHelper(
     NotifType type,
     String title,
     String msg,
   ) {
-    return (Process.runSync(notifHelperPath, [
+    return (Process.runSync(_getNotifHelperPath(), [
       switch (type) {
         NotifType.banner => 'banner',
         NotifType.question => 'question-popup',
@@ -65,7 +80,7 @@ class NotifManager {
     _callNotifHelper(NotifType.banner, banner.title, banner.message);
   }
 
-  List<BannerNotif> buildBannerQueue(Map banners) {
+  static List<BannerNotif> buildBannerQueue(Map banners) {
     final bannerQueue = <BannerNotif>[];
     for (final banner in banners.values) {
       for (final triggerTime in banner['triggerTimes']) {

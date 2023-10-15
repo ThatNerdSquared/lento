@@ -47,7 +47,7 @@ class LentoProxy {
           popupMsg: detectedSite.popupMessage,
         );
       }
-      detectedSite.setChallenged();
+      db.recordSiteChallenge(detectedSite);
       return await connection.reject(CommandReplyCode.connectionDenied);
     }
 

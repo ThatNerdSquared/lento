@@ -55,10 +55,6 @@ class BlockedWebsiteItem {
     return lastChallenged != null &&
         DateTime.now().difference(lastChallenged!).inSeconds < 3;
   }
-
-  void setChallenged() {
-    // lastChallenged = DateTime.now();
-  }
 }
 
 void init({required String path}) {
@@ -100,7 +96,7 @@ void init({required String path}) {
 }
 
 bool mainTimerLoopExists() {
-  if (!File(defaultDBFilePath).existsSync()) {
+  if (!File(dbPath).existsSync()) {
     return false;
   }
   final db = sqlite3.open(dbPath);
@@ -394,7 +390,7 @@ BlockedWebsiteItem getBlockedSite(Uri siteURL) {
 void recordSiteChallenge(BlockedWebsiteItem site) {
   final db = sqlite3.open(dbPath);
   db.execute(
-    'UPDATE $blockedSitesTable SET lastChallenged = "${DateTime.now()}" WHERE url = "${site.url.toString()}"',
+    'UPDATE $blockedSitesTable SET lastChallenged = "${DateTime.now()}" WHERE url = "${site.url.host.toString()}"',
   );
   db.dispose();
 }
