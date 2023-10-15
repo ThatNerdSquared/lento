@@ -1,3 +1,10 @@
+/// Firefox doesn't use SOCKS5 by default when using the system default
+/// proxy - it defaults to SOCKS4. Since our proxy only supports SOCKS5,
+/// [ensureFirefoxCompat] is required in order to inject a setting into
+/// the `user.js` config file to switch the default SOCKS version to 5.
+/// Hopefully at some point in the future this will become redundant -
+/// maybe we should file an issue with FF about it?
+
 import 'dart:io';
 
 import 'package:meta/meta.dart';

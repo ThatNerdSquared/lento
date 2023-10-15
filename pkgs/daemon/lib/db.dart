@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:sqlite3/sqlite3.dart';
@@ -157,29 +156,6 @@ void saveWebsiteData(Map websites) {
   db.dispose();
 }
 
-void saveBannerData(List bannerText, List bannerTriggerTimes) {
-  final db = sqlite3.open(dbPath);
-  var bannerData = '';
-  for (var pair in IterableZip([bannerText, bannerTriggerTimes])) {
-    log.info(pair.elementAt(0));
-    String bannerTitle = pair.elementAt(0).keys.elementAt(0);
-    String bannerMessage = pair.elementAt(0)[bannerTitle];
-    var bannerTriggerTime = pair.elementAt(1).toString();
-
-    bannerData +=
-        '''INSERT INTO banner (banner_title, banner_message, trigger_time)
-        VALUES ("$bannerTitle", "$bannerMessage", "$bannerTriggerTime");\n''';
-  }
-
-  db.execute('''
-  BEGIN TRANSACTION;
-  $bannerData
-  COMMIT;
-  ''');
-
-  db.dispose();
-}
-
 void saveEndTime(DateTime endTime) {
   final db = sqlite3.open(dbPath);
   final endTimeString = endTime.toString();
@@ -189,78 +165,6 @@ void saveEndTime(DateTime endTime) {
   ''');
 
   db.dispose();
-}
-
-Map buildAppInfo() {
-  final db = sqlite3.open(dbPath);
-  var apps = {}; // add apps to cardInfo from db
-  List dbAppBlockInfo = db.select('''
-  SELECT * FROM app_blocks
-  ''');
-
-  for (var appInfo in dbAppBlockInfo) {
-    String procName = appInfo['proc_name'];
-    int isSoftBlockInt = appInfo['is_soft_block'];
-    var isSoftBlock = isSoftBlockInt == 1 ? true : false;
-    int isAllowedInt = appInfo['is_allowed'];
-    var isAllowed = isAllowedInt == 1 ? true : false;
-    String popupMessage = appInfo['popup_msg'];
-    var lastOpened = DateTime.parse(appInfo['last_opened']);
-
-    apps[procName] = {
-      'isSoftBlock': isSoftBlock,
-      'isAllowed': isAllowed,
-      'popupMessage': popupMessage,
-      'lastOpened': lastOpened
-    };
-  }
-
-  db.dispose();
-  return apps;
-}
-
-Map buildWebsiteInfo() {
-  final db = sqlite3.open(dbPath);
-  var websites = {}; // add websites to cardInfo from db
-  List dbWebsiteBlockInfo = db.select('''
-  SELECT * FROM website_blocks
-  ''');
-
-  for (var websiteInfo in dbWebsiteBlockInfo) {
-    String url = websiteInfo['url'];
-    int isSoftBlockInt = websiteInfo['is_soft_block'];
-    var isSoftBlock = isSoftBlockInt == 1 ? true : false;
-    int isAllowedInt = websiteInfo['is_allowed'];
-    var isAllowed = isAllowedInt == 1 ? true : false;
-    String popupMessage = websiteInfo['popup_msg'];
-
-    websites[url] = {
-      'isSoftBlock': isSoftBlock,
-      'isAllowed': isAllowed,
-      'popupMessage': popupMessage
-    };
-  }
-
-  db.dispose();
-  return websites;
-}
-
-List buildBannerInfo() {
-  final db = sqlite3.open(dbPath);
-  var bannerText = [];
-  var bannerTriggerTimes = [];
-
-  List dbBannerInfo = db.select('''
-  SELECT * FROM banner
-  ''');
-
-  for (var bannerInfo in dbBannerInfo) {
-    bannerText.add({bannerInfo['banner_title']: bannerInfo['banner_message']});
-    bannerTriggerTimes.add(DateTime.parse(bannerInfo['trigger_time']));
-  }
-
-  db.dispose();
-  return [bannerText, bannerTriggerTimes];
 }
 
 DateTime getEndTime() {

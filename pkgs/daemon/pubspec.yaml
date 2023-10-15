@@ -10,9 +10,6 @@ environment:
 dependencies:
   sqlite3: ^2.1.0
   logging: ^1.2.0
-  collection: ^1.17.1
-  shelf_proxy: ^1.0.4
-  shelf: ^1.4.1
   socks5_proxy: ^1.0.3+dev.3
   path: ^1.8.3
   meta: ^1.10.0

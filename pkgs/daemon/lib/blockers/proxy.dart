@@ -65,21 +65,6 @@ class LentoProxy {
     return await connection.forward();
   }
 
-  /// as much as i hate needing to use this function to check if a given url
-  /// is the same as a blocked one, it's the only way i can think of to do it.
-  /// there's not really a good way to cut out subdomains, especially
-  /// considering the different types of TLDs, etc.
-  ///
-  /// besides, i think this also works if you want to block a specific subdomain?
-  // Uri? detectBlockedSite(String rawURL) {
-  //   for (final site in blockedSites.keys) {
-  //     if (rawURL.contains(site.host)) {
-  //       return site;
-  //     }
-  //   }
-  //   return null;
-  // }
-
   Future<void> challengeRestrictedAccess(
     Uri detectedSiteUrl,
     db.BlockedWebsiteItem detectedSite,
