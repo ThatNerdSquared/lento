@@ -1,0 +1,32 @@
+# todo
+
+- [ ] [CHARLIE] daemon interface
+- [ ] [NATHAN] json backend
+- [ ] [NATHAN] investigate flutter freezing when app backgrounded
+- [ ] [NATHAN] icon manager
+  - [ ] crash on icon manager icon load???
+- [ ] [NATHAN] right click menu support
+  - [ ] toggle restricted access
+  - [ ] edit block item
+  - [ ] delete the item
+- [ ] [CHARLIE] emoji support
+- [ ] [CHARLIE] mini deck
+- [ ] [CHARLIE] properly style blocklist item
+- [ ] [NATHAN] focus mode
+- [ ] [NATHAN] banner support on frontend
+  - [ ] scheduled events togglelist
+  - [ ] banner add form (with testing button)
+  - [ ] custom banner slider thing
+- [ ] [CHARLIE] build AppPicker for Windows
+- [ ] [CHARLIE] add block logging to backend
+- [ ] [CHARLIE] implement toolbar (functions, sizing, styling, etc)
+- [ ] [CHARLIE] solidify resizing
+- [ ] [CHARLIE] sound effects
+- [ ] [CHARLIE] plan website design
+- [ ] [NATHAN] add update mechanism
+- [ ] [CHARLIE] init view??? (double check w beta testers)
+- [ ] [CHARLIE] make timer wheels save only when you click outside them
+- [ ] [NATHAN] dark mode
+- [ ] [NATHAN] consolidate hover effects
+- [ ] [NATHAN] minimal keyboard shortcuts
+      ... other things
