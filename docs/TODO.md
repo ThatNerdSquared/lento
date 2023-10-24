@@ -1,7 +1,7 @@
 # todo
 
 - [ ] [CHARLIE] daemon interface
-- [-] [NATHAN] json backend
+- [x] [NATHAN] json backend
 - [ ] [NATHAN] investigate flutter freezing when app backgrounded
 - [ ] [NATHAN] icon manager
   - [ ] crash on icon manager icon load???

@@ -8,6 +8,8 @@ enum TimeSection { hours, minutes, seconds }
 
 enum BlockItemType { website, app }
 
+enum AppTheme { light, dark, system }
+
 class Config {
   static const double defaultMarginPercentage = 0.15;
 

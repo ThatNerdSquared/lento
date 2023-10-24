@@ -5,11 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../config.dart';
 import '../main.dart';
+import 'json_backend.dart';
 
 /// Class that controls a list of [LentoCardData].
 class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
-  LentoDeck(Map<String, LentoCardData>? initialDeck)
-      : super(initialDeck ?? <String, LentoCardData>{});
+  LentoDeck({
+    Map<String, LentoCardData>? initialDeck,
+  }) : super(initialDeck ?? <String, LentoCardData>{}) {
+    readDeck();
+  }
 
   void _findAndModifyCardAttribute(
     String cardId,
@@ -24,6 +28,14 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
     });
   }
 
+  void readDeck() {
+    state = JsonBackend().readDeckFromJson();
+  }
+
+  void _writeDeck() {
+    JsonBackend().writeDeckToJson(state);
+  }
+
   void updateCardTitle(String cardId, String newName) {
     _findAndModifyCardAttribute(
         cardId,
@@ -32,6 +44,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
             blockDuration: oldCard.blockDuration,
             isActivated: oldCard.isActivated,
             blockedSites: oldCard.blockedSites));
+    _writeDeck();
   }
 
   void activateCard(String cardId) {
@@ -42,6 +55,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
             blockDuration: oldCard.blockDuration,
             isActivated: true,
             blockedSites: oldCard.blockedSites));
+    _writeDeck();
   }
 
   void deactivateCard(String cardId) {
@@ -54,6 +68,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               isActivated: false,
               blockedSites: oldCard.blockedSites,
             ));
+    _writeDeck();
   }
 
   void updateCardTime({
@@ -82,14 +97,17 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                         : oldCard.blockDuration.seconds),
             isActivated: oldCard.isActivated,
             blockedSites: oldCard.blockedSites));
+    _writeDeck();
   }
 
   void addNewCard() {
     state[uuID.v4()] = const LentoCardData();
+    _writeDeck();
   }
 
   void removeCard({required String cardId}) {
     state.removeWhere((key, value) => key == cardId);
+    _writeDeck();
   }
 
   void addBlockedWebsite({
@@ -105,6 +123,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockedSites: {...oldCard.blockedSites, uuID.v4(): websiteData},
               blockedApps: oldCard.blockedApps,
             ));
+    _writeDeck();
   }
 
   void addBlockedApp({
@@ -120,6 +139,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockedSites: oldCard.blockedSites,
               blockedApps: {...oldCard.blockedApps, uuID.v4(): appData},
             ));
+    _writeDeck();
   }
 }
 
@@ -139,6 +159,22 @@ class LentoCardData {
     this.blockedSites = const {},
     this.blockedApps = const {},
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': cardName,
+      'blockDuration': blockDuration.presetTime,
+      'isActivated': isActivated,
+      'blockedSites': blockedSites.map((key, value) => MapEntry(
+            key,
+            value.toJson(),
+          )),
+      'blockedApps': blockedSites.map((key, value) => MapEntry(
+            key,
+            value.toJson(),
+          )),
+    };
+  }
 }
 
 @immutable
@@ -191,23 +227,43 @@ class BlockedWebsiteData {
     this.isRestrictedAccess = false,
     this.customPopupId,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'siteUrl': siteUrl.toString(),
+      'isEnabled': isEnabled,
+      'isRestrictedAccess': isRestrictedAccess,
+      'customPopupId': customPopupId,
+    };
+  }
 }
 
 @immutable
 class BlockedAppData {
   final String appName;
-  final Map<String, String> sourcePaths;
+  // does this need to exist?
+  final Map<String, String>? sourcePaths;
   final bool isEnabled;
   final bool isRestrictedAccess;
   final String? customPopupId;
 
   const BlockedAppData({
     required this.appName,
-    required this.sourcePaths,
+    this.sourcePaths,
     this.isEnabled = true,
     this.isRestrictedAccess = false,
     this.customPopupId,
   });
 
-  String? get currentSourcePath => sourcePaths[Platform.operatingSystem];
+  // does this need to exist?
+  String? get currentSourcePath => sourcePaths![Platform.operatingSystem];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'appName': appName,
+      'isEnabled': isEnabled,
+      'isRestrictedAccess': isRestrictedAccess,
+      'customPopupId': customPopupId,
+    };
+  }
 }

@@ -20,18 +20,6 @@ final iconManager = IconManager();
 String platformAppSupportDir = '';
 
 final mockIds = [uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4()];
-final mockDeck = {
-  mockIds[0]: const LentoCardData(
-    blockDuration: CardTime.fromPresetTime(61),
-  ),
-  mockIds[1]: const LentoCardData(
-    cardName: 'Card 2',
-    blockDuration: CardTime.fromPresetTime(5),
-  ),
-  mockIds[2]: const LentoCardData(
-    cardName: 'code wrangling',
-  ),
-};
 final mockPopups = {
   mockIds[3]: const CustomPopup(
     customMessage:
@@ -43,7 +31,7 @@ final mockPopups = {
 };
 final lentoDeckProvider =
     StateNotifierProvider<LentoDeck, Map<String, LentoCardData>>(
-        (ref) => LentoDeck(mockDeck));
+        (ref) => LentoDeck());
 final customPopupListProvider =
     StateNotifierProvider<CustomPopupList, Map<String, CustomPopup>>(
         (ref) => CustomPopupList(initialPopupList: mockPopups));
@@ -93,7 +81,6 @@ class LentoHome extends ConsumerStatefulWidget {
 
 class LentoHomeState extends ConsumerState<LentoHome> {
   int pageViewIndex = 0;
-  int limitIndex = mockDeck.length;
 
   final PageController controller = PageController(
     viewportFraction: 0.8,
@@ -102,6 +89,7 @@ class LentoHomeState extends ConsumerState<LentoHome> {
 
   @override
   Widget build(BuildContext context) {
+    final limitIndex = ref.read(lentoDeckProvider).entries.length;
     return Scaffold(
         body: Center(
             child: Padding(
