@@ -1,67 +1,70 @@
 {
     "schema": "1.0.0",
-    "activated_card": "Code Wrangling",
+    "activatedCard": "Code Wrangling",
     "cards": {
-        "Code Wrangling": {
-            "id": "0025bc7c-1d1b-4bca-84d7-9bb59f204e2d",
+        "0025bc7c-1d1b-4bca-84d7-9bb59f204e2d": {
             "name": "Code Wrangling",
             "emoji": "💻",
-            "time": 5400,
-            "blocked_sites": {
-                "twitter.com": {
-                    "enabled": false,
-                    "restricted_access": false,
-                    "icon_path": "~/Library/Application Support/Lento/twitter.com.png",
-                    "associated_popup": null
+            "blockDuration": 5400,
+            "blockedSites": {
+                "fae18d91-5e7f-47ab-8545-87eced1e96bc": {
+                    "siteUrl": "twitter.com",
+                    "isEnabled": false,
+                    "isRestrictedAccess": false,
+                    "customPopupId": null
                 },
-                "talk.macpowerusers.com": {
-                    "enabled": true,
-                    "restricted_access": false,
-                    "icon_path": "~/Library/Application Support/Lento/talk.macpowerusers.com.png",
-                    "associated_popup": "2d189b37-6eaf-478f-a5ab-e19c9dab5738"
+                "253b714a-c878-4cc5-994b-52cfd6f61cf9" : {
+                    "siteUrl": "talk.macpowerusers.com",
+                    "isEnabled": true,
+                    "isRestrictedAccess": true,
+                    "customPopupId": "2d189b37-6eaf-478f-a5ab-e19c9dab5738"
                 },
-                "youtube.com": {
-                    "enabled": true,
-                    "restricted_access": true,
-                    "icon_path": "~/Library/Application Support/Lento/youtube.com.png",
-                    "associated_popup": "a019868e-f43f-478f-8dcc-ba78c35525c4"
+                "0211b230-bdef-4b08-8178-556876971788": {
+                    "siteUrl": "youtube.com",
+                    "isEnabled": true,
+                    "isRestrictedAccess": true,
+                    "customPopupId": "a019868e-f43f-478f-8dcc-ba78c35525c4"
                 }
  
             },
-            "blocked_apps": {
-                "GRIS": {
-                    "enabled": true,
-                    "bundle_id": "unity.nomada studio.GRIS",
-                    "app_icon_path": "~/Library/Application Support/Lento/GRIS.jpg",
-                    "associated_popup": null
+            "blockedApps": {
+                "6aebbd39-167c-4b5c-93d1-56df9a68d344": {
+                    "appName": "GRIS",
+                    "isEnabled": true,
+                    "isRestrictedAccess": true,
+                    "customPopupId": null
                 },
-                "NetNewsWire": {
-                    "enabled": true,
-                    "restricted_access": true,
-                    "bundle_id": "com.ranchero.NetNewsWire-Evergreen",
-                    "app_icon_path": "~/Library/Application Support/Lento/NetNewsWire.jpg",
-                    "associated_popup": "2d189b37-6eaf-478f-a5ab-e19c9dab5738"
+                "567b7cc9-7c98-4ecc-b927-21cd8529f05c": {
+                    "appName": "NetNewsWire",
+                    "isEnabled": true,
+                    "isRestrictedAccess": true,
+                    "customPopupId": "2d189b37-6eaf-478f-a5ab-e19c9dab5738"
                 },
-                "Trello": {
-                    "enabled": false,
-                    "restricted_access": true,
-                    "path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\app\\Trello.exe",
-                    "icon_path": "C:\\Program Files\\WindowsApps\\45273LiamForsyth.PawsforTrello_2.12.5.0_x64__7pb5ddty8z1pa\\assets\\Square310x310Logo.scale-200.png",
-                    "associated_popup": "a019868e-f43f-478f-8dcc-ba78c35525c4"
+                "cb663ee1-c99e-44c6-8f86-9bfbeadc6162": {
+                    "appname": "Trello",
+                    "isEnabled": false,
+                    "isRestrictedAccess": true,
+                    "customPopupId": "a019868e-f43f-478f-8dcc-ba78c35525c4"
                 }
             }
         }
     },
-    "popups": {
-        "2d189b37-6eaf-478f-a5ab-e19c9dab5738": {
-            "name": "Lento Default",
-            "quote": "Starting is the most difficult step - but you can do it.",
-            "icon": "@lentoapp"
+    "popupMsgs": {
+        "2d189b37-6eaf-478f-a5ab-e19c9dab5738": "Starting is the most difficult step - but you can do it.",
+        "a019868e-f43f-478f-8dcc-ba78c35525c4": "An essential aspect of creativity is not being afraid to fail."
+    },
+    "scheduledEvents": {
+        "6667e5cf-8cd2-499e-9414-ce6531aaf3d0": {
+            "type": "banner",
+            "title": "banner1 title",
+            "message": "banner1 msg",
+            "triggerTimes": [30, 60]
         },
-        "a019868e-f43f-478f-8dcc-ba78c35525c4": {
-            "name": "Ataraxis",
-            "quote": "An essential aspect of creativity is not being afraid to fail.",
-            "icon": "😌"
+        "38e03105-7723-4df3-b635-e0cd54571a9d": {
+            "type": "banner",
+            "title": "banner2 title",
+            "message": "banner2 msg",
+            "triggerTimes": [50]
         }
     },
     "goals": {
@@ -69,9 +72,8 @@
         "Finish E2E tests": false,
         "Write up PR": false
     },
-    "application_settings": {
+    "applicationSettings": {
         "theme": "system",
-        "default_restricted_access": false,
-        "default_popup": "2d189b37-6eaf-478f-a5ab-e19c9dab5738"
+        "defaultRestrictedAccess": false
     }
 }

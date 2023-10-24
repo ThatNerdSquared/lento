@@ -182,13 +182,13 @@ class CardTime {
 class BlockedWebsiteData {
   final Uri siteUrl;
   final bool isEnabled;
-  final bool isAccessRestricted;
+  final bool isRestrictedAccess;
   final String? customPopupId;
 
   const BlockedWebsiteData({
     required this.siteUrl,
     this.isEnabled = true,
-    this.isAccessRestricted = false,
+    this.isRestrictedAccess = false,
     this.customPopupId,
   });
 }
@@ -198,14 +198,14 @@ class BlockedAppData {
   final String appName;
   final Map<String, String> sourcePaths;
   final bool isEnabled;
-  final bool isAccessRestricted;
+  final bool isRestrictedAccess;
   final String? customPopupId;
 
   const BlockedAppData({
     required this.appName,
     required this.sourcePaths,
     this.isEnabled = true,
-    this.isAccessRestricted = false,
+    this.isRestrictedAccess = false,
     this.customPopupId,
   });
 

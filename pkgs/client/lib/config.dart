@@ -11,7 +11,7 @@ enum BlockItemType { website, app }
 class Config {
   static const double defaultMarginPercentage = 0.15;
 
-  String get dataFilePath {
+  static String get dataFilePath {
     return p.join(
       platformAppSupportDir,
       'lentosettings.json',

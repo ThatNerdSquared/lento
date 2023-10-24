@@ -48,7 +48,7 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
               cardId: widget.cardId,
               websiteData: BlockedWebsiteData(
                 siteUrl: Uri.parse(_urlTextFieldController.text),
-                isAccessRestricted: isAccessRestricted,
+                isRestrictedAccess: isAccessRestricted,
                 customPopupId: selectedPopupId,
               ),
             );
@@ -59,7 +59,7 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
               appData: BlockedAppData(
                 appName: basenameWithoutExtension(selectedApp!.path),
                 sourcePaths: {Platform.operatingSystem: selectedApp!.path},
-                isAccessRestricted: isAccessRestricted,
+                isRestrictedAccess: isAccessRestricted,
                 customPopupId: selectedPopupId,
               ),
             );

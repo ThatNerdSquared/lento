@@ -18,7 +18,7 @@ class BlockListItem extends ConsumerStatefulWidget {
     required this.itemID,
     required BlockedWebsiteData data,
   })  : itemTitle = data.siteUrl.host,
-        isAccessRestricted = data.isAccessRestricted,
+        isAccessRestricted = data.isRestrictedAccess,
         isEnabled = data.isEnabled,
         sourcePath = data.siteUrl.toString(),
         _blockItemType = BlockItemType.website;
@@ -28,7 +28,7 @@ class BlockListItem extends ConsumerStatefulWidget {
     required this.itemID,
     required BlockedAppData data,
   })  : itemTitle = data.appName,
-        isAccessRestricted = data.isAccessRestricted,
+        isAccessRestricted = data.isRestrictedAccess,
         isEnabled = data.isEnabled,
         sourcePath = data.currentSourcePath!,
         _blockItemType = BlockItemType.app;
@@ -38,6 +38,7 @@ class BlockListItem extends ConsumerStatefulWidget {
 }
 
 class BlockListItemState extends ConsumerState<BlockListItem> {
+  // ignore: unused_element
   Future<ImageIcon> _loadIcon(iconId, srcPath) async {
     return switch (widget._blockItemType) {
       BlockItemType.app => await iconManager.loadAppIcon(iconId, srcPath),
@@ -51,7 +52,8 @@ class BlockListItemState extends ConsumerState<BlockListItem> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _loadIcon(widget.itemID, widget.sourcePath),
+        // future: _loadIcon(widget.itemID, widget.sourcePath),
+        future: null,
         builder: (context, snapshot) {
           return ListTile(
             leading: Checkbox.adaptive(
@@ -61,7 +63,7 @@ class BlockListItemState extends ConsumerState<BlockListItem> {
             ),
             title: Row(
               children: [
-                snapshot.hasData ? snapshot.data! : const Icon(Icons.circle),
+                // snapshot.hasData ? snapshot.data! : const Icon(Icons.circle),
                 Text(
                   widget.itemTitle,
                   style: Theme.of(context).textTheme.labelMedium,

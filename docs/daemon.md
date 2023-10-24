@@ -59,11 +59,20 @@ a5 --> r1.2
 
 ## Debugging
 
-### Manual testing
-A script is included to send test data to the daemon when manually debugging:
+### Sending test data to the daemon
+The `docs/example-daemon-input.json` file is the canonical spec for the data input format expected by the daemon. All data sent to and requested by the daemon should match this file - if not, either it should be corrected, or the `example-daemon-input.json` file updated to match.
+
+A script is included to send this data to the daemon for manual debugging (the daemon should output a "DaemonServer on port XXXXX" log message that you can retrieve the port number from).
 ```
 dart run :liveammotest [port]
 ```
+
+### Manual testing
+If you're running in dev, you want to use the `--devmode` flag when running the daemon so that it can find the `notifhelper` build in the repo, as opposed to a bundled version of it in prod:
+```
+dart run daemon --devmode
+```
+For VSCode users, this is included in the `launch.json` - just select the `daemon (dev mode)` configuration.
 
 ### DB
 To inspect the state of the DB at runtime, I would recommend opening it up in some sort of SQLite DB browser. I use [DB Browser for SQLite](https://sqlitebrowser.org/) (download at link, or below for macOS):
