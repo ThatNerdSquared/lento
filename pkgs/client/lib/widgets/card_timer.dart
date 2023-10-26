@@ -6,6 +6,7 @@ import 'package:pret_a_porter/pret_a_porter.dart';
 
 import '../config.dart';
 import '../main.dart';
+import '../platform_daemon_settings.dart';
 import 'timer_edit_wheel.dart';
 
 class CardTimer extends ConsumerStatefulWidget {
@@ -142,6 +143,9 @@ class CardTimerState extends ConsumerState<CardTimer> {
 
   void _startTimer() {
     ref.read(lentoDeckProvider.notifier).activateCard(widget.cardId);
+    final daemonSettings = getPlatformDaemonSettings();
+    daemonSettings
+        .sendBlockDataToDaemon(ref.read(lentoDeckProvider)[widget.cardId]!);
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
