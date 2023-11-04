@@ -1,15 +1,17 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:favicon/favicon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as p;
 
 import '../config.dart';
 
 class IconManager {
-  final Map<String, ImageIcon> _iconsCache = {};
+  final Map<String, Widget> _iconsCache = {};
 
   IconManager() {
     var iconDir = Directory(Config().iconDirPath);
@@ -17,36 +19,52 @@ class IconManager {
       iconDir.createSync();
     } else {
       for (final item in iconDir.listSync()) {
-        if (lookupMimeType(item.path)!.startsWith('image/')) {
-          _iconsCache[basenameWithoutExtension(item.path)] =
-              ImageIcon(FileImage(File(item.path)));
+        final fileType = lookupMimeType(item.path);
+        // TODO: log warning when we cannot read filetype
+        if (fileType == null) continue;
+        if (fileType.startsWith('image/')) {
+          _iconsCache[p.basenameWithoutExtension(item.path)] = _bytesToImage(
+              ext: p.extension(item.path),
+              bytes: File(item.path).readAsBytesSync());
         }
       }
     }
   }
 
-  Future<ImageIcon> loadWebsiteIcon(String iconId, String url) async {
+  Widget _bytesToImage({required String ext, required Uint8List bytes}) =>
+      switch (ext) {
+        '.svg' => SvgPicture.memory(
+            bytes,
+            width: Config.blockItemIconSize,
+            height: Config.blockItemIconSize,
+          ),
+        _ => Image.memory(
+            bytes,
+            width: Config.blockItemIconSize,
+            height: Config.blockItemIconSize,
+          )
+      };
+
+  Future<Widget> loadWebsiteIcon(String iconId, String url) async {
     if (_iconsCache.containsKey(iconId)) return _iconsCache[iconId]!;
     var favicon = await FaviconFinder.getBest(url);
     final response = await http.get(Uri.parse(favicon!.url));
-    final imageFile = File(join(Config().iconDirPath, iconId));
+    final iconExt = favicon.url.substring(favicon.url.lastIndexOf('.'));
+    final imageFile = File(p.join(Config().iconDirPath, '$iconId$iconExt'));
     await imageFile.writeAsBytes(response.bodyBytes);
-    final icon = ImageIcon(MemoryImage(response.bodyBytes));
+    final icon = _bytesToImage(ext: iconExt, bytes: response.bodyBytes);
     _iconsCache[iconId] = icon;
     return icon;
   }
 
-  // Future<ImageIcon> loadAppIcon(
-  dynamic loadAppIcon(
+  Future<Widget> loadAppIcon(
     String iconId,
     String sourcePath,
   ) async {
     if (_iconsCache.containsKey(iconId)) {
       return _iconsCache[iconId]!;
     } else {
-      // ignore: avoid_print
-      print('getappicon');
-      return null;
+      throw UnimplementedError('This feature hasn\'t been built for apps yet!');
     }
   }
 }

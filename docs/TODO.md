@@ -3,12 +3,14 @@
 - [ ] [CHARLIE] daemon interface
 - [x] [NATHAN] json backend
 - [ ] [NATHAN] investigate flutter freezing when app backgrounded
-- [ ] [NATHAN] icon manager
-  - [ ] crash on icon manager icon load???
+- [x] [NATHAN] icon manager
+  - [x] crash on icon manager icon load???
 - [ ] [NATHAN] right click menu support
   - [ ] toggle restricted access
   - [ ] edit block item
   - [ ] delete the item
+- [ ] [NATHAN] update bundle id
+- [ ] [whoever-gets-to-it-first] add logging to client
 - [ ] [CHARLIE] emoji support
 - [ ] [CHARLIE] mini deck
 - [ ] [CHARLIE] properly style blocklist item
@@ -23,6 +25,7 @@
 - [ ] [CHARLIE] solidify resizing
 - [ ] [CHARLIE] sound effects
 - [ ] [CHARLIE] plan website design
+- [ ] [NATHAN] figure out build pipeline
 - [ ] [NATHAN] add update mechanism
 - [ ] [CHARLIE] init view??? (double check w beta testers)
 - [ ] [CHARLIE] make timer wheels save only when you click outside them

@@ -169,7 +169,7 @@ class LentoCardData {
             key,
             value.toJson(),
           )),
-      'blockedApps': blockedSites.map((key, value) => MapEntry(
+      'blockedApps': blockedApps.map((key, value) => MapEntry(
             key,
             value.toJson(),
           )),

@@ -70,7 +70,7 @@ class JsonBackend extends PretJsonManager {
         blockedSitesMap.map((key, value) => MapEntry(
               key,
               BlockedWebsiteData(
-                siteUrl: value['siteUrl'],
+                siteUrl: Uri.parse(value['siteUrl']),
                 isEnabled: value['isEnabled'],
                 isRestrictedAccess: value['isRestrictedAccess'],
                 customPopupId: value['customPopupId'],

@@ -44,6 +44,7 @@ dependencies:
   path: ^1.8.3
   mime: ^1.0.4
   favicon: ^1.1.1
+  flutter_svg: ^2.0.9
   http: ^0.13.6
   window_size:
     git:

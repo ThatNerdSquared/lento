@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pret_a_porter/pret_a_porter.dart';
 
 import '../backend/card_data.dart';
 import '../config.dart';
@@ -38,8 +39,7 @@ class BlockListItem extends ConsumerStatefulWidget {
 }
 
 class BlockListItemState extends ConsumerState<BlockListItem> {
-  // ignore: unused_element
-  Future<ImageIcon> _loadIcon(iconId, srcPath) async {
+  Future<Widget> _loadIcon(iconId, srcPath) async {
     return switch (widget._blockItemType) {
       BlockItemType.app => await iconManager.loadAppIcon(iconId, srcPath),
       BlockItemType.website => await iconManager.loadWebsiteIcon(
@@ -52,8 +52,7 @@ class BlockListItemState extends ConsumerState<BlockListItem> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        // future: _loadIcon(widget.itemID, widget.sourcePath),
-        future: null,
+        future: _loadIcon(widget.itemID, widget.sourcePath),
         builder: (context, snapshot) {
           return ListTile(
             leading: Checkbox.adaptive(
@@ -63,7 +62,10 @@ class BlockListItemState extends ConsumerState<BlockListItem> {
             ),
             title: Row(
               children: [
-                // snapshot.hasData ? snapshot.data! : const Icon(Icons.circle),
+                snapshot.hasData ? snapshot.data! : const Icon(Icons.circle),
+                const Padding(
+                  padding: EdgeInsets.only(left: PretConfig.thinElementSpacing),
+                ),
                 Text(
                   widget.itemTitle,
                   style: Theme.of(context).textTheme.labelMedium,

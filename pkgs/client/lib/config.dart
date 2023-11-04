@@ -12,6 +12,7 @@ enum AppTheme { light, dark, system }
 
 class Config {
   static const double defaultMarginPercentage = 0.15;
+  static const double blockItemIconSize = 32.0;
 
   static String get dataFilePath {
     return p.join(
