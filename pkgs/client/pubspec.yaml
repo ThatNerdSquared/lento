@@ -51,6 +51,8 @@ dependencies:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
       ref: 6c66ad2
+  logging: ^1.2.0
+  plist_parser: ^0.0.10
 
 dev_dependencies:
   flutter_test:

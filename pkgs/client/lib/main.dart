@@ -16,7 +16,7 @@ import 'widgets/card.dart';
 import 'widgets/lento_toolbar.dart';
 
 const uuID = Uuid();
-final iconManager = IconManager();
+final iconManager = getIconManager();
 String platformAppSupportDir = '';
 
 final mockIds = [uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4()];

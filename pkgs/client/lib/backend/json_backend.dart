@@ -84,6 +84,7 @@ class JsonBackend extends PretJsonManager {
             key,
             BlockedAppData(
               appName: value['appName'],
+              sourcePaths: Map<String, String>.from(value['sourcePaths']),
               isEnabled: value['isEnabled'],
               isRestrictedAccess: value['isRestrictedAccess'],
               customPopupId: value['customPopupId'],

@@ -241,7 +241,6 @@ class BlockedWebsiteData {
 @immutable
 class BlockedAppData {
   final String appName;
-  // does this need to exist?
   final Map<String, String>? sourcePaths;
   final bool isEnabled;
   final bool isRestrictedAccess;
@@ -249,18 +248,18 @@ class BlockedAppData {
 
   const BlockedAppData({
     required this.appName,
-    this.sourcePaths,
+    required this.sourcePaths,
     this.isEnabled = true,
     this.isRestrictedAccess = false,
     this.customPopupId,
   });
 
-  // does this need to exist?
   String? get currentSourcePath => sourcePaths![Platform.operatingSystem];
 
   Map<String, dynamic> toJson() {
     return {
       'appName': appName,
+      'sourcePaths': sourcePaths,
       'isEnabled': isEnabled,
       'isRestrictedAccess': isRestrictedAccess,
       'customPopupId': customPopupId,

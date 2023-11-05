@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:pret_a_porter/pret_a_porter.dart';
@@ -11,6 +13,8 @@ enum BlockItemType { website, app }
 enum AppTheme { light, dark, system }
 
 class Config {
+  Config._();
+
   static const double defaultMarginPercentage = 0.15;
   static const double blockItemIconSize = 32.0;
 
@@ -21,11 +25,11 @@ class Config {
     );
   }
 
-  String get iconDirPath {
-    return p.join(
+  static Directory get iconDir {
+    return Directory(p.join(
       platformAppSupportDir,
       'icons',
-    );
+    ));
   }
 }
 
