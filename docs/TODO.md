@@ -6,11 +6,11 @@
 - [x] [NATHAN] icon manager
   - [x] crash on icon manager icon load???
 - [ ] [NATHAN] right click menu support
-  - [ ] toggle restricted access
+  - [x] toggle restricted access
   - [ ] edit block item
-  - [ ] delete the item
+  - [x] delete the item
 - [ ] [NATHAN] update bundle id
-- [ ] [whoever-gets-to-it-first] add logging to client
+- [x] [whoever-gets-to-it-first] add logging to client
 - [ ] [CHARLIE] emoji support
 - [ ] [CHARLIE] mini deck
 - [ ] [CHARLIE] properly style blocklist item

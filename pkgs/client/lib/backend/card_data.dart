@@ -141,6 +141,63 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
             ));
     _writeDeck();
   }
+
+  void deleteBlockItem({
+    required String cardId,
+    required String blockItemId,
+  }) {
+    _findAndModifyCardAttribute(
+        cardId,
+        (oldCard) => LentoCardData(
+              cardName: oldCard.cardName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: oldCard.isActivated,
+              blockedSites: Map.from(oldCard.blockedSites)
+                ..removeWhere((key, value) => key == blockItemId),
+              blockedApps: Map.from(oldCard.blockedApps)
+                ..removeWhere((key, value) => key == blockItemId),
+            ));
+    _writeDeck();
+  }
+
+  void toggleRestrictedAccess({
+    required String cardId,
+    required String blockItemId,
+  }) {
+    _findAndModifyCardAttribute(
+        cardId,
+        (oldCard) => LentoCardData(
+              cardName: oldCard.cardName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: oldCard.isActivated,
+              blockedSites: oldCard.blockedSites.containsKey(blockItemId)
+                  ? oldCard.blockedSites.map((key, value) => MapEntry(
+                      key,
+                      BlockedWebsiteData(
+                        siteUrl: value.siteUrl,
+                        isEnabled: value.isEnabled,
+                        isRestrictedAccess: key == blockItemId
+                            ? !value.isRestrictedAccess
+                            : value.isRestrictedAccess,
+                        customPopupId: value.customPopupId,
+                      )))
+                  : oldCard.blockedSites,
+              blockedApps: oldCard.blockedApps.containsKey(blockItemId)
+                  ? oldCard.blockedApps.map((key, value) => MapEntry(
+                      key,
+                      BlockedAppData(
+                        appName: value.appName,
+                        sourcePaths: value.sourcePaths,
+                        isEnabled: value.isEnabled,
+                        isRestrictedAccess: key == blockItemId
+                            ? !value.isRestrictedAccess
+                            : value.isRestrictedAccess,
+                        customPopupId: value.customPopupId,
+                      )))
+                  : oldCard.blockedApps,
+            ));
+    _writeDeck();
+  }
 }
 
 /// Immutable data class for a Lento card.
