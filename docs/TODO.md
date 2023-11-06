@@ -9,7 +9,7 @@
   - [x] toggle restricted access
   - [x] edit block item
   - [x] delete the item
-- [ ] [NATHAN] update bundle id
+- [x] [NATHAN] update bundle id
 - [x] [whoever-gets-to-it-first] add logging to client
 - [ ] [CHARLIE] emoji support
 - [ ] [CHARLIE] mini deck

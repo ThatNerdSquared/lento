@@ -40,10 +40,12 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
     _findAndModifyCardAttribute(
         cardId,
         (oldCard) => LentoCardData(
-            cardName: newName,
-            blockDuration: oldCard.blockDuration,
-            isActivated: oldCard.isActivated,
-            blockedSites: oldCard.blockedSites));
+              cardName: newName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: oldCard.isActivated,
+              blockedSites: oldCard.blockedSites,
+              blockedApps: oldCard.blockedApps,
+            ));
     _writeDeck();
   }
 
@@ -54,7 +56,8 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
             cardName: oldCard.cardName,
             blockDuration: oldCard.blockDuration,
             isActivated: true,
-            blockedSites: oldCard.blockedSites));
+            blockedSites: oldCard.blockedSites,
+            blockedApps: oldCard.blockedApps));
     _writeDeck();
   }
 
@@ -67,6 +70,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                   CardTime.fromPresetTime(oldCard.blockDuration.presetTime),
               isActivated: false,
               blockedSites: oldCard.blockedSites,
+              blockedApps: oldCard.blockedApps,
             ));
     _writeDeck();
   }
@@ -96,12 +100,13 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                         ? newValue
                         : oldCard.blockDuration.seconds),
             isActivated: oldCard.isActivated,
-            blockedSites: oldCard.blockedSites));
+            blockedSites: oldCard.blockedSites,
+            blockedApps: oldCard.blockedApps));
     _writeDeck();
   }
 
   void addNewCard() {
-    state[uuID.v4()] = const LentoCardData();
+    state[uuID.v4()] = const LentoCardData.fromDefaults();
     _writeDeck();
   }
 
@@ -250,12 +255,19 @@ class LentoCardData {
   final Map<String, BlockedAppData> blockedApps;
 
   const LentoCardData({
-    this.cardName = 'Untitled Card',
-    this.blockDuration = const CardTime.fromPresetTime(0),
-    this.isActivated = false,
-    this.blockedSites = const {},
-    this.blockedApps = const {},
+    required this.cardName,
+    required this.blockDuration,
+    required this.isActivated,
+    required this.blockedSites,
+    required this.blockedApps,
   });
+
+  const LentoCardData.fromDefaults()
+      : cardName = 'Untitled Card',
+        blockDuration = const CardTime.fromPresetTime(0),
+        isActivated = false,
+        blockedSites = const {},
+        blockedApps = const {};
 
   Map<String, dynamic> toJson() {
     return {

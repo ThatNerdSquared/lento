@@ -45,7 +45,7 @@ void main() async {
     setWindowMaxSize(Size.infinite);
   }
 
-  platformAppSupportDir = (await getApplicationSupportDirectory()).path;
+  platformAppSupportDir = (await getApplicationDocumentsDirectory()).path;
   runApp(const ProviderScope(child: MyApp()));
 }
 

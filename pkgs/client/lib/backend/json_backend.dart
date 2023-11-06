@@ -14,12 +14,7 @@ class JsonBackend extends PretJsonManager {
         'schema': '1.0.0',
         'activatedCard': null,
         'cards': {
-          uuID.v4(): {
-            'name': 'Untitled Card',
-            'blockDuration': 0,
-            'blockedSites': {},
-            'blockedApps': {},
-          }
+          uuID.v4(): const LentoCardData.fromDefaults().toJson(),
         },
         'popupMsgs': {},
         'scheduledEvents': {},
@@ -59,6 +54,7 @@ class JsonBackend extends PretJsonManager {
             key,
             LentoCardData(
               cardName: value['name'],
+              isActivated: value['isActivated'],
               blockDuration: CardTime.fromPresetTime(value['blockDuration']),
               blockedSites: _parseV1Sites(value['blockedSites']),
               blockedApps: _parseV1Apps(value['blockedApps']),
