@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
 
+import '../config.dart';
 import '../main.dart';
 import 'blocklist_item.dart';
 import 'card_timer.dart';
@@ -11,7 +12,10 @@ import 'togglelist.dart';
 /// A card in the Lento deck.
 class LentoCard extends ConsumerWidget {
   final String cardId;
-  final Function(String) startEditing;
+  final Function({
+    String? blockItemId,
+    BlockItemType? blockItemType,
+  }) startEditing;
 
   const LentoCard({
     super.key,
@@ -92,6 +96,7 @@ class LentoCard extends ConsumerWidget {
                                                 cardId: cardId,
                                                 itemID: item.key,
                                                 data: item.value,
+                                                startEditing: startEditing,
                                               ))
                                           .toList()),
                             )),
@@ -137,13 +142,14 @@ class LentoCard extends ConsumerWidget {
                                               cardId: cardId,
                                               itemID: item.key,
                                               data: item.value,
+                                              startEditing: startEditing,
                                             ))
                                         .toList(),
                               ),
                             )),
                           ])),
                       TextButton(
-                        onPressed: () => startEditing(cardId),
+                        onPressed: startEditing,
                         child: Text(
                           '+ Block something...',
                           style: TextStyle(

@@ -5,9 +5,9 @@
 - [ ] [NATHAN] investigate flutter freezing when app backgrounded
 - [x] [NATHAN] icon manager
   - [x] crash on icon manager icon load???
-- [ ] [NATHAN] right click menu support
+- [x] [NATHAN] right click menu support
   - [x] toggle restricted access
-  - [ ] edit block item
+  - [x] edit block item
   - [x] delete the item
 - [ ] [NATHAN] update bundle id
 - [x] [whoever-gets-to-it-first] add logging to client

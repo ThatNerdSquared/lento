@@ -13,12 +13,17 @@ class BlockListItem extends ConsumerStatefulWidget {
   final bool isAccessRestricted;
   final bool isEnabled;
   final String sourcePath;
+  final Function({
+    String? blockItemId,
+    BlockItemType? blockItemType,
+  }) startEditing;
   final BlockItemType _blockItemType;
 
   BlockListItem.fromBlockedWebsite({
     super.key,
     required this.cardId,
     required this.itemID,
+    required this.startEditing,
     required BlockedWebsiteData data,
   })  : itemTitle = data.siteUrl.host,
         isAccessRestricted = data.isRestrictedAccess,
@@ -30,6 +35,7 @@ class BlockListItem extends ConsumerStatefulWidget {
     super.key,
     required this.cardId,
     required this.itemID,
+    required this.startEditing,
     required BlockedAppData data,
   })  : itemTitle = data.appName,
         isAccessRestricted = data.isRestrictedAccess,
@@ -60,7 +66,13 @@ class BlockListItemState extends ConsumerState<BlockListItem> {
                 .read(lentoDeckProvider.notifier)
                 .toggleRestrictedAccess(
                     cardId: widget.cardId, blockItemId: widget.itemID)),
-        MenuItem(label: 'Edit Block Item'),
+        MenuItem(
+          label: 'Edit Block Item',
+          onClick: (_) => widget.startEditing(
+            blockItemId: widget.itemID,
+            blockItemType: widget._blockItemType,
+          ),
+        ),
         MenuItem(
             label: 'Delete Block Item',
             onClick: (_) =>

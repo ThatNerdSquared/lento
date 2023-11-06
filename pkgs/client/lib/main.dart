@@ -85,7 +85,7 @@ class LentoHomeState extends ConsumerState<LentoHome> {
   final PageController controller = PageController(
     viewportFraction: 0.8,
   );
-  String? isEditingItem;
+  EditingEnv? editingEnv;
 
   @override
   Widget build(BuildContext context) {
@@ -113,17 +113,22 @@ class LentoHomeState extends ConsumerState<LentoHome> {
                             .read(lentoDeckProvider)
                             .keys
                             .elementAt(index % limitIndex);
-                        return isEditingItem == cardId
+                        return editingEnv != null
                             ? BlockedItemEditor(
-                                cardId: cardId,
+                                editingEnv: editingEnv!,
                                 endEditing: () => setState(() {
-                                  isEditingItem = null;
+                                  editingEnv = null;
                                 }),
                               )
                             : LentoCard(
                                 cardId: cardId,
-                                startEditing: (id) => setState(() {
-                                      isEditingItem = id;
+                                startEditing: ({blockItemId, blockItemType}) =>
+                                    setState(() {
+                                      editingEnv = EditingEnv(
+                                        cardId: cardId,
+                                        blockItemId: blockItemId,
+                                        blockItemType: blockItemType,
+                                      );
                                     }));
                       }))),
           Flexible(

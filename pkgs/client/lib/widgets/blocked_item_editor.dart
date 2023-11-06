@@ -12,20 +12,39 @@ import '../config.dart';
 import '../main.dart';
 import 'app_picker.dart';
 
+@immutable
+class EditingEnv {
+  final String cardId;
+  final String? blockItemId;
+  final BlockItemType? blockItemType;
+
+  const EditingEnv({
+    required this.cardId,
+    required this.blockItemId,
+    required this.blockItemType,
+  });
+}
+
 const Map<BlockItemType, Text> blockItemTypeWidgets = {
   BlockItemType.website: Text('Website'),
   BlockItemType.app: Text('App'),
 };
 
 class BlockedItemEditor extends ConsumerStatefulWidget {
-  final String cardId;
-  final Function() endEditing;
+  final EditingEnv editingEnv;
+  final VoidCallback endEditing;
 
-  const BlockedItemEditor({
+  BlockedItemEditor({
     super.key,
-    required this.cardId,
+    required this.editingEnv,
     required this.endEditing,
-  });
+  }) {
+    if ((editingEnv.blockItemType == null) ^ (editingEnv.blockItemId == null)) {
+      throw ArgumentError(
+        'Block item type and block item id cannot have different null/non-null states!',
+      );
+    }
+  }
 
   @override
   BlockedItemEditorState createState() => BlockedItemEditorState();
@@ -40,29 +59,47 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
   File? selectedApp;
   String? selectedPopupId;
 
+  bool processedData = false;
+
+  void toggleBlockItemType(BlockItemType? value) => setState(() {
+        value != null ? blockItemTypeSelection = value : null;
+      });
+
   void onSubmitItem(WidgetRef ref) {
     if (!_formKey.currentState!.validate()) return;
     switch (blockItemTypeSelection) {
       case BlockItemType.website:
-        ref.read(lentoDeckProvider.notifier).addBlockedWebsite(
-              cardId: widget.cardId,
-              websiteData: BlockedWebsiteData(
-                siteUrl: Uri.parse(_urlTextFieldController.text),
-                isRestrictedAccess: isAccessRestricted,
-                customPopupId: selectedPopupId,
-              ),
-            );
+        final data = BlockedWebsiteData(
+          siteUrl: Uri.parse(_urlTextFieldController.text),
+          isRestrictedAccess: isAccessRestricted,
+          customPopupId: selectedPopupId,
+        );
+        widget.editingEnv.blockItemId != null
+            ? ref.read(lentoDeckProvider.notifier).updateBlockedWebsite(
+                cardId: widget.editingEnv.cardId,
+                blockItemId: widget.editingEnv.blockItemId!,
+                newData: data)
+            : ref.read(lentoDeckProvider.notifier).addBlockedWebsite(
+                  cardId: widget.editingEnv.cardId,
+                  websiteData: data,
+                );
         break;
       case BlockItemType.app:
-        ref.read(lentoDeckProvider.notifier).addBlockedApp(
-              cardId: widget.cardId,
-              appData: BlockedAppData(
-                appName: basenameWithoutExtension(selectedApp!.path),
-                sourcePaths: {Platform.operatingSystem: selectedApp!.path},
-                isRestrictedAccess: isAccessRestricted,
-                customPopupId: selectedPopupId,
-              ),
-            );
+        final data = BlockedAppData(
+          appName: basenameWithoutExtension(selectedApp!.path),
+          sourcePaths: {Platform.operatingSystem: selectedApp!.path},
+          isRestrictedAccess: isAccessRestricted,
+          customPopupId: selectedPopupId,
+        );
+        widget.editingEnv.blockItemId != null
+            ? ref.read(lentoDeckProvider.notifier).updateBlockedApp(
+                cardId: widget.editingEnv.cardId,
+                blockItemId: widget.editingEnv.blockItemId!,
+                newData: data)
+            : ref.read(lentoDeckProvider.notifier).addBlockedApp(
+                  cardId: widget.editingEnv.cardId,
+                  appData: data,
+                );
         break;
     }
     widget.endEditing();
@@ -71,6 +108,32 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
   @override
   Widget build(BuildContext context) {
     var popups = ref.watch(customPopupListProvider);
+    if (widget.editingEnv.blockItemType != null && !processedData) {
+      toggleBlockItemType(widget.editingEnv.blockItemType);
+      switch (widget.editingEnv.blockItemType!) {
+        case BlockItemType.app:
+          final item = ref
+              .read(lentoDeckProvider)[widget.editingEnv.cardId]!
+              .blockedApps[widget.editingEnv.blockItemId];
+          setState(() {
+            selectedApp = File(item!.currentSourcePath!);
+            isAccessRestricted = item.isRestrictedAccess;
+            selectedPopupId = item.customPopupId;
+          });
+        case BlockItemType.website:
+          final item = ref
+              .read(lentoDeckProvider)[widget.editingEnv.cardId]!
+              .blockedSites[widget.editingEnv.blockItemId];
+          setState(() {
+            _urlTextFieldController.text = item!.siteUrl.toString();
+            isAccessRestricted = item.isRestrictedAccess;
+            selectedPopupId = item.customPopupId;
+          });
+      }
+    }
+    setState(() {
+      processedData = true;
+    });
     return LayoutBuilder(
         builder: (context, constraints) => Container(
               decoration: const BoxDecoration(
@@ -144,11 +207,7 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                 child: CupertinoSlidingSegmentedControl(
                                     children: blockItemTypeWidgets,
                                     groupValue: blockItemTypeSelection,
-                                    onValueChanged: (value) => setState(() {
-                                          value != null
-                                              ? blockItemTypeSelection = value
-                                              : null;
-                                        })),
+                                    onValueChanged: toggleBlockItemType),
                               )),
                               const SliverPadding(
                                   padding: EdgeInsets.only(

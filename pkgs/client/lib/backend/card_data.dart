@@ -160,6 +160,46 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
     _writeDeck();
   }
 
+  void updateBlockedWebsite({
+    required String cardId,
+    required String blockItemId,
+    required BlockedWebsiteData newData,
+  }) {
+    _findAndModifyCardAttribute(
+        cardId,
+        (oldCard) => LentoCardData(
+              cardName: oldCard.cardName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: oldCard.isActivated,
+              blockedSites: Map.fromEntries(oldCard.blockedSites.entries.map(
+                  (e) => e.key == blockItemId
+                      ? MapEntry(blockItemId, newData)
+                      : e)),
+              blockedApps: oldCard.blockedApps,
+            ));
+    _writeDeck();
+  }
+
+  void updateBlockedApp({
+    required String cardId,
+    required String blockItemId,
+    required BlockedAppData newData,
+  }) {
+    _findAndModifyCardAttribute(
+        cardId,
+        (oldCard) => LentoCardData(
+              cardName: oldCard.cardName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: oldCard.isActivated,
+              blockedSites: oldCard.blockedSites,
+              blockedApps: Map.fromEntries(oldCard.blockedApps.entries.map(
+                  (e) => e.key == blockItemId
+                      ? MapEntry(blockItemId, newData)
+                      : e)),
+            ));
+    _writeDeck();
+  }
+
   void toggleRestrictedAccess({
     required String cardId,
     required String blockItemId,
