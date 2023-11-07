@@ -66,26 +66,9 @@ class LentoCard extends ConsumerWidget {
                                           .blockedSites
                                           .isEmpty
                                       ? [
-                                          const Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Padding(
-                                                    padding: EdgeInsets.all(
-                                                        PretConfig
-                                                            .defaultElementSpacing),
-                                                    child: Text(
-                                                        'No blocked websites',
-                                                        style: TextStyle(
-                                                            fontStyle: FontStyle
-                                                                .italic,
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: Color(
-                                                                0xFF565656)) // italicized lentoTextTheme.labelSmall
-                                                        ))
-                                              ])
+                                          const EmptyListLabel(
+                                            labelText: 'No blocked websites',
+                                          )
                                         ]
                                       : ref
                                           .watch(lentoDeckProvider)[cardId]!
@@ -113,25 +96,9 @@ class LentoCard extends ConsumerWidget {
                                         .blockedApps
                                         .isEmpty
                                     ? [
-                                        const Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Padding(
-                                                  padding: EdgeInsets.all(
-                                                      PretConfig
-                                                          .defaultElementSpacing),
-                                                  child: Text('No blocked apps',
-                                                      style: TextStyle(
-                                                          fontStyle:
-                                                              FontStyle.italic,
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Color(
-                                                              0xFF565656)) // italicized lentoTextTheme.labelSmall
-                                                      ))
-                                            ])
+                                        const EmptyListLabel(
+                                          labelText: 'No blocked apps',
+                                        )
                                       ]
                                     : ref
                                         .watch(lentoDeckProvider)[cardId]!
@@ -162,5 +129,30 @@ class LentoCard extends ConsumerWidget {
                 ),
               ),
             )));
+  }
+}
+
+class EmptyListLabel extends StatelessWidget {
+  final String labelText;
+
+  const EmptyListLabel({
+    super.key,
+    required this.labelText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Padding(
+        padding: const EdgeInsets.all(PretConfig.defaultElementSpacing),
+        child: Text(
+          labelText,
+          style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                fontStyle: FontStyle.italic,
+                color: const Color(0xFF565656),
+              ),
+        ),
+      )
+    ]);
   }
 }

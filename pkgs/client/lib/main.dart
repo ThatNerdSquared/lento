@@ -87,9 +87,33 @@ class LentoHomeState extends ConsumerState<LentoHome> {
   );
   EditingEnv? editingEnv;
 
+  void scrollLeft() => controller.previousPage(
+        duration: const Duration(seconds: 1),
+        curve: Curves.decelerate,
+      );
+
+  void scrollRight() => controller.nextPage(
+        duration: const Duration(seconds: 1),
+        curve: Curves.decelerate,
+      );
+
+  void scrollBackToStart() => controller.animateTo(
+        0,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.decelerate,
+      );
+
+  void _onScroll() {
+    final len = ref.read(lentoDeckProvider).entries.length;
+    if (controller.page! > len - 0.5) {
+      scrollBackToStart();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final limitIndex = ref.read(lentoDeckProvider).entries.length;
+    controller.addListener(_onScroll);
+    final limitIndex = ref.watch(lentoDeckProvider).entries.length;
     return Scaffold(
         body: Center(
             child: Padding(
@@ -135,6 +159,8 @@ class LentoHomeState extends ConsumerState<LentoHome> {
               flex: 1,
               child: LentoToolbar(
                 currentCardIndex: pageViewIndex,
+                nextPageHandler: scrollRight,
+                prevPageHandler: scrollLeft,
               )),
         ],
       ),
