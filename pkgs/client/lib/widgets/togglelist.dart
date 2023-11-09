@@ -11,12 +11,14 @@ import '../config.dart';
 class ToggleList extends ConsumerWidget {
   final String cardId;
   final String toggleTitle;
+  final String emptyLabel;
   final List<Widget> children;
 
   const ToggleList({
     super.key,
     required this.cardId,
     required this.toggleTitle,
+    required this.emptyLabel,
     required this.children,
   });
 
@@ -69,11 +71,38 @@ class ToggleList extends ConsumerWidget {
                       borderRadius: PretConfig.thinBorderRadius,
                     ),
                     child: Column(
-                      children: children,
+                      children: children.isEmpty
+                          ? [EmptyListLabel(labelText: emptyLabel)]
+                          : children,
                     )),
               )),
         ]),
       ),
     );
+  }
+}
+
+class EmptyListLabel extends StatelessWidget {
+  final String labelText;
+
+  const EmptyListLabel({
+    super.key,
+    required this.labelText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Padding(
+        padding: const EdgeInsets.all(PretConfig.defaultElementSpacing),
+        child: Text(
+          labelText,
+          style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                fontStyle: FontStyle.italic,
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
+        ),
+      )
+    ]);
   }
 }

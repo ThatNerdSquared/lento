@@ -243,6 +243,45 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
             ));
     _writeDeck();
   }
+
+  void toggleEnabled({
+    required String cardId,
+    required String blockItemId,
+  }) {
+    _findAndModifyCardAttribute(
+        cardId,
+        (oldCard) => LentoCardData(
+              cardName: oldCard.cardName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: oldCard.isActivated,
+              blockedSites: oldCard.blockedSites.containsKey(blockItemId)
+                  ? oldCard.blockedSites.map((key, value) => MapEntry(
+                      key,
+                      BlockedWebsiteData(
+                        siteUrl: value.siteUrl,
+                        isEnabled: key == blockItemId
+                            ? !value.isEnabled
+                            : value.isEnabled,
+                        isRestrictedAccess: value.isRestrictedAccess,
+                        customPopupId: value.customPopupId,
+                      )))
+                  : oldCard.blockedSites,
+              blockedApps: oldCard.blockedApps.containsKey(blockItemId)
+                  ? oldCard.blockedApps.map((key, value) => MapEntry(
+                      key,
+                      BlockedAppData(
+                        appName: value.appName,
+                        sourcePaths: value.sourcePaths,
+                        isEnabled: key == blockItemId
+                            ? !value.isEnabled
+                            : value.isEnabled,
+                        isRestrictedAccess: value.isRestrictedAccess,
+                        customPopupId: value.customPopupId,
+                      )))
+                  : oldCard.blockedApps,
+            ));
+    _writeDeck();
+  }
 }
 
 /// Immutable data class for a Lento card.

@@ -90,10 +90,23 @@ class BlockListItemState extends ConsumerState<BlockListItem> {
           return ContextMenuRegion(
               contextMenu: buildContextMenu(),
               child: ListTile(
-                leading: Checkbox.adaptive(
+                leading: Checkbox(
+                  side: BorderSide(
+                      width: 3.0,
+                      color: Theme.of(context).colorScheme.onSecondary),
+                  fillColor: MaterialStateColor.resolveWith((states) {
+                    return states.contains(MaterialState.selected)
+                        ? Theme.of(context).colorScheme.tertiary
+                        : Theme.of(context).colorScheme.secondary;
+                  }),
+                  shape: const CircleBorder(eccentricity: 0.5),
                   value: widget.isEnabled,
-                  // ignore: avoid_print
-                  onChanged: (_) => print('untoggle'),
+                  splashRadius: 0,
+                  onChanged: (_) =>
+                      ref.read(lentoDeckProvider.notifier).toggleEnabled(
+                            cardId: widget.cardId,
+                            blockItemId: widget.itemID,
+                          ),
                 ),
                 title: Row(
                   children: [
@@ -106,7 +119,12 @@ class BlockListItemState extends ConsumerState<BlockListItem> {
                     ),
                     Text(
                       widget.itemTitle,
-                      style: Theme.of(context).textTheme.labelMedium,
+                      style: widget.isEnabled
+                          ? Theme.of(context).textTheme.labelMedium
+                          : Theme.of(context).textTheme.labelMedium!.copyWith(
+                              decoration: TextDecoration.lineThrough,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.grey),
                     ),
                     if (widget.isAccessRestricted)
                       Icon(

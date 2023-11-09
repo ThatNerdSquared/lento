@@ -61,27 +61,19 @@ class LentoCard extends ConsumerWidget {
                               child: ToggleList(
                                   cardId: cardId,
                                   toggleTitle: 'Blocked Websites',
+                                  emptyLabel: 'No blocked websites',
                                   children: ref
-                                          .watch(lentoDeckProvider)[cardId]!
-                                          .blockedSites
-                                          .isEmpty
-                                      ? [
-                                          const EmptyListLabel(
-                                            labelText: 'No blocked websites',
-                                          )
-                                        ]
-                                      : ref
-                                          .watch(lentoDeckProvider)[cardId]!
-                                          .blockedSites
-                                          .entries
-                                          .map((item) =>
-                                              BlockListItem.fromBlockedWebsite(
-                                                cardId: cardId,
-                                                itemID: item.key,
-                                                data: item.value,
-                                                startEditing: startEditing,
-                                              ))
-                                          .toList()),
+                                      .watch(lentoDeckProvider)[cardId]!
+                                      .blockedSites
+                                      .entries
+                                      .map((item) =>
+                                          BlockListItem.fromBlockedWebsite(
+                                            cardId: cardId,
+                                            itemID: item.key,
+                                            data: item.value,
+                                            startEditing: startEditing,
+                                          ))
+                                      .toList()),
                             )),
                             SliverToBoxAdapter(
                                 child: Container(
@@ -91,27 +83,18 @@ class LentoCard extends ConsumerWidget {
                               child: ToggleList(
                                 cardId: cardId,
                                 toggleTitle: 'Blocked Apps',
+                                emptyLabel: 'No blocked apps',
                                 children: ref
-                                        .watch(lentoDeckProvider)[cardId]!
-                                        .blockedApps
-                                        .isEmpty
-                                    ? [
-                                        const EmptyListLabel(
-                                          labelText: 'No blocked apps',
-                                        )
-                                      ]
-                                    : ref
-                                        .watch(lentoDeckProvider)[cardId]!
-                                        .blockedApps
-                                        .entries
-                                        .map((item) =>
-                                            BlockListItem.fromBlockedApp(
-                                              cardId: cardId,
-                                              itemID: item.key,
-                                              data: item.value,
-                                              startEditing: startEditing,
-                                            ))
-                                        .toList(),
+                                    .watch(lentoDeckProvider)[cardId]!
+                                    .blockedApps
+                                    .entries
+                                    .map((item) => BlockListItem.fromBlockedApp(
+                                          cardId: cardId,
+                                          itemID: item.key,
+                                          data: item.value,
+                                          startEditing: startEditing,
+                                        ))
+                                    .toList(),
                               ),
                             )),
                           ])),
@@ -129,30 +112,5 @@ class LentoCard extends ConsumerWidget {
                 ),
               ),
             )));
-  }
-}
-
-class EmptyListLabel extends StatelessWidget {
-  final String labelText;
-
-  const EmptyListLabel({
-    super.key,
-    required this.labelText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Padding(
-        padding: const EdgeInsets.all(PretConfig.defaultElementSpacing),
-        child: Text(
-          labelText,
-          style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                fontStyle: FontStyle.italic,
-                color: const Color(0xFF565656),
-              ),
-        ),
-      )
-    ]);
   }
 }

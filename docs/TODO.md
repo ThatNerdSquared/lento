@@ -10,15 +10,16 @@
   - [x] edit block item
   - [x] delete the item
 - [x] [NATHAN] update bundle id
-- [x] [whoever-gets-to-it-first] add logging to client
+- [x] [CHATGPT] add logging to client
 - [ ] [CHARLIE] emoji support
 - [ ] [CHARLIE] mini deck
-- [ ] [CHARLIE] properly style blocklist item
+- [x] [NATHAN] properly style blocklist item
 - [ ] [NATHAN] focus mode
 - [ ] [NATHAN] banner support on frontend
   - [ ] scheduled events togglelist
   - [ ] banner add form (with testing button)
   - [ ] custom banner slider thing
+- [ ] [NATHAN] fix bug where, when card is deleted, its page is not properly disposed, due to its edge still showing in the PageView viewport
 - [ ] [CHARLIE] build AppPicker for Windows
 - [ ] [CHARLIE] add block logging to backend
 - [ ] [CHARLIE] implement toolbar (functions, sizing, styling, etc)
