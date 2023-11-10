@@ -21,7 +21,7 @@ class AppSelectionForm extends StatelessWidget {
 
   Future<File?> showAppPicker() async {
     if (Platform.isMacOS) {
-      var result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         initialDirectory: '/Applications/',
         allowedExtensions: ['app'],
@@ -45,7 +45,7 @@ class AppSelectionForm extends StatelessWidget {
                     const BoxDecoration(boxShadow: [PretConfig.defaultShadow]),
                 child: TextButton(
                   onPressed: () async {
-                    var selection = await showAppPicker();
+                    final selection = await showAppPicker();
                     selectedAppSetter(selection);
                   },
                   style: ButtonStyle(

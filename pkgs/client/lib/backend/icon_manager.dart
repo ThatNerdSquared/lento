@@ -60,7 +60,7 @@ abstract class IconManager {
 
   Future<Widget> loadWebsiteIcon(String iconId, String url) async {
     if (_iconsCache.containsKey(iconId)) return _iconsCache[iconId]!;
-    var favicon = await FaviconFinder.getBest(url);
+    final favicon = await FaviconFinder.getBest(url);
     final response = await http.get(Uri.parse(favicon!.url));
     final iconExt = favicon.url.substring(favicon.url.lastIndexOf('.'));
     final imageFile = File(p.join(Config.iconDir.path, '$iconId$iconExt'));

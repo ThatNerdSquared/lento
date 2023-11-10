@@ -17,7 +17,7 @@ void ensureFirefoxCompat() {
     if (!userJsFile.existsSync()) {
       userJsFile.createSync();
     }
-    var userJsText = userJsFile.readAsLinesSync();
+    final userJsText = userJsFile.readAsLinesSync();
     userJsFile.writeAsStringSync(addPayloadToUserJS(userJsText));
   }
 }

@@ -38,9 +38,9 @@ class CardTimerState extends ConsumerState<CardTimer> {
 
   @override
   Widget build(BuildContext context) {
-    var blockDuration = ref.watch(
+    final blockDuration = ref.watch(
         lentoDeckProvider.select((deck) => deck[widget.cardId]!.blockDuration));
-    var isCardActivated =
+    final isCardActivated =
         ref.watch(lentoDeckProvider)[widget.cardId]!.isActivated;
 
     return LayoutBuilder(
@@ -150,9 +150,9 @@ class CardTimerState extends ConsumerState<CardTimer> {
 
     Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
-        var blockDuration = ref.read(lentoDeckProvider
+        final blockDuration = ref.read(lentoDeckProvider
             .select((deck) => deck[widget.cardId]!.blockDuration));
-        var newDuration = blockDuration.gatheredSeconds - 1;
+        final newDuration = blockDuration.gatheredSeconds - 1;
         ref.read(lentoDeckProvider.notifier).updateCardTime(
               cardId: widget.cardId,
               newValue: newDuration,

@@ -17,7 +17,7 @@ class LentoToolbar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var currentCardId =
+    final currentCardId =
         ref.watch(lentoDeckProvider).keys.elementAt(currentCardIndex);
     return LayoutBuilder(
       builder: ((context, constraints) => Row(

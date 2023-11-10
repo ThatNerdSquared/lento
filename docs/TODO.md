@@ -14,6 +14,7 @@
 - [ ] [CHARLIE] emoji support
 - [ ] [CHARLIE] mini deck
 - [x] [NATHAN] properly style blocklist item
+- [x] [NATHAN] refactor card and blockitem editor
 - [ ] [NATHAN] focus mode
 - [ ] [NATHAN] banner support on frontend
   - [ ] scheduled events togglelist

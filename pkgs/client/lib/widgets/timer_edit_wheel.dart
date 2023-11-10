@@ -17,7 +17,7 @@ class TimerEditWheel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var blockDuration = ref
+    final blockDuration = ref
         .watch(lentoDeckProvider.select((deck) => deck[cardId]!.blockDuration));
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text(switch (timeSection) {

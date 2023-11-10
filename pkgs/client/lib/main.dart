@@ -127,7 +127,7 @@ class LentoHomeState extends ConsumerState<LentoHome> {
                             pageViewIndex = value % limitIndex;
                           }),
                       itemBuilder: (context, index) {
-                        var cardId = ref
+                        final cardId = ref
                             .read(lentoDeckProvider)
                             .keys
                             .elementAt(index % limitIndex);

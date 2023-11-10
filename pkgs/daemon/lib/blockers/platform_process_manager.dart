@@ -46,7 +46,7 @@ class MacosProcessManager extends PlatformProcessManager {
   @override
   ProcessInfo processInfo(String rawProcess) {
     final trimmedLine = rawProcess.trim();
-    var firstSpace = trimmedLine.indexOf(' ');
+    final firstSpace = trimmedLine.indexOf(' ');
     return ProcessInfo(
       name: trimmedLine.substring(firstSpace + 1, trimmedLine.length),
       pid: int.parse(trimmedLine.substring(0, firstSpace)),

@@ -18,7 +18,7 @@ class CardTitleState extends ConsumerState<CardTitle> {
   Color? titleColor;
   @override
   Widget build(BuildContext context) {
-    var isCardActivated = ref.watch(
+    final isCardActivated = ref.watch(
         lentoDeckProvider.select((deck) => deck[widget.cardId]!.isActivated));
     return LayoutBuilder(
         builder: (context, constraints) => MouseRegion(
