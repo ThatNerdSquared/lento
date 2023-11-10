@@ -1,26 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../main.dart';
 
-class CustomPopupList extends StateNotifier<Map<String, CustomPopup>> {
-  CustomPopupList({Map<String, CustomPopup>? initialPopupList})
-      : super(initialPopupList ?? {});
+class PopupMsgs extends StateNotifier<Map<String, String>> {
+  PopupMsgs({Map<String, String>? initialPopupMsgs})
+      : super(initialPopupMsgs ?? {});
 
-  void addPopup(String customMessage) {
-    state[uuID.v4()] = CustomPopup(
-      customMessage: customMessage,
-    );
-  }
+  void addPopup(String customMessage) => state[uuID.v4()] = customMessage;
 
-  void removePopup({required String popupId}) {
-    state.removeWhere((key, value) => key == popupId);
-  }
-}
-
-@immutable
-class CustomPopup {
-  final String customMessage;
-
-  const CustomPopup({required this.customMessage});
+  void removePopup({required String popupId}) => state.removeWhere(
+        (key, value) => key == popupId,
+      );
 }

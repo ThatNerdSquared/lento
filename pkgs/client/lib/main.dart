@@ -21,20 +21,14 @@ String platformAppSupportDir = '';
 
 final mockIds = [uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4()];
 final mockPopups = {
-  mockIds[3]: const CustomPopup(
-    customMessage:
-        'An essential aspect of creativity is not being afraid to fail.',
-  ),
-  mockIds[4]: const CustomPopup(
-    customMessage: 'Don\'t get distracted!',
-  )
+  mockIds[3]: 'An essential aspect of creativity is not being afraid to fail.',
+  mockIds[4]: 'Don\'t get distracted!',
 };
 final lentoDeckProvider =
     StateNotifierProvider<LentoDeck, Map<String, LentoCardData>>(
         (ref) => LentoDeck());
-final customPopupListProvider =
-    StateNotifierProvider<CustomPopupList, Map<String, CustomPopup>>(
-        (ref) => CustomPopupList(initialPopupList: mockPopups));
+final popupMsgsProvider = StateNotifierProvider<PopupMsgs, Map<String, String>>(
+    (ref) => PopupMsgs(initialPopupMsgs: mockPopups));
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -11,6 +11,7 @@ import '../backend/card_data.dart';
 import '../config.dart';
 import '../main.dart';
 import 'app_picker.dart';
+import 'card.dart';
 
 @immutable
 class EditingEnv {
@@ -30,6 +31,11 @@ const Map<BlockItemType, Text> blockItemTypeWidgets = {
   BlockItemType.app: Text('App'),
 };
 
+/// an editor for creating and editing blockitems, both website and apps.
+/// at some point we should probably revisit how we're handling this -
+/// i think it might be better for us to handle different BlockItem types
+/// via abstract classes or something. although if we end up combining
+/// the different blockitem types this might become irrelevant. we'll see.
 class BlockedItemEditor extends ConsumerStatefulWidget {
   final EditingEnv editingEnv;
   final VoidCallback endEditing;
@@ -107,7 +113,7 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
 
   @override
   Widget build(BuildContext context) {
-    var popups = ref.watch(customPopupListProvider);
+    final popups = ref.watch(popupMsgsProvider);
     if (widget.editingEnv.blockItemType != null && !processedData) {
       toggleBlockItemType(widget.editingEnv.blockItemType);
       switch (widget.editingEnv.blockItemType!) {
@@ -134,273 +140,201 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
     setState(() {
       processedData = true;
     });
-    return LayoutBuilder(
-        builder: (context, constraints) => Container(
-              decoration: const BoxDecoration(
-                  borderRadius: PretConfig.defaultBorderRadius,
-                  boxShadow: [PretConfig.defaultShadow]),
-              margin: const EdgeInsets.all(PretConfig.defaultElementSpacing),
-              child: Card(
-                child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: PretConfig.defaultElementSpacing,
-                      bottom: PretConfig.defaultElementSpacing,
-                    ),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CupertinoButton.filled(
-                                onPressed: widget.endEditing,
-                                child: Text(
-                                  'Cancel',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge!
-                                      .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .error),
-                                ),
-                              ),
-                              CupertinoButton.filled(
-                                onPressed: () {
-                                  onSubmitItem(ref);
-                                },
-                                child: Text(
-                                  'OK',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge!
-                                      .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .tertiary),
-                                ),
-                              )
-                            ],
-                          ),
-                          Expanded(
-                              child: CustomScrollView(
-                            slivers: [
-                              SliverToBoxAdapter(
-                                  child: Text(
-                                'Block something...',
-                                textAlign: TextAlign.center,
-                                style:
-                                    Theme.of(context).textTheme.displayMedium,
-                              )),
-                              const SliverPadding(
-                                  padding: EdgeInsets.only(
-                                      top: PretConfig.defaultElementSpacing)),
-                              SliverToBoxAdapter(
-                                  child: Container(
-                                margin: EdgeInsets.only(
-                                  left: Config.defaultMarginPercentage *
-                                      constraints.maxWidth,
-                                  right: Config.defaultMarginPercentage *
-                                      constraints.maxWidth,
-                                ),
-                                child: CupertinoSlidingSegmentedControl(
-                                    children: blockItemTypeWidgets,
-                                    groupValue: blockItemTypeSelection,
-                                    onValueChanged: toggleBlockItemType),
-                              )),
-                              const SliverPadding(
-                                  padding: EdgeInsets.only(
-                                      top: PretConfig.defaultElementSpacing)),
-                              SliverToBoxAdapter(
-                                  child: Container(
-                                      margin: EdgeInsets.only(
-                                        left: Config.defaultMarginPercentage *
-                                            constraints.maxWidth,
-                                        right: Config.defaultMarginPercentage *
-                                            constraints.maxWidth,
-                                      ),
-                                      child: blockItemTypeSelection ==
-                                              BlockItemType.app
-                                          ? FormField(
-                                              validator: (_) => (selectedApp ==
-                                                          null &&
-                                                      blockItemTypeSelection ==
-                                                          BlockItemType.app)
-                                                  ? 'Please choose an app to block!'
-                                                  : null,
-                                              builder: (_) => Column(children: [
-                                                    Container(
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                              boxShadow: [
-                                                            PretConfig
-                                                                .defaultShadow
-                                                          ]),
-                                                      child: TextButton(
-                                                        onPressed: () async {
-                                                          var selection =
-                                                              await showAppPicker();
-                                                          setState(() {
-                                                            selectedApp =
-                                                                selection;
-                                                          });
-                                                        },
-                                                        style: ButtonStyle(
-                                                            backgroundColor:
-                                                                MaterialStatePropertyAll(Theme.of(
-                                                                        context)
-                                                                    .colorScheme
-                                                                    .tertiary),
-                                                            padding: const MaterialStatePropertyAll(
-                                                                EdgeInsets.all(
-                                                                    PretConfig
-                                                                        .defaultElementSpacing)),
-                                                            shape: const MaterialStatePropertyAll(
-                                                                RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        PretConfig
-                                                                            .thinBorderRadius))),
-                                                        child: const Text(
-                                                            'Choose app...'),
-                                                      ),
-                                                    ),
-                                                    const Padding(
-                                                        padding: EdgeInsets.all(
-                                                            PretConfig
-                                                                .minElementSpacing)),
-                                                    Text(
-                                                      selectedApp != null
-                                                          ? basename(
-                                                              selectedApp!.path)
-                                                          : 'No app selected',
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .labelMedium!
-                                                          .copyWith(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .tertiary),
-                                                    )
-                                                  ]))
-                                          : TextFormField(
-                                              controller:
-                                                  _urlTextFieldController,
-                                              validator: (value) => (value!
-                                                          .isEmpty &&
-                                                      blockItemTypeSelection ==
-                                                          BlockItemType.website)
-                                                  ? 'Please enter a URL to block!'
-                                                  : null,
-                                              textAlign: TextAlign.center,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .labelLarge,
-                                              decoration: const InputDecoration(
-                                                  border: InputBorder.none,
-                                                  hintText: 'youtube.com'),
-                                            ))),
-                              const SliverPadding(
-                                  padding: EdgeInsets.only(
-                                      top: PretConfig.defaultElementSpacing)),
-                              SliverToBoxAdapter(
-                                  child: Container(
-                                      margin: EdgeInsets.only(
-                                        left: Config.defaultMarginPercentage *
-                                            constraints.maxWidth,
-                                        right: Config.defaultMarginPercentage *
-                                            constraints.maxWidth,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            'Restricted Access',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .labelLarge,
-                                          ),
-                                          PretTooltip(
-                                              maxWidth: 300,
-                                              tooltipContent: Text(
-                                                'Allow access to the blocked site or app in 15 minute intervals, instead of blocking it right away.',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .labelSmall,
-                                              ),
-                                              icon: const FaIcon(
-                                                  FontAwesomeIcons
-                                                      .circleQuestion)),
-                                          const Spacer(),
-                                          CupertinoSwitch(
-                                              value: isAccessRestricted,
-                                              onChanged: (value) =>
-                                                  setState(() {
-                                                    isAccessRestricted = value;
-                                                  }))
-                                        ],
-                                      ))),
-                              const SliverPadding(
-                                  padding: EdgeInsets.only(
-                                      top: PretConfig.defaultElementSpacing)),
-                              SliverToBoxAdapter(
-                                  child: Container(
-                                margin: EdgeInsets.only(
-                                  left: Config.defaultMarginPercentage *
-                                      constraints.maxWidth,
-                                  right: Config.defaultMarginPercentage *
-                                      constraints.maxWidth,
-                                ),
-                                child: Text(
-                                  'Add a custom popup message:',
-                                  style: Theme.of(context).textTheme.labelLarge,
-                                ),
-                              )),
-                              const SliverPadding(
-                                  padding: EdgeInsets.only(
-                                      top: PretConfig.defaultElementSpacing)),
-                              SliverList.builder(
-                                itemCount: popups.length,
-                                itemBuilder: (context, index) {
-                                  var itemId = popups.keys.elementAt(index);
-                                  var message = popups[itemId]!.customMessage;
-                                  return Padding(
-                                      padding: EdgeInsets.only(
-                                        left: Config.defaultMarginPercentage *
-                                            constraints.maxWidth,
-                                        right: Config.defaultMarginPercentage *
-                                            constraints.maxWidth,
-                                      ),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedPopupId != itemId
-                                                ? selectedPopupId = itemId
-                                                : selectedPopupId = null;
-                                          });
-                                        },
-                                        child: PretCard(
-                                          borderColor: selectedPopupId == itemId
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .tertiary
-                                              : null,
-                                          child: Text(
-                                            message,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium,
-                                          ),
-                                        ),
-                                      ));
-                                },
-                              )
-                            ],
-                          ))
-                        ],
-                      ),
-                    )),
+    return LayoutBuilder(builder: (context, constraints) {
+      final defaultEdgeInsets = EdgeInsets.only(
+        left: Config.defaultMarginPercentage * constraints.maxWidth,
+        right: Config.defaultMarginPercentage * constraints.maxWidth,
+      );
+      return StyledCard(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              EditorCancelOkBar(
+                endEditing: widget.endEditing,
+                onSubmitItem: onSubmitItem,
               ),
-            ));
+              Expanded(
+                  child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Text(
+                      'Block something...',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                  ),
+                  Config.defaultSliverPadding,
+                  SliverToBoxAdapter(
+                    child: Container(
+                      margin: defaultEdgeInsets,
+                      child: CupertinoSlidingSegmentedControl(
+                          children: blockItemTypeWidgets,
+                          groupValue: blockItemTypeSelection,
+                          onValueChanged: toggleBlockItemType),
+                    ),
+                  ),
+                  Config.defaultSliverPadding,
+                  SliverToBoxAdapter(
+                    child: Container(
+                      margin: defaultEdgeInsets,
+                      child: blockItemTypeSelection == BlockItemType.app
+                          ? AppSelectionForm(
+                              selectedApp: selectedApp,
+                              blockItemTypeSelection: blockItemTypeSelection,
+                              selectedAppSetter: (selection) => setState(() {
+                                selectedApp = selection;
+                              }),
+                            )
+                          : TextFormField(
+                              controller: _urlTextFieldController,
+                              validator: (value) => (value!.isEmpty &&
+                                      blockItemTypeSelection ==
+                                          BlockItemType.website)
+                                  ? 'Please enter a URL to block!'
+                                  : null,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.labelLarge,
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'youtube.com'),
+                            ),
+                    ),
+                  ),
+                  Config.defaultSliverPadding,
+                  SliverToBoxAdapter(
+                      child: RestrictedAccessFormField(
+                    defaultEdgeInsets: defaultEdgeInsets,
+                    isAccessRestricted: isAccessRestricted,
+                    toggleRestrictedAccessHandler: ({required newData}) =>
+                        setState(() {
+                      isAccessRestricted = newData;
+                    }),
+                  )),
+                  Config.defaultSliverPadding,
+                  SliverToBoxAdapter(
+                      child: Container(
+                    margin: defaultEdgeInsets,
+                    child: Text(
+                      'Add a custom popup message:',
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
+                  )),
+                  Config.defaultSliverPadding,
+                  SliverList.builder(
+                    itemCount: popups.length,
+                    itemBuilder: (context, index) {
+                      final itemId = popups.keys.elementAt(index);
+                      final message = popups[itemId];
+                      return Padding(
+                          padding: defaultEdgeInsets,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedPopupId != itemId
+                                    ? selectedPopupId = itemId
+                                    : selectedPopupId = null;
+                              });
+                            },
+                            child: PretCard(
+                              borderColor: selectedPopupId == itemId
+                                  ? Theme.of(context).colorScheme.tertiary
+                                  : null,
+                              child: Text(
+                                message!,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ),
+                          ));
+                    },
+                  )
+                ],
+              ))
+            ],
+          ),
+        ),
+      );
+    });
   }
+}
+
+class RestrictedAccessFormField extends StatelessWidget {
+  const RestrictedAccessFormField({
+    super.key,
+    required this.defaultEdgeInsets,
+    required this.isAccessRestricted,
+    required this.toggleRestrictedAccessHandler,
+  });
+
+  final EdgeInsets defaultEdgeInsets;
+  final bool isAccessRestricted;
+  final Function({required bool newData}) toggleRestrictedAccessHandler;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: defaultEdgeInsets,
+        child: Row(
+          children: [
+            Text(
+              'Restricted Access',
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            PretTooltip(
+                maxWidth: 300,
+                tooltipContent: Text(
+                  'Allow access to the blocked site or app in 15 minute intervals, instead of blocking it right away.',
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+                icon: const FaIcon(FontAwesomeIcons.circleQuestion)),
+            const Spacer(),
+            CupertinoSwitch(
+              value: isAccessRestricted,
+              onChanged: (value) => toggleRestrictedAccessHandler(
+                newData: value,
+              ),
+            )
+          ],
+        ));
+  }
+}
+
+class EditorCancelOkBar extends ConsumerWidget {
+  final VoidCallback endEditing;
+  final Function(WidgetRef) onSubmitItem;
+
+  const EditorCancelOkBar({
+    super.key,
+    required this.endEditing,
+    required this.onSubmitItem,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CupertinoButton.filled(
+            onPressed: endEditing,
+            child: Text(
+              'Cancel',
+              style: Theme.of(context)
+                  .textTheme
+                  .labelLarge!
+                  .copyWith(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+          CupertinoButton.filled(
+            onPressed: () {
+              onSubmitItem(ref);
+            },
+            child: Text(
+              'OK',
+              style: Theme.of(context)
+                  .textTheme
+                  .labelLarge!
+                  .copyWith(color: Theme.of(context).colorScheme.tertiary),
+            ),
+          )
+        ],
+      );
 }

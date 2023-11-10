@@ -31,6 +31,12 @@ class Config {
       'icons',
     ));
   }
+
+  static const defaultSliverPadding = SliverPadding(
+    padding: EdgeInsets.only(
+      top: PretConfig.defaultElementSpacing,
+    ),
+  );
 }
 
 const ColorScheme lentoLightColorScheme = ColorScheme(
