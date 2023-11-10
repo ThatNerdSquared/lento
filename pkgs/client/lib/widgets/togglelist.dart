@@ -27,6 +27,7 @@ class ToggleList extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) => Container(
         margin: EdgeInsets.only(
+          top: PretConfig.thinElementSpacing,
           left: Config.defaultMarginPercentage * constraints.maxWidth,
           right: Config.defaultMarginPercentage * constraints.maxWidth,
         ),

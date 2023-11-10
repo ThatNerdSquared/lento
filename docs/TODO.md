@@ -26,6 +26,8 @@
 - [ ] [CHARLIE] solidify resizing
 - [ ] [CHARLIE] sound effects
 - [ ] [CHARLIE] plan website design
+- [ ] [NATHAN] update README
+- [ ] [NATHAN] add tests throughout codebase (proxy, lentoDeckProvider, etc)
 - [ ] [NATHAN] figure out build pipeline
 - [ ] [NATHAN] add update mechanism
 - [ ] [CHARLIE] init view??? (double check w beta testers)

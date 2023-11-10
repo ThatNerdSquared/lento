@@ -114,6 +114,7 @@ class CardTimerState extends ConsumerState<CardTimer> {
         const Padding(
             padding: EdgeInsets.all(PretConfig.defaultElementSpacing * 1 / 2)),
         Container(
+            margin: const EdgeInsets.only(bottom: PretConfig.minElementSpacing),
             decoration: const BoxDecoration(
                 borderRadius: PretConfig.defaultBorderRadius,
                 boxShadow: [PretConfig.defaultShadow]),
