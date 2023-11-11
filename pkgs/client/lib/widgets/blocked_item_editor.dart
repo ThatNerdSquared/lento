@@ -12,6 +12,7 @@ import '../config.dart';
 import '../main.dart';
 import 'app_picker.dart';
 import 'card.dart';
+import 'popup_msg_form.dart';
 
 @immutable
 class EditingEnv {
@@ -195,8 +196,14 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                   : null,
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.labelLarge,
+                              cursorColor: Colors.grey,
                               decoration: const InputDecoration(
-                                  border: InputBorder.none,
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        PretConfig.defaultBorderRadius,
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
                                   hintText: 'youtube.com'),
                             ),
                     ),
@@ -221,6 +228,12 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                     ),
                   )),
                   Config.defaultSliverPadding,
+                  SliverToBoxAdapter(
+                    child: Container(
+                      margin: defaultEdgeInsets,
+                      child: const NewPopupMsgForm(),
+                    ),
+                  ),
                   SliverList.builder(
                     itemCount: popups.length,
                     itemBuilder: (context, index) {
@@ -236,13 +249,16 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                                     : selectedPopupId = null;
                               });
                             },
-                            child: PretCard(
-                              borderColor: selectedPopupId == itemId
-                                  ? Theme.of(context).colorScheme.tertiary
-                                  : null,
-                              child: Text(
-                                message!,
-                                style: Theme.of(context).textTheme.bodyMedium,
+                            child: ContextMenuRegion(
+                              contextMenu: popupMsgContextMenu(ref, itemId),
+                              child: PretCard(
+                                borderColor: selectedPopupId == itemId
+                                    ? Theme.of(context).colorScheme.tertiary
+                                    : null,
+                                child: Text(
+                                  message!,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
                               ),
                             ),
                           ));

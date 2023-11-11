@@ -36,6 +36,13 @@ class JsonBackend extends PretJsonManager {
     });
   }
 
+  void writePopupMsgsToJson(Map<String, String> msgsToWrite) {
+    jsonWriteWrapper((initialData) {
+      initialData['popupMsgs'] = msgsToWrite;
+      return initialData;
+    });
+  }
+
   Map<String, LentoCardData> readDeckFromJson() {
     final contentsMap = pretLoadJson();
     switch (contentsMap['schema']) {
@@ -45,6 +52,16 @@ class JsonBackend extends PretJsonManager {
         throw UnsupportedError(
             'Invalid schema version ${contentsMap['schema']}');
     }
+  }
+
+  Map<String, String> readPopupMsgsFromJson() {
+    final contentsMap = pretLoadJson();
+    return switch (contentsMap['schema']) {
+      '1.0.0' => Map<String, String>.from(contentsMap['popupMsgs']),
+      _ => throw UnsupportedError(
+          'Invalid schema version ${contentsMap['schema']}',
+        )
+    };
   }
 
   Map<String, LentoCardData> _parseV1(contentsMap) {

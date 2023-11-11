@@ -15,12 +15,15 @@
 - [ ] [CHARLIE] mini deck
 - [x] [NATHAN] properly style blocklist item
 - [x] [NATHAN] refactor card and blockitem editor
-- [ ] [NATHAN] focus mode
+- [x] [NATHAN] refactor popup system
+  - [x] add new msg field on frontend
+  - [x] persist popups on disk
 - [ ] [NATHAN] banner support on frontend
   - [ ] scheduled events togglelist
   - [ ] banner add form (with testing button)
   - [ ] custom banner slider thing
 - [ ] [NATHAN] fix bug where, when card is deleted, its page is not properly disposed, due to its edge still showing in the PageView viewport
+- [ ] [NATHAN] focus mode
 - [ ] [CHARLIE] build AppPicker for Windows
 - [ ] [CHARLIE] add block logging to backend
 - [ ] [CHARLIE] implement toolbar (functions, sizing, styling, etc)

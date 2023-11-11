@@ -8,8 +8,8 @@ import 'package:uuid/uuid.dart';
 import 'package:window_size/window_size.dart';
 
 import 'backend/card_data.dart';
-import 'backend/custom_popup_data.dart';
 import 'backend/icon_manager.dart';
+import 'backend/popup_msg_data.dart';
 import 'config.dart';
 import 'widgets/blocked_item_editor.dart';
 import 'widgets/card.dart';
@@ -19,16 +19,11 @@ const uuID = Uuid();
 final iconManager = getIconManager();
 String platformAppSupportDir = '';
 
-final mockIds = [uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4(), uuID.v4()];
-final mockPopups = {
-  mockIds[3]: 'An essential aspect of creativity is not being afraid to fail.',
-  mockIds[4]: 'Don\'t get distracted!',
-};
 final lentoDeckProvider =
     StateNotifierProvider<LentoDeck, Map<String, LentoCardData>>(
         (ref) => LentoDeck());
-final popupMsgsProvider = StateNotifierProvider<PopupMsgs, Map<String, String>>(
-    (ref) => PopupMsgs(initialPopupMsgs: mockPopups));
+final popupMsgsProvider =
+    StateNotifierProvider<PopupMsgs, Map<String, String>>((ref) => PopupMsgs());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,8 +50,11 @@ class MyApp extends StatelessWidget {
         colorScheme: lentoLightColorScheme,
         fontFamily: 'Montserrat',
         scaffoldBackgroundColor: lentoLightColorScheme.background,
+        textSelectionTheme: TextSelectionThemeData(
+            selectionColor: lentoLightColorScheme.tertiary),
         shadowColor: lentoLightColorScheme.shadow,
         splashFactory: NoSplash.splashFactory,
+        highlightColor: Colors.transparent,
         textTheme: lentoTextTheme,
       ),
       home: const LentoHome(title: 'Lento Home'),
