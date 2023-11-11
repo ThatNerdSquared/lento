@@ -45,13 +45,12 @@ class JsonBackend extends PretJsonManager {
 
   Map<String, LentoCardData> readDeckFromJson() {
     final contentsMap = pretLoadJson();
-    switch (contentsMap['schema']) {
-      case '1.0.0':
-        return _parseV1(contentsMap);
-      default:
-        throw UnsupportedError(
-            'Invalid schema version ${contentsMap['schema']}');
-    }
+    return switch (contentsMap['schema']) {
+      '1.0.0' => _parseV1(contentsMap),
+      _ => throw UnsupportedError(
+          'Invalid schema version "${contentsMap['schema']}"',
+        ),
+    };
   }
 
   Map<String, String> readPopupMsgsFromJson() {
@@ -59,7 +58,7 @@ class JsonBackend extends PretJsonManager {
     return switch (contentsMap['schema']) {
       '1.0.0' => Map<String, String>.from(contentsMap['popupMsgs']),
       _ => throw UnsupportedError(
-          'Invalid schema version ${contentsMap['schema']}',
+          'Invalid schema version "${contentsMap['schema']}"',
         )
     };
   }

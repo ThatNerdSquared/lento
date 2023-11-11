@@ -106,12 +106,15 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
   }
 
   void addNewCard() {
-    state[uuID.v4()] = const LentoCardData.fromDefaults();
+    state = {
+      ...state,
+      uuID.v4(): const LentoCardData.fromDefaults(),
+    };
     _writeDeck();
   }
 
   void removeCard({required String cardId}) {
-    state.removeWhere((key, value) => key == cardId);
+    state = Map.fromEntries(state.entries.where((e) => e.key != cardId));
     _writeDeck();
   }
 
