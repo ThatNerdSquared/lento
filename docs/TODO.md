@@ -17,6 +17,8 @@
   - [x] persist popups on disk
 - [ ] [CHARLIE] build AppPicker for Windows
 - [x] [NATHAN] fix bug where, when card is deleted, its page is not properly disposed, due to its edge still showing in the PageView viewport
+- [x] [NATHAN] add to-do support
+- [ ] [NATHAN] incorrect mock path for common?
 - [ ] [NATHAN] investigate flutter freezing when app backgrounded
 - [ ] [NATHAN] figure out build pipeline
 - [ ] [NATHAN] add update mechanism
@@ -27,7 +29,6 @@
   - [ ] custom banner slider thing
 - [ ] [CHARLIE] emoji support
 - [ ] [CHARLIE] mini deck
-- [ ] [NATHAN] focus mode
 - [ ] [CHARLIE] add block logging to backend
 - [ ] [CHARLIE] implement toolbar (functions, sizing, styling, etc)
 - [ ] [CHARLIE] solidify resizing

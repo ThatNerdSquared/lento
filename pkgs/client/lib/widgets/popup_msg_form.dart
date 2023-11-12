@@ -14,22 +14,29 @@ Menu popupMsgContextMenu(WidgetRef ref, String popupId) => Menu(
       ],
     );
 
-class NewPopupMsgForm extends ConsumerStatefulWidget {
-  const NewPopupMsgForm({super.key});
+class OnelineTextAddForm extends ConsumerStatefulWidget {
+  final Function(String text) handleSubmit;
+  final String hintText;
+  final String validatorErrorMsg;
+
+  const OnelineTextAddForm({
+    super.key,
+    required this.handleSubmit,
+    required this.hintText,
+    required this.validatorErrorMsg,
+  });
 
   @override
-  NewPopupMsgFormState createState() => NewPopupMsgFormState();
+  OnelineTextAddFormState createState() => OnelineTextAddFormState();
 }
 
-class NewPopupMsgFormState extends ConsumerState<NewPopupMsgForm> {
+class OnelineTextAddFormState extends ConsumerState<OnelineTextAddForm> {
   final _formKey = GlobalKey<FormState>();
   final _textFieldController = TextEditingController();
 
   void onSubmit() {
     if (!_formKey.currentState!.validate()) return;
-    ref
-        .read(popupMsgsProvider.notifier)
-        .addPopup(_textFieldController.value.text);
+    widget.handleSubmit(_textFieldController.value.text);
     _textFieldController.clear();
   }
 
@@ -65,11 +72,11 @@ class NewPopupMsgFormState extends ConsumerState<NewPopupMsgForm> {
                   contentPadding: const EdgeInsets.all(
                     PretConfig.thinElementSpacing,
                   ),
-                  hintText: 'Don\'t get distracted!',
+                  hintText: widget.hintText,
                   isDense: true,
                 ),
                 validator: (value) =>
-                    value!.isEmpty ? 'Please enter a popup message!' : null,
+                    value!.isEmpty ? widget.validatorErrorMsg : null,
               ),
             ),
             const Padding(

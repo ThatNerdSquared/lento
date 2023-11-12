@@ -231,7 +231,12 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
                   SliverToBoxAdapter(
                     child: Container(
                       margin: defaultEdgeInsets,
-                      child: const NewPopupMsgForm(),
+                      child: OnelineTextAddForm(
+                        handleSubmit: (text) =>
+                            ref.read(popupMsgsProvider.notifier).addPopup(text),
+                        hintText: 'Don\'t get distracted!',
+                        validatorErrorMsg: 'Please enter a popup message!',
+                      ),
                     ),
                   ),
                   SliverList.builder(

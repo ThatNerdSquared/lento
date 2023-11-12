@@ -137,3 +137,49 @@ class BlockListItemState extends ConsumerState<BlockListItem> {
         });
   }
 }
+
+class TodoListItem extends ConsumerWidget {
+  final String cardId;
+  final String todoId;
+  final LentoTodo todo;
+
+  const TodoListItem({
+    super.key,
+    required this.cardId,
+    required this.todoId,
+    required this.todo,
+  });
+
+  Menu _buildContextMenu(WidgetRef ref) => Menu(items: [
+        MenuItem(
+          label: 'Delete To-do',
+          onClick: (_) => ref.read(lentoDeckProvider.notifier).deleteTodo(
+                cardId: cardId,
+                todoId: todoId,
+              ),
+        ),
+      ]);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => ContextMenuRegion(
+        contextMenu: _buildContextMenu(ref),
+        child: ListTile(
+          leading: Checkbox(
+            side: BorderSide(
+                width: 3.0, color: Theme.of(context).colorScheme.onSecondary),
+            fillColor: MaterialStateColor.resolveWith((states) {
+              return states.contains(MaterialState.selected)
+                  ? Theme.of(context).colorScheme.tertiary
+                  : Theme.of(context).colorScheme.secondary;
+            }),
+            shape: const CircleBorder(eccentricity: 0.5),
+            value: todo.completed,
+            splashRadius: 0,
+            onChanged: (_) => ref
+                .read(lentoDeckProvider.notifier)
+                .toggleTodoCompletion(cardId: cardId, todoId: todoId),
+          ),
+          title: Text(todo.title),
+        ),
+      );
+}

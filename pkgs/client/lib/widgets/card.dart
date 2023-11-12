@@ -7,6 +7,7 @@ import '../main.dart';
 import 'blocklist_item.dart';
 import 'card_timer.dart';
 import 'card_title.dart';
+import 'popup_msg_form.dart';
 import 'togglelist.dart';
 
 /// A card in the Lento deck.
@@ -68,6 +69,38 @@ class LentoCard extends ConsumerWidget {
                               startEditing: startEditing,
                             ))
                         .toList(),
+                  ),
+                  ToggleList(
+                    cardId: cardId,
+                    toggleTitle: 'To-do',
+                    emptyLabel: 'No to-dos',
+                    additionalWidgets: [
+                      OnelineTextAddForm(
+                        handleSubmit: (text) => ref
+                            .read(lentoDeckProvider.notifier)
+                            .addTodo(cardId: cardId, title: text),
+                        hintText: 'What\'s on your plate?',
+                        validatorErrorMsg: 'Please enter a todo!',
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(
+                          bottom: PretConfig.minElementSpacing,
+                        ),
+                      ),
+                    ],
+                    children: ref
+                        .watch(lentoDeckProvider)[cardId]!
+                        .todos
+                        .entries
+                        .map((item) => TodoListItem(
+                              cardId: cardId,
+                              todoId: item.key,
+                              todo: item.value,
+                            ))
+                        .toList(),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(PretConfig.defaultElementSpacing),
                   ),
                 ].map((widget) => SliverToBoxAdapter(child: widget)).toList())),
             TextButton(

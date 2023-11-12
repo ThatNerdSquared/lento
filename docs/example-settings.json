@@ -46,6 +46,20 @@
                     "isRestrictedAccess": true,
                     "customPopupId": "a019868e-f43f-478f-8dcc-ba78c35525c4"
                 }
+            },
+            "todos": {
+                "c233c1c3-e265-4dcb-8f96-5f3cdfa3c9a4": {
+                    "name": "Finish up DB tests",
+                    "completed": true
+                },
+                "670f00da-c5cf-4f17-9836-4c479f295201": {
+                    "name": "Finish up E2E tests",
+                    "completed": false
+                },
+                "2a956e01-80b5-40bd-bc3c-b98b537b84ab": {
+                    "name": "Write up PR",
+                    "completed": false
+                }
             }
         }
     },
@@ -66,11 +80,6 @@
             "message": "banner2 msg",
             "triggerTimes": [50]
         }
-    },
-    "goals": {
-        "Finish up DB tests": true,
-        "Finish E2E tests": false,
-        "Write up PR": false
     },
     "applicationSettings": {
         "theme": "system",

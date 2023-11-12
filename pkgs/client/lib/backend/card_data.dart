@@ -45,6 +45,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               isActivated: oldCard.isActivated,
               blockedSites: oldCard.blockedSites,
               blockedApps: oldCard.blockedApps,
+              todos: oldCard.todos,
             ));
     _writeDeck();
   }
@@ -53,11 +54,13 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
     _findAndModifyCardAttribute(
         cardId,
         (oldCard) => LentoCardData(
-            cardName: oldCard.cardName,
-            blockDuration: oldCard.blockDuration,
-            isActivated: true,
-            blockedSites: oldCard.blockedSites,
-            blockedApps: oldCard.blockedApps));
+              cardName: oldCard.cardName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: true,
+              blockedSites: oldCard.blockedSites,
+              blockedApps: oldCard.blockedApps,
+              todos: oldCard.todos,
+            ));
     _writeDeck();
   }
 
@@ -71,6 +74,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               isActivated: false,
               blockedSites: oldCard.blockedSites,
               blockedApps: oldCard.blockedApps,
+              todos: oldCard.todos,
             ));
     _writeDeck();
   }
@@ -83,25 +87,27 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
     _findAndModifyCardAttribute(
         cardId,
         (oldCard) => LentoCardData(
-            cardName: oldCard.cardName,
-            blockDuration: timeSection == null
-                ? CardTime.fromTime(
-                    presetTime: oldCard.blockDuration.presetTime,
-                    newTime: newValue)
-                : CardTime(
-                    presetTime: oldCard.blockDuration.presetTime,
-                    hours: timeSection == TimeSection.hours
-                        ? newValue
-                        : oldCard.blockDuration.hours,
-                    minutes: timeSection == TimeSection.minutes
-                        ? newValue
-                        : oldCard.blockDuration.minutes,
-                    seconds: timeSection == TimeSection.seconds
-                        ? newValue
-                        : oldCard.blockDuration.seconds),
-            isActivated: oldCard.isActivated,
-            blockedSites: oldCard.blockedSites,
-            blockedApps: oldCard.blockedApps));
+              cardName: oldCard.cardName,
+              blockDuration: timeSection == null
+                  ? CardTime.fromTime(
+                      presetTime: oldCard.blockDuration.presetTime,
+                      newTime: newValue)
+                  : CardTime(
+                      presetTime: oldCard.blockDuration.presetTime,
+                      hours: timeSection == TimeSection.hours
+                          ? newValue
+                          : oldCard.blockDuration.hours,
+                      minutes: timeSection == TimeSection.minutes
+                          ? newValue
+                          : oldCard.blockDuration.minutes,
+                      seconds: timeSection == TimeSection.seconds
+                          ? newValue
+                          : oldCard.blockDuration.seconds),
+              isActivated: oldCard.isActivated,
+              blockedSites: oldCard.blockedSites,
+              blockedApps: oldCard.blockedApps,
+              todos: oldCard.todos,
+            ));
     _writeDeck();
   }
 
@@ -130,6 +136,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               isActivated: oldCard.isActivated,
               blockedSites: {...oldCard.blockedSites, uuID.v4(): websiteData},
               blockedApps: oldCard.blockedApps,
+              todos: oldCard.todos,
             ));
     _writeDeck();
   }
@@ -146,6 +153,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               isActivated: oldCard.isActivated,
               blockedSites: oldCard.blockedSites,
               blockedApps: {...oldCard.blockedApps, uuID.v4(): appData},
+              todos: oldCard.todos,
             ));
     _writeDeck();
   }
@@ -164,6 +172,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                 ..removeWhere((key, value) => key == blockItemId),
               blockedApps: Map.from(oldCard.blockedApps)
                 ..removeWhere((key, value) => key == blockItemId),
+              todos: oldCard.todos,
             ));
     _writeDeck();
   }
@@ -184,6 +193,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                       ? MapEntry(blockItemId, newData)
                       : e)),
               blockedApps: oldCard.blockedApps,
+              todos: oldCard.todos,
             ));
     _writeDeck();
   }
@@ -204,6 +214,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                   (e) => e.key == blockItemId
                       ? MapEntry(blockItemId, newData)
                       : e)),
+              todos: oldCard.todos,
             ));
     _writeDeck();
   }
@@ -243,6 +254,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                         customPopupId: value.customPopupId,
                       )))
                   : oldCard.blockedApps,
+              todos: oldCard.todos,
             ));
     _writeDeck();
   }
@@ -282,6 +294,72 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                         customPopupId: value.customPopupId,
                       )))
                   : oldCard.blockedApps,
+              todos: oldCard.todos,
+            ));
+    _writeDeck();
+  }
+
+  void addTodo({
+    required String cardId,
+    required String title,
+  }) {
+    _findAndModifyCardAttribute(
+        cardId,
+        (oldCard) => LentoCardData(
+                cardName: oldCard.cardName,
+                blockDuration: oldCard.blockDuration,
+                isActivated: oldCard.isActivated,
+                blockedSites: oldCard.blockedSites,
+                blockedApps: oldCard.blockedApps,
+                todos: {
+                  ...oldCard.todos,
+                  uuID.v4(): LentoTodo(
+                    title: title,
+                    completed: false,
+                  ),
+                }));
+    _writeDeck();
+  }
+
+  void toggleTodoCompletion({
+    required String cardId,
+    required String todoId,
+  }) {
+    _findAndModifyCardAttribute(
+        cardId,
+        (oldCard) => LentoCardData(
+              cardName: oldCard.cardName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: oldCard.isActivated,
+              blockedSites: oldCard.blockedSites,
+              blockedApps: oldCard.blockedApps,
+              todos: oldCard.todos.map((key, value) => key == todoId
+                  ? MapEntry(
+                      key,
+                      LentoTodo(
+                        title: value.title,
+                        completed: !value.completed,
+                      ))
+                  : MapEntry(key, value)),
+            ));
+    _writeDeck();
+  }
+
+  void deleteTodo({
+    required String cardId,
+    required String todoId,
+  }) {
+    _findAndModifyCardAttribute(
+        cardId,
+        (oldCard) => LentoCardData(
+              cardName: oldCard.cardName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: oldCard.isActivated,
+              blockedSites: oldCard.blockedSites,
+              blockedApps: oldCard.blockedApps,
+              todos: Map.fromEntries(
+                oldCard.todos.entries.where((e) => e.key != todoId),
+              ),
             ));
     _writeDeck();
   }
@@ -295,6 +373,7 @@ class LentoCardData {
   final bool isActivated;
   final Map<String, BlockedWebsiteData> blockedSites;
   final Map<String, BlockedAppData> blockedApps;
+  final Map<String, LentoTodo> todos;
 
   const LentoCardData({
     required this.cardName,
@@ -302,6 +381,7 @@ class LentoCardData {
     required this.isActivated,
     required this.blockedSites,
     required this.blockedApps,
+    required this.todos,
   });
 
   const LentoCardData.fromDefaults()
@@ -309,7 +389,8 @@ class LentoCardData {
         blockDuration = const CardTime.fromPresetTime(0),
         isActivated = false,
         blockedSites = const {},
-        blockedApps = const {};
+        blockedApps = const {},
+        todos = const {};
 
   Map<String, dynamic> toJson() {
     return {
@@ -324,6 +405,7 @@ class LentoCardData {
             key,
             value.toJson(),
           )),
+      'todos': todos.map((key, value) => MapEntry(key, value.toJson())),
     };
   }
 }
@@ -416,4 +498,20 @@ class BlockedAppData {
       'customPopupId': customPopupId,
     };
   }
+}
+
+@immutable
+class LentoTodo {
+  final String title;
+  final bool completed;
+
+  const LentoTodo({
+    required this.title,
+    required this.completed,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'completed': completed,
+      };
 }

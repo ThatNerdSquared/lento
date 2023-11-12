@@ -10,8 +10,10 @@ class JsonBackend extends PretJsonManager {
   @override
   File get dataFile => File(Config.dataFilePath);
   @override
+  String schemaVersion = '1.1.0';
+  @override
   Map get freshJson => {
-        'schema': '1.0.0',
+        'schema': schemaVersion,
         'activatedCard': null,
         'cards': {
           uuID.v4(): const LentoCardData.fromDefaults().toJson(),
@@ -47,6 +49,7 @@ class JsonBackend extends PretJsonManager {
     final contentsMap = pretLoadJson();
     return switch (contentsMap['schema']) {
       '1.0.0' => _parseV1(contentsMap),
+      '1.1.0' => _parseV1_1(contentsMap),
       _ => throw UnsupportedError(
           'Invalid schema version "${contentsMap['schema']}"',
         ),
@@ -57,6 +60,7 @@ class JsonBackend extends PretJsonManager {
     final contentsMap = pretLoadJson();
     return switch (contentsMap['schema']) {
       '1.0.0' => Map<String, String>.from(contentsMap['popupMsgs']),
+      '1.1.0' => Map<String, String>.from(contentsMap['popupMsgs']),
       _ => throw UnsupportedError(
           'Invalid schema version "${contentsMap['schema']}"',
         )
@@ -74,7 +78,35 @@ class JsonBackend extends PretJsonManager {
               blockDuration: CardTime.fromPresetTime(value['blockDuration']),
               blockedSites: _parseV1Sites(value['blockedSites']),
               blockedApps: _parseV1Apps(value['blockedApps']),
+              todos: const {},
             ))));
+  }
+
+  Map<String, LentoCardData> _parseV1_1(contentsMap) {
+    final cardsMap = contentsMap['cards'];
+    return Map<String, LentoCardData>.from(
+        cardsMap.map((key, value) => MapEntry(
+            key,
+            LentoCardData(
+              cardName: value['name'],
+              isActivated: value['isActivated'],
+              blockDuration: CardTime.fromPresetTime(value['blockDuration']),
+              blockedSites: _parseV1Sites(value['blockedSites']),
+              blockedApps: _parseV1Apps(value['blockedApps']),
+              todos: _parseV1Todos(value['todos']),
+            ))));
+  }
+
+  Map<String, LentoTodo> _parseV1Todos(todosMap) {
+    return Map<String, LentoTodo>.from(todosMap.map(
+      (key, value) => MapEntry(
+        key,
+        LentoTodo(
+          title: value['title'],
+          completed: value['completed'],
+        ),
+      ),
+    ));
   }
 
   Map<String, BlockedWebsiteData> _parseV1Sites(blockedSitesMap) {

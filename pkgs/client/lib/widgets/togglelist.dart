@@ -12,6 +12,7 @@ class ToggleList extends ConsumerWidget {
   final String cardId;
   final String toggleTitle;
   final String emptyLabel;
+  final List<Widget> additionalWidgets;
   final List<Widget> children;
 
   const ToggleList({
@@ -20,6 +21,7 @@ class ToggleList extends ConsumerWidget {
     required this.toggleTitle,
     required this.emptyLabel,
     required this.children,
+    this.additionalWidgets = const [],
   });
 
   @override
@@ -73,8 +75,11 @@ class ToggleList extends ConsumerWidget {
                     ),
                     child: Column(
                       children: children.isEmpty
-                          ? [EmptyListLabel(labelText: emptyLabel)]
-                          : children,
+                          ? [
+                              EmptyListLabel(labelText: emptyLabel),
+                              ...additionalWidgets
+                            ]
+                          : [...children, ...additionalWidgets],
                     )),
               )),
         ]),
