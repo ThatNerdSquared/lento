@@ -1,8 +1,9 @@
+import 'package:common/common.dart';
 import 'package:logging/logging.dart';
+
 import '../config.dart';
 import '../db.dart' as db;
 import '../notifs.dart';
-import 'platform_process_manager.dart';
 
 class AppBlocker {
   final log = Logger('Class: AppBlocker');

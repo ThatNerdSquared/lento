@@ -1,6 +1,7 @@
 name: daemon
 description: A sample command-line application.
 version: 1.0.0
+publish_to: none
 # repository: https://github.com/my_org/my_repo
 
 environment:
@@ -14,6 +15,8 @@ dependencies:
   path: ^1.8.3
   meta: ^1.10.0
   clock: ^1.1.1
+  common:
+    path: ../common
 
 dev_dependencies:
   lints: ^2.0.0

@@ -14,15 +14,18 @@ enum AppTheme { light, dark, system }
 
 class Config {
   Config._();
-
   static const double defaultMarginPercentage = 0.15;
   static const double blockItemIconSize = 32.0;
-
   static String get dataFilePath {
     return p.join(
       platformAppSupportDir,
       'lentosettings.json',
     );
+  }
+
+  static String get homeFolder{
+    final envVars = Platform.environment;
+    return envVars['HOME']!;
   }
 
   static Directory get iconDir {

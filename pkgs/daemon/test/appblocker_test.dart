@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:common/common.dart';
 import 'package:daemon/blockers/appblocker.dart';
-import 'package:daemon/blockers/platform_process_manager.dart';
 import 'package:daemon/db.dart' as db;
 import 'package:daemon/notifs.dart';
 import 'package:mockito/annotations.dart';
@@ -69,9 +69,9 @@ void main() {
     );
     appBlocker.blockApps();
 
-    verify(mockProcessManager.killProcess(fakeProcessInfo));
+    verify(mockProcessManager.killProcess(fakeProcessInfo as ProcessInfo?));
     verify(mockNotifManager.promptUserToUnblock(fakeAppName));
-    verify(mockProcessManager.restartProcess(fakeProcessInfo));
+    verify(mockProcessManager.restartProcess(fakeProcessInfo as ProcessInfo?));
     verifyNever(mockNotifManager.showBlockedItemPopup(
         blockedItemName: fakeProcessInfo.name, popupMsg: fakePopupMsg));
   });
@@ -86,11 +86,11 @@ void main() {
     );
     appBlocker.blockApps();
 
-    verify(mockProcessManager.killProcess(fakeProcessInfo));
+    verify(mockProcessManager.killProcess(fakeProcessInfo as ProcessInfo?));
     verify(mockNotifManager.promptUserToUnblock(fakeAppName));
     verify(mockNotifManager.showBlockedItemPopup(
         blockedItemName: fakeProcessInfo.name, popupMsg: fakePopupMsg));
-    verifyNever(mockProcessManager.restartProcess(fakeProcessInfo));
+    verifyNever(mockProcessManager.restartProcess(fakeProcessInfo as ProcessInfo?));
   });
 
   test('previously allowed restricted app is not affected', () {
@@ -107,10 +107,10 @@ void main() {
     );
     appBlocker.blockApps();
 
-    verifyNever(mockProcessManager.killProcess(fakeProcessInfo));
+    verifyNever(mockProcessManager.killProcess(fakeProcessInfo as ProcessInfo?));
     verifyNever(mockNotifManager.promptUserToUnblock(fakeAppName));
     verifyNever(mockNotifManager.showBlockedItemPopup(
         blockedItemName: fakeProcessInfo.name, popupMsg: fakePopupMsg));
-    verifyNever(mockProcessManager.restartProcess(fakeProcessInfo));
+    verifyNever(mockProcessManager.restartProcess(fakeProcessInfo as ProcessInfo?));
   });
 }
