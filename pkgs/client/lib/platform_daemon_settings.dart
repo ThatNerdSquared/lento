@@ -1,12 +1,12 @@
 /// THIS IS A VERY ROUGH DRAFT, PRIMARLY FOR TESTING.
 /// THERE ARE NUMEROUS PROBLEMS IN THIS FILE, INCLUDING BUT NOT LIMITED TO:
-/// 
+///
 /// - manual reads from the `lentosettings.json` file - all JSON handling should
 ///   be handled by a method on the [JsonBackend] class
-/// 
+///
 /// - idk if a while loop + sleep is the best way to wait for daemon to write its
 ///   port to the settings file
-/// 
+///
 /// - [PlatformDaemonSettings.createDaemonInput] is EXTREMELY rough and does not
 ///   support things like banners yet. i think with time i want to standardize
 ///   the data formats such that we can just [LentoCardData.toJson] an entire
@@ -77,9 +77,13 @@ class MacosDaemonSettings extends PlatformDaemonSettings {
   void launchDaemon() async {
     var homeFolder = Config.homeFolder;
     dynamic lentoPlist;
-    if (!File('$homeFolder/Library/LaunchAgents/"ca.failsafe.lentodaemon.plist"').existsSync()) {
-      final lentoPlistString = await rootBundle.loadString('assets/ca.failsafe.lentodaemon.plist');
-      lentoPlist = File('$homeFolder/Library/LaunchAgents/"ca.failsafe.lentodaemon.plist"');
+    if (!File(
+            '$homeFolder/Library/LaunchAgents/"ca.failsafe.lentodaemon.plist"')
+        .existsSync()) {
+      final lentoPlistString =
+          await rootBundle.loadString('assets/ca.failsafe.lentodaemon.plist');
+      lentoPlist = File(
+          '$homeFolder/Library/LaunchAgents/"ca.failsafe.lentodaemon.plist"');
       lentoPlist.writeAsString(lentoPlistString);
     }
     Process.run('launchctl', ['load', lentoPlist]);
@@ -95,5 +99,5 @@ class MacosDaemonSettings extends PlatformDaemonSettings {
       }
     }
     return false;
-  }   
+  }
 }

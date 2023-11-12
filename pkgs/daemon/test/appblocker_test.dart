@@ -69,9 +69,9 @@ void main() {
     );
     appBlocker.blockApps();
 
-    verify(mockProcessManager.killProcess(fakeProcessInfo as ProcessInfo?));
+    verify(mockProcessManager.killProcess(fakeProcessInfo));
     verify(mockNotifManager.promptUserToUnblock(fakeAppName));
-    verify(mockProcessManager.restartProcess(fakeProcessInfo as ProcessInfo?));
+    verify(mockProcessManager.restartProcess(fakeProcessInfo));
     verifyNever(mockNotifManager.showBlockedItemPopup(
         blockedItemName: fakeProcessInfo.name, popupMsg: fakePopupMsg));
   });
@@ -86,11 +86,11 @@ void main() {
     );
     appBlocker.blockApps();
 
-    verify(mockProcessManager.killProcess(fakeProcessInfo as ProcessInfo?));
+    verify(mockProcessManager.killProcess(fakeProcessInfo));
     verify(mockNotifManager.promptUserToUnblock(fakeAppName));
     verify(mockNotifManager.showBlockedItemPopup(
         blockedItemName: fakeProcessInfo.name, popupMsg: fakePopupMsg));
-    verifyNever(mockProcessManager.restartProcess(fakeProcessInfo as ProcessInfo?));
+    verifyNever(mockProcessManager.restartProcess(fakeProcessInfo));
   });
 
   test('previously allowed restricted app is not affected', () {
@@ -107,10 +107,10 @@ void main() {
     );
     appBlocker.blockApps();
 
-    verifyNever(mockProcessManager.killProcess(fakeProcessInfo as ProcessInfo?));
+    verifyNever(mockProcessManager.killProcess(fakeProcessInfo));
     verifyNever(mockNotifManager.promptUserToUnblock(fakeAppName));
     verifyNever(mockNotifManager.showBlockedItemPopup(
         blockedItemName: fakeProcessInfo.name, popupMsg: fakePopupMsg));
-    verifyNever(mockProcessManager.restartProcess(fakeProcessInfo as ProcessInfo?));
+    verifyNever(mockProcessManager.restartProcess(fakeProcessInfo));
   });
 }

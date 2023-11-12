@@ -23,7 +23,7 @@ class Config {
     );
   }
 
-  static String get homeFolder{
+  static String get homeFolder {
     final envVars = Platform.environment;
     return envVars['HOME']!;
   }
