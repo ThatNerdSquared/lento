@@ -6,7 +6,7 @@ import '../main.dart';
 class LentoToolbar extends ConsumerWidget {
   final int currentCardIndex;
   final VoidCallback nextPageHandler;
-  final VoidCallback prevPageHandler;
+  final Future<void> Function() prevPageHandler;
 
   const LentoToolbar({
     super.key,
@@ -34,14 +34,13 @@ class LentoToolbar extends ConsumerWidget {
               ),
               IconButton(
                 iconSize: 0.4 * constraints.maxHeight,
-                onPressed: () {
+                // we might need to guard here against deleting
+                // the final card and just having nothing left over...
+                onPressed: () async {
+                  await prevPageHandler();
                   ref
                       .read(lentoDeckProvider.notifier)
                       .removeCard(cardId: currentCardId);
-                  ref.read(lentoDeckProvider).entries.isEmpty
-                      ? ref.read(lentoDeckProvider.notifier).addNewCard()
-                      : null;
-                  prevPageHandler();
                 },
                 icon: const Icon(Icons.delete_outline),
               ),

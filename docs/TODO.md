@@ -2,7 +2,6 @@
 
 - [ ] [CHARLIE] daemon interface
 - [x] [NATHAN] json backend
-- [ ] [NATHAN] investigate flutter freezing when app backgrounded
 - [x] [NATHAN] icon manager
   - [x] crash on icon manager icon load???
 - [x] [NATHAN] right click menu support
@@ -11,20 +10,24 @@
   - [x] delete the item
 - [x] [NATHAN] update bundle id
 - [x] [CHATGPT] add logging to client
-- [ ] [CHARLIE] emoji support
-- [ ] [CHARLIE] mini deck
 - [x] [NATHAN] properly style blocklist item
 - [x] [NATHAN] refactor card and blockitem editor
 - [x] [NATHAN] refactor popup system
   - [x] add new msg field on frontend
   - [x] persist popups on disk
+- [ ] [CHARLIE] build AppPicker for Windows
+- [x] [NATHAN] fix bug where, when card is deleted, its page is not properly disposed, due to its edge still showing in the PageView viewport
+- [ ] [NATHAN] investigate flutter freezing when app backgrounded
+- [ ] [NATHAN] figure out build pipeline
+- [ ] [NATHAN] add update mechanism
+- [ ] [NATHAN] dark mode
 - [ ] [NATHAN] banner support on frontend
   - [ ] scheduled events togglelist
   - [ ] banner add form (with testing button)
   - [ ] custom banner slider thing
-- [ ] [NATHAN] fix bug where, when card is deleted, its page is not properly disposed, due to its edge still showing in the PageView viewport
+- [ ] [CHARLIE] emoji support
+- [ ] [CHARLIE] mini deck
 - [ ] [NATHAN] focus mode
-- [ ] [CHARLIE] build AppPicker for Windows
 - [ ] [CHARLIE] add block logging to backend
 - [ ] [CHARLIE] implement toolbar (functions, sizing, styling, etc)
 - [ ] [CHARLIE] solidify resizing
@@ -32,11 +35,8 @@
 - [ ] [CHARLIE] plan website design
 - [ ] [NATHAN] update README
 - [ ] [NATHAN] add tests throughout codebase (proxy, lentoDeckProvider, etc)
-- [ ] [NATHAN] figure out build pipeline
-- [ ] [NATHAN] add update mechanism
 - [ ] [CHARLIE] init view??? (double check w beta testers)
 - [ ] [CHARLIE] make timer wheels save only when you click outside them
-- [ ] [NATHAN] dark mode
 - [ ] [NATHAN] consolidate hover effects
 - [ ] [NATHAN] minimal keyboard shortcuts
       ... other things

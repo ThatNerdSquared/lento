@@ -79,10 +79,12 @@ class LentoHomeState extends ConsumerState<LentoHome> {
   );
   EditingEnv? editingEnv;
 
-  void scrollLeft() => controller.previousPage(
-        duration: const Duration(seconds: 1),
-        curve: Curves.decelerate,
-      );
+  Future<void> scrollLeft() async {
+    await controller.previousPage(
+      duration: const Duration(seconds: 1),
+      curve: Curves.decelerate,
+    );
+  }
 
   void scrollRight() => controller.nextPage(
         duration: const Duration(seconds: 1),
@@ -91,7 +93,7 @@ class LentoHomeState extends ConsumerState<LentoHome> {
 
   void scrollBackToStart() => controller.animateTo(
         0,
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 200),
         curve: Curves.decelerate,
       );
 
@@ -125,6 +127,10 @@ class LentoHomeState extends ConsumerState<LentoHome> {
                             pageViewIndex = value % limitIndex;
                           }),
                       itemBuilder: (context, index) {
+                        // why does this work?
+                        if ((index - 1) == pageViewIndex) {
+                          return StyledCard(child: Container());
+                        }
                         final cardId = ref
                             .read(lentoDeckProvider)
                             .keys
