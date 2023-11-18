@@ -12,6 +12,9 @@
     - "Allow" and "Cancel" options, "Cancel" is DEFAULT
   - **hardblock popup**
     - singular "OK" option as DEFAULT
+  - stored separately from card data
+  - can be assigned to multiple blockitems
+  - can be used on multiple cards
 - banners
   - fire at different time points during the block, as set by user PER CARD
   - can be set to fire at any point in the block
@@ -22,6 +25,8 @@
     - each card can have different banners enabled/disabled
     - editing happens in banner editor (title, message, time points on slider, test)
     - in future, could allow selection from provided set of sound effects
+  - stored in each card data
+  - can only be used on the card it is stored under
 
 ## implementation
 
