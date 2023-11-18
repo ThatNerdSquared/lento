@@ -12,6 +12,14 @@ enum BlockItemType { website, app }
 
 enum AppTheme { light, dark, system }
 
+enum ScheduledEventType { banner }
+
+ScheduledEventType convertToScheduledEventType(String seString) =>
+    switch (seString) {
+      'banner' => ScheduledEventType.banner,
+      _ => throw UnimplementedError('Invalid scheduled event!'),
+    };
+
 class Config {
   Config._();
   static const double defaultMarginPercentage = 0.15;

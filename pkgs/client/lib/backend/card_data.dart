@@ -46,6 +46,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockedSites: oldCard.blockedSites,
               blockedApps: oldCard.blockedApps,
               todos: oldCard.todos,
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -60,6 +61,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockedSites: oldCard.blockedSites,
               blockedApps: oldCard.blockedApps,
               todos: oldCard.todos,
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -75,6 +77,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockedSites: oldCard.blockedSites,
               blockedApps: oldCard.blockedApps,
               todos: oldCard.todos,
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -107,6 +110,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockedSites: oldCard.blockedSites,
               blockedApps: oldCard.blockedApps,
               todos: oldCard.todos,
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -137,6 +141,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockedSites: {...oldCard.blockedSites, uuID.v4(): websiteData},
               blockedApps: oldCard.blockedApps,
               todos: oldCard.todos,
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -154,6 +159,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockedSites: oldCard.blockedSites,
               blockedApps: {...oldCard.blockedApps, uuID.v4(): appData},
               todos: oldCard.todos,
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -173,6 +179,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockedApps: Map.from(oldCard.blockedApps)
                 ..removeWhere((key, value) => key == blockItemId),
               todos: oldCard.todos,
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -194,6 +201,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                       : e)),
               blockedApps: oldCard.blockedApps,
               todos: oldCard.todos,
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -215,6 +223,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                       ? MapEntry(blockItemId, newData)
                       : e)),
               todos: oldCard.todos,
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -255,6 +264,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                       )))
                   : oldCard.blockedApps,
               todos: oldCard.todos,
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -295,6 +305,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                       )))
                   : oldCard.blockedApps,
               todos: oldCard.todos,
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -306,18 +317,20 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
     _findAndModifyCardAttribute(
         cardId,
         (oldCard) => LentoCardData(
-                cardName: oldCard.cardName,
-                blockDuration: oldCard.blockDuration,
-                isActivated: oldCard.isActivated,
-                blockedSites: oldCard.blockedSites,
-                blockedApps: oldCard.blockedApps,
-                todos: {
-                  ...oldCard.todos,
-                  uuID.v4(): LentoTodo(
-                    title: title,
-                    completed: false,
-                  ),
-                }));
+              cardName: oldCard.cardName,
+              blockDuration: oldCard.blockDuration,
+              isActivated: oldCard.isActivated,
+              blockedSites: oldCard.blockedSites,
+              blockedApps: oldCard.blockedApps,
+              todos: {
+                ...oldCard.todos,
+                uuID.v4(): LentoTodo(
+                  title: title,
+                  completed: false,
+                ),
+              },
+              scheduledEvents: oldCard.scheduledEvents,
+            ));
     _writeDeck();
   }
 
@@ -341,6 +354,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                         completed: !value.completed,
                       ))
                   : MapEntry(key, value)),
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -360,6 +374,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               todos: Map.fromEntries(
                 oldCard.todos.entries.where((e) => e.key != todoId),
               ),
+              scheduledEvents: oldCard.scheduledEvents,
             ));
     _writeDeck();
   }
@@ -374,6 +389,7 @@ class LentoCardData {
   final Map<String, BlockedWebsiteData> blockedSites;
   final Map<String, BlockedAppData> blockedApps;
   final Map<String, LentoTodo> todos;
+  final Map<String, ScheduledEvent> scheduledEvents;
 
   const LentoCardData({
     required this.cardName,
@@ -382,6 +398,7 @@ class LentoCardData {
     required this.blockedSites,
     required this.blockedApps,
     required this.todos,
+    required this.scheduledEvents,
   });
 
   const LentoCardData.fromDefaults()
@@ -390,7 +407,8 @@ class LentoCardData {
         isActivated = false,
         blockedSites = const {},
         blockedApps = const {},
-        todos = const {};
+        todos = const {},
+        scheduledEvents = const {};
 
   Map<String, dynamic> toJson() {
     return {
@@ -406,6 +424,10 @@ class LentoCardData {
             value.toJson(),
           )),
       'todos': todos.map((key, value) => MapEntry(key, value.toJson())),
+      'scheduledEvents': scheduledEvents.map((key, value) => MapEntry(
+            key,
+            value.toJson(),
+          )),
     };
   }
 }
@@ -513,5 +535,27 @@ class LentoTodo {
   Map<String, dynamic> toJson() => {
         'title': title,
         'completed': completed,
+      };
+}
+
+@immutable
+class ScheduledEvent {
+  final ScheduledEventType type;
+  final String title;
+  final String message;
+  final List<String> triggerTimes;
+
+  const ScheduledEvent({
+    required this.type,
+    required this.title,
+    required this.message,
+    required this.triggerTimes,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'type': type.toString(),
+        'title': title,
+        'message': message,
+        'triggerTimes': triggerTimes,
       };
 }

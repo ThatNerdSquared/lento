@@ -19,7 +19,7 @@
 - [x] [NATHAN] fix bug where, when card is deleted, its page is not properly disposed, due to its edge still showing in the PageView viewport
 - [x] [NATHAN] add to-do support
 - [x] [NATHAN] incorrect mock path for common?
-- [ ] [NATHAN] update lentosettings format for scheduled events per card, drop goals
+- [x] [NATHAN] update lentosettings format for scheduled events per card, drop goals
 - [ ] [NATHAN] investigate flutter freezing when app backgrounded
 - [ ] [NATHAN] figure out build pipeline
 - [ ] [NATHAN] add update mechanism
