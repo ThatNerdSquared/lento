@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pret_a_porter/pret_a_porter.dart';
 
 import '../config.dart';
 import '../main.dart';
@@ -33,7 +34,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
   }
 
   void _writeDeck() {
-    JsonBackend().writeDeckToJson(state);
+    JsonBackend().writeDataToJson(state, 'cards');
   }
 
   void updateCardTitle(String cardId, String newName) {
@@ -118,7 +119,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
   void addNewCard() {
     state = {
       ...state,
-      uuID.v4(): const LentoCardData.fromDefaults(),
+      uuID.v4(): LentoCardData.fromDefaults(),
     };
     _writeDeck();
   }
@@ -381,8 +382,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
 }
 
 /// Immutable data class for a Lento card.
-@immutable
-class LentoCardData {
+class LentoCardData extends PretDataclass {
   final String cardName;
   final CardTime blockDuration;
   final bool isActivated;
@@ -391,7 +391,7 @@ class LentoCardData {
   final Map<String, LentoTodo> todos;
   final Map<String, ScheduledEvent> scheduledEvents;
 
-  const LentoCardData({
+  LentoCardData({
     required this.cardName,
     required this.blockDuration,
     required this.isActivated,
@@ -401,7 +401,7 @@ class LentoCardData {
     required this.scheduledEvents,
   });
 
-  const LentoCardData.fromDefaults()
+  LentoCardData.fromDefaults()
       : cardName = 'Untitled Card',
         blockDuration = const CardTime.fromPresetTime(0),
         isActivated = false,
@@ -410,6 +410,7 @@ class LentoCardData {
         todos = const {},
         scheduledEvents = const {};
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'name': cardName,
@@ -469,20 +470,20 @@ class CardTime {
 // just gave up on it. Maybe there's a better way to do it?
 // Return to this later.
 
-@immutable
-class BlockedWebsiteData {
+class BlockedWebsiteData extends PretDataclass {
   final Uri siteUrl;
   final bool isEnabled;
   final bool isRestrictedAccess;
   final String? customPopupId;
 
-  const BlockedWebsiteData({
+  BlockedWebsiteData({
     required this.siteUrl,
     this.isEnabled = true,
     this.isRestrictedAccess = false,
     this.customPopupId,
   });
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'siteUrl': siteUrl.toString(),
@@ -493,15 +494,14 @@ class BlockedWebsiteData {
   }
 }
 
-@immutable
-class BlockedAppData {
+class BlockedAppData extends PretDataclass {
   final String appName;
   final Map<String, String>? sourcePaths;
   final bool isEnabled;
   final bool isRestrictedAccess;
   final String? customPopupId;
 
-  const BlockedAppData({
+  BlockedAppData({
     required this.appName,
     required this.sourcePaths,
     this.isEnabled = true,
@@ -511,6 +511,7 @@ class BlockedAppData {
 
   String? get currentSourcePath => sourcePaths![Platform.operatingSystem];
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'appName': appName,
@@ -522,36 +523,36 @@ class BlockedAppData {
   }
 }
 
-@immutable
-class LentoTodo {
+class LentoTodo extends PretDataclass {
   final String title;
   final bool completed;
 
-  const LentoTodo({
+  LentoTodo({
     required this.title,
     required this.completed,
   });
 
+  @override
   Map<String, dynamic> toJson() => {
         'title': title,
         'completed': completed,
       };
 }
 
-@immutable
-class ScheduledEvent {
+class ScheduledEvent extends PretDataclass {
   final ScheduledEventType type;
   final String title;
   final String message;
   final List<String> triggerTimes;
 
-  const ScheduledEvent({
+  ScheduledEvent({
     required this.type,
     required this.title,
     required this.message,
     required this.triggerTimes,
   });
 
+  @override
   Map<String, dynamic> toJson() => {
         'type': type.toString(),
         'title': title,

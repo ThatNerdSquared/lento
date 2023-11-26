@@ -16,7 +16,7 @@ class JsonBackend extends PretJsonManager {
         'schema': schemaVersion,
         'activatedCard': null,
         'cards': {
-          uuID.v4(): const LentoCardData.fromDefaults().toJson(),
+          uuID.v4(): LentoCardData.fromDefaults().toJson(),
         },
         'popupMsgs': {},
         'applicationSettings': {
@@ -24,17 +24,6 @@ class JsonBackend extends PretJsonManager {
           'defaultRestrictedAccess': false
         },
       };
-
-  void writeDeckToJson(Map<String, LentoCardData> cardsToWrite) {
-    jsonWriteWrapper((initialData) {
-      final mappifiedCards = cardsToWrite.map((key, value) => MapEntry(
-            key,
-            value.toJson(),
-          ));
-      initialData['cards'] = mappifiedCards;
-      return initialData;
-    });
-  }
 
   void writePopupMsgsToJson(Map<String, String> msgsToWrite) {
     jsonWriteWrapper((initialData) {
