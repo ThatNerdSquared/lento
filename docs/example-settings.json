@@ -7,63 +7,78 @@
             "name": "Code Wrangling",
             "emoji": "💻",
             "blockDuration": 5400,
-            "blockedSites": {
+            "todos": {
+                "c233c1c3-e265-4dcb-8f96-5f3cdfa3c9a4": {
+                    "name": "Finish up DB tests",
+                    "completed": true,
+                    "timeAllocation": 3600
+                },
+                "670f00da-c5cf-4f17-9836-4c479f295201": {
+                    "name": "Finish up E2E tests",
+                    "completed": false,
+                    "timeAllocation": 5400
+                },
+                "2a956e01-80b5-40bd-bc3c-b98b537b84ab": {
+                    "name": "Write up PR",
+                    "completed": false,
+                    "timeAllocation": 1800
+                }
+            },
+            "blockedItems": {
                 "fae18d91-5e7f-47ab-8545-87eced1e96bc": {
-                    "siteUrl": "twitter.com",
+                    "type": "website",
+                    "blockItemName": "twitter.com",
                     "isEnabled": false,
                     "isRestrictedAccess": false,
                     "customPopupId": null
                 },
+                "6aebbd39-167c-4b5c-93d1-56df9a68d344": {
+                    "type": "app",
+                    "blockItemName": "GRIS",
+                    "sourcePaths": {
+                        "macos": "/Volumes/Macintosh HD/Applications/GRIS.app"
+                    },
+                    "isEnabled": true,
+                    "isRestrictedAccess": true,
+                    "customPopupId": null
+                },
                 "253b714a-c878-4cc5-994b-52cfd6f61cf9": {
-                    "siteUrl": "talk.macpowerusers.com",
+                    "type": "website",
+                    "blockItemName": "talk.macpowerusers.com",
                     "isEnabled": true,
                     "isRestrictedAccess": true,
                     "customPopupId": "2d189b37-6eaf-478f-a5ab-e19c9dab5738"
                 },
                 "0211b230-bdef-4b08-8178-556876971788": {
-                    "siteUrl": "youtube.com",
+                    "type": "website",
+                    "blockItemName": "youtube.com",
                     "isEnabled": true,
                     "isRestrictedAccess": true,
                     "customPopupId": "a019868e-f43f-478f-8dcc-ba78c35525c4"
-                }
-            },
-            "blockedApps": {
-                "6aebbd39-167c-4b5c-93d1-56df9a68d344": {
-                    "appName": "GRIS",
-                    "isEnabled": true,
-                    "isRestrictedAccess": true,
-                    "customPopupId": null
                 },
                 "567b7cc9-7c98-4ecc-b927-21cd8529f05c": {
-                    "appName": "NetNewsWire",
+                    "type": "app",
+                    "blockItemName": "NetNewsWire",
+                    "sourcePaths": {
+                        "macos": "/Volumes/Macintosh HD/Applications/NetNewsWire.app"
+                    },
                     "isEnabled": true,
                     "isRestrictedAccess": true,
                     "customPopupId": "2d189b37-6eaf-478f-a5ab-e19c9dab5738"
                 },
                 "cb663ee1-c99e-44c6-8f86-9bfbeadc6162": {
-                    "appname": "Trello",
+                    "type": "app",
+                    "blockItemName": "Trello",
+                    "sourcePaths": {
+                        "macos": "/Volumes/Macintosh HD/Applications/Trello.app"
+                    },
                     "isEnabled": false,
                     "isRestrictedAccess": true,
                     "customPopupId": "a019868e-f43f-478f-8dcc-ba78c35525c4"
                 }
             },
-            "todos": {
-                "c233c1c3-e265-4dcb-8f96-5f3cdfa3c9a4": {
-                    "name": "Finish up DB tests",
-                    "completed": true
-                },
-                "670f00da-c5cf-4f17-9836-4c479f295201": {
-                    "name": "Finish up E2E tests",
-                    "completed": false
-                },
-                "2a956e01-80b5-40bd-bc3c-b98b537b84ab": {
-                    "name": "Write up PR",
-                    "completed": false
-                }
-            },
-            "scheduledEvents": {
+            "reminders": {
                 "6667e5cf-8cd2-499e-9414-ce6531aaf3d0": {
-                    "type": "banner",
                     "title": "banner1 title",
                     "message": "banner1 msg",
                     "triggerTimes": [
@@ -72,7 +87,6 @@
                     ]
                 },
                 "38e03105-7723-4df3-b635-e0cd54571a9d": {
-                    "type": "banner",
                     "title": "banner2 title",
                     "message": "banner2 msg",
                     "triggerTimes": [

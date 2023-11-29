@@ -1,6 +1,7 @@
 # `LentoDaemon` Documentation
 
 ## Proxy flow
+*Note: the below diagram should render as a flowchart when previewed (Cmd/Ctrl-Shift-V in VSCode). Ensure your Markdown preview has Mermaid support - you may need [this VSCode extension](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid), [this neovim extension](https://github.com/iamcco/markdown-preview.nvim), or equivalent.*
 ```mermaid
 flowchart TD
 

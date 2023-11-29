@@ -44,10 +44,9 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               cardName: newName,
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
-              blockedSites: oldCard.blockedSites,
-              blockedApps: oldCard.blockedApps,
+              blockedItems: oldCard.blockedItems,
               todos: oldCard.todos,
-              scheduledEvents: oldCard.scheduledEvents,
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
@@ -59,10 +58,9 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               cardName: oldCard.cardName,
               blockDuration: oldCard.blockDuration,
               isActivated: true,
-              blockedSites: oldCard.blockedSites,
-              blockedApps: oldCard.blockedApps,
+              blockedItems: oldCard.blockedItems,
               todos: oldCard.todos,
-              scheduledEvents: oldCard.scheduledEvents,
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
@@ -75,10 +73,9 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockDuration:
                   CardTime.fromPresetTime(oldCard.blockDuration.presetTime),
               isActivated: false,
-              blockedSites: oldCard.blockedSites,
-              blockedApps: oldCard.blockedApps,
+              blockedItems: oldCard.blockedItems,
               todos: oldCard.todos,
-              scheduledEvents: oldCard.scheduledEvents,
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
@@ -108,10 +105,9 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                           ? newValue
                           : oldCard.blockDuration.seconds),
               isActivated: oldCard.isActivated,
-              blockedSites: oldCard.blockedSites,
-              blockedApps: oldCard.blockedApps,
+              blockedItems: oldCard.blockedItems,
               todos: oldCard.todos,
-              scheduledEvents: oldCard.scheduledEvents,
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
@@ -129,9 +125,9 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
     _writeDeck();
   }
 
-  void addBlockedWebsite({
+  void addBlockedItem({
     required String cardId,
-    required BlockedWebsiteData websiteData,
+    required BlockedItemData blockedItem,
   }) {
     _findAndModifyCardAttribute(
         cardId,
@@ -139,28 +135,9 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               cardName: oldCard.cardName,
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
-              blockedSites: {...oldCard.blockedSites, uuID.v4(): websiteData},
-              blockedApps: oldCard.blockedApps,
+              blockedItems: {...oldCard.blockedItems, uuID.v4(): blockedItem},
               todos: oldCard.todos,
-              scheduledEvents: oldCard.scheduledEvents,
-            ));
-    _writeDeck();
-  }
-
-  void addBlockedApp({
-    required String cardId,
-    required BlockedAppData appData,
-  }) {
-    _findAndModifyCardAttribute(
-        cardId,
-        (oldCard) => LentoCardData(
-              cardName: oldCard.cardName,
-              blockDuration: oldCard.blockDuration,
-              isActivated: oldCard.isActivated,
-              blockedSites: oldCard.blockedSites,
-              blockedApps: {...oldCard.blockedApps, uuID.v4(): appData},
-              todos: oldCard.todos,
-              scheduledEvents: oldCard.scheduledEvents,
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
@@ -175,20 +152,18 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               cardName: oldCard.cardName,
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
-              blockedSites: Map.from(oldCard.blockedSites)
-                ..removeWhere((key, value) => key == blockItemId),
-              blockedApps: Map.from(oldCard.blockedApps)
+              blockedItems: Map.from(oldCard.blockedItems)
                 ..removeWhere((key, value) => key == blockItemId),
               todos: oldCard.todos,
-              scheduledEvents: oldCard.scheduledEvents,
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
 
-  void updateBlockedWebsite({
+  void updateBlockedItem({
     required String cardId,
     required String blockItemId,
-    required BlockedWebsiteData newData,
+    required BlockedItemData newData,
   }) {
     _findAndModifyCardAttribute(
         cardId,
@@ -196,35 +171,12 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               cardName: oldCard.cardName,
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
-              blockedSites: Map.fromEntries(oldCard.blockedSites.entries.map(
-                  (e) => e.key == blockItemId
-                      ? MapEntry(blockItemId, newData)
-                      : e)),
-              blockedApps: oldCard.blockedApps,
-              todos: oldCard.todos,
-              scheduledEvents: oldCard.scheduledEvents,
-            ));
-    _writeDeck();
-  }
-
-  void updateBlockedApp({
-    required String cardId,
-    required String blockItemId,
-    required BlockedAppData newData,
-  }) {
-    _findAndModifyCardAttribute(
-        cardId,
-        (oldCard) => LentoCardData(
-              cardName: oldCard.cardName,
-              blockDuration: oldCard.blockDuration,
-              isActivated: oldCard.isActivated,
-              blockedSites: oldCard.blockedSites,
-              blockedApps: Map.fromEntries(oldCard.blockedApps.entries.map(
+              blockedItems: Map.fromEntries(oldCard.blockedItems.entries.map(
                   (e) => e.key == blockItemId
                       ? MapEntry(blockItemId, newData)
                       : e)),
               todos: oldCard.todos,
-              scheduledEvents: oldCard.scheduledEvents,
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
@@ -239,33 +191,32 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               cardName: oldCard.cardName,
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
-              blockedSites: oldCard.blockedSites.containsKey(blockItemId)
-                  ? oldCard.blockedSites.map((key, value) => MapEntry(
-                      key,
-                      BlockedWebsiteData(
-                        siteUrl: value.siteUrl,
-                        isEnabled: value.isEnabled,
-                        isRestrictedAccess: key == blockItemId
-                            ? !value.isRestrictedAccess
-                            : value.isRestrictedAccess,
-                        customPopupId: value.customPopupId,
-                      )))
-                  : oldCard.blockedSites,
-              blockedApps: oldCard.blockedApps.containsKey(blockItemId)
-                  ? oldCard.blockedApps.map((key, value) => MapEntry(
-                      key,
-                      BlockedAppData(
-                        appName: value.appName,
-                        sourcePaths: value.sourcePaths,
-                        isEnabled: value.isEnabled,
-                        isRestrictedAccess: key == blockItemId
-                            ? !value.isRestrictedAccess
-                            : value.isRestrictedAccess,
-                        customPopupId: value.customPopupId,
-                      )))
-                  : oldCard.blockedApps,
               todos: oldCard.todos,
-              scheduledEvents: oldCard.scheduledEvents,
+              blockedItems: Map.fromEntries(
+                  oldCard.blockedItems.entries.map((e) => e.key == blockItemId
+                      ? MapEntry(
+                          blockItemId,
+                          switch (e.value.type) {
+                            BlockItemType.app => BlockedItemData.fromApp(
+                                appName: e.value.appName,
+                                sourcePaths: e.value.sourcePaths,
+                                isEnabled: e.value.isEnabled,
+                                isRestrictedAccess: e.key == blockItemId
+                                    ? !e.value.isRestrictedAccess
+                                    : e.value.isRestrictedAccess,
+                                customPopupId: e.value.customPopupId,
+                              ),
+                            BlockItemType.website => BlockedItemData.fromSite(
+                                siteUrl: e.value.siteUrl,
+                                isEnabled: e.value.isEnabled,
+                                isRestrictedAccess: e.key == blockItemId
+                                    ? !e.value.isRestrictedAccess
+                                    : e.value.isRestrictedAccess,
+                                customPopupId: e.value.customPopupId,
+                              )
+                          })
+                      : e)),
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
@@ -280,33 +231,32 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               cardName: oldCard.cardName,
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
-              blockedSites: oldCard.blockedSites.containsKey(blockItemId)
-                  ? oldCard.blockedSites.map((key, value) => MapEntry(
-                      key,
-                      BlockedWebsiteData(
-                        siteUrl: value.siteUrl,
-                        isEnabled: key == blockItemId
-                            ? !value.isEnabled
-                            : value.isEnabled,
-                        isRestrictedAccess: value.isRestrictedAccess,
-                        customPopupId: value.customPopupId,
-                      )))
-                  : oldCard.blockedSites,
-              blockedApps: oldCard.blockedApps.containsKey(blockItemId)
-                  ? oldCard.blockedApps.map((key, value) => MapEntry(
-                      key,
-                      BlockedAppData(
-                        appName: value.appName,
-                        sourcePaths: value.sourcePaths,
-                        isEnabled: key == blockItemId
-                            ? !value.isEnabled
-                            : value.isEnabled,
-                        isRestrictedAccess: value.isRestrictedAccess,
-                        customPopupId: value.customPopupId,
-                      )))
-                  : oldCard.blockedApps,
               todos: oldCard.todos,
-              scheduledEvents: oldCard.scheduledEvents,
+              blockedItems: Map.fromEntries(
+                  oldCard.blockedItems.entries.map((e) => e.key == blockItemId
+                      ? MapEntry(
+                          blockItemId,
+                          switch (e.value.type) {
+                            BlockItemType.app => BlockedItemData.fromApp(
+                                appName: e.value.appName,
+                                sourcePaths: e.value.sourcePaths,
+                                isEnabled: e.key == blockItemId
+                                    ? !e.value.isEnabled
+                                    : e.value.isEnabled,
+                                isRestrictedAccess: e.value.isRestrictedAccess,
+                                customPopupId: e.value.customPopupId,
+                              ),
+                            BlockItemType.website => BlockedItemData.fromSite(
+                                siteUrl: e.value.siteUrl,
+                                isEnabled: e.key == blockItemId
+                                    ? !e.value.isEnabled
+                                    : e.value.isEnabled,
+                                isRestrictedAccess: e.value.isRestrictedAccess,
+                                customPopupId: e.value.customPopupId,
+                              )
+                          })
+                      : e)),
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
@@ -314,6 +264,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
   void addTodo({
     required String cardId,
     required String title,
+    required int timeAllocation,
   }) {
     _findAndModifyCardAttribute(
         cardId,
@@ -321,16 +272,16 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               cardName: oldCard.cardName,
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
-              blockedSites: oldCard.blockedSites,
-              blockedApps: oldCard.blockedApps,
+              blockedItems: oldCard.blockedItems,
               todos: {
                 ...oldCard.todos,
                 uuID.v4(): LentoTodo(
                   title: title,
                   completed: false,
+                  timeAllocation: timeAllocation,
                 ),
               },
-              scheduledEvents: oldCard.scheduledEvents,
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
@@ -338,6 +289,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
   void toggleTodoCompletion({
     required String cardId,
     required String todoId,
+    required int timeAllocation,
   }) {
     _findAndModifyCardAttribute(
         cardId,
@@ -345,17 +297,17 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               cardName: oldCard.cardName,
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
-              blockedSites: oldCard.blockedSites,
-              blockedApps: oldCard.blockedApps,
+              blockedItems: oldCard.blockedItems,
               todos: oldCard.todos.map((key, value) => key == todoId
                   ? MapEntry(
                       key,
                       LentoTodo(
                         title: value.title,
                         completed: !value.completed,
+                        timeAllocation: timeAllocation,
                       ))
                   : MapEntry(key, value)),
-              scheduledEvents: oldCard.scheduledEvents,
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
@@ -370,12 +322,11 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               cardName: oldCard.cardName,
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
-              blockedSites: oldCard.blockedSites,
-              blockedApps: oldCard.blockedApps,
+              blockedItems: oldCard.blockedItems,
               todos: Map.fromEntries(
                 oldCard.todos.entries.where((e) => e.key != todoId),
               ),
-              scheduledEvents: oldCard.scheduledEvents,
+              reminders: oldCard.reminders,
             ));
     _writeDeck();
   }
@@ -386,29 +337,26 @@ class LentoCardData extends PretDataclass {
   final String cardName;
   final CardTime blockDuration;
   final bool isActivated;
-  final Map<String, BlockedWebsiteData> blockedSites;
-  final Map<String, BlockedAppData> blockedApps;
   final Map<String, LentoTodo> todos;
-  final Map<String, ScheduledEvent> scheduledEvents;
+  final Map<String, BlockedItemData> blockedItems;
+  final Map<String, ReminderData> reminders;
 
   LentoCardData({
     required this.cardName,
     required this.blockDuration,
     required this.isActivated,
-    required this.blockedSites,
-    required this.blockedApps,
+    required this.blockedItems,
     required this.todos,
-    required this.scheduledEvents,
+    required this.reminders,
   });
 
   LentoCardData.fromDefaults()
       : cardName = 'Untitled Card',
         blockDuration = const CardTime.fromPresetTime(0),
         isActivated = false,
-        blockedSites = const {},
-        blockedApps = const {},
+        blockedItems = const {},
         todos = const {},
-        scheduledEvents = const {};
+        reminders = const {};
 
   @override
   Map<String, dynamic> toJson() {
@@ -416,16 +364,12 @@ class LentoCardData extends PretDataclass {
       'name': cardName,
       'blockDuration': blockDuration.presetTime,
       'isActivated': isActivated,
-      'blockedSites': blockedSites.map((key, value) => MapEntry(
-            key,
-            value.toJson(),
-          )),
-      'blockedApps': blockedApps.map((key, value) => MapEntry(
-            key,
-            value.toJson(),
-          )),
       'todos': todos.map((key, value) => MapEntry(key, value.toJson())),
-      'scheduledEvents': scheduledEvents.map((key, value) => MapEntry(
+      'blockedItems': blockedItems.map((key, value) => MapEntry(
+            key,
+            value.toJson(),
+          )),
+      'reminders': reminders.map((key, value) => MapEntry(
             key,
             value.toJson(),
           )),
@@ -470,83 +414,102 @@ class CardTime {
 // just gave up on it. Maybe there's a better way to do it?
 // Return to this later.
 
-class BlockedWebsiteData extends PretDataclass {
-  final Uri siteUrl;
+class BlockedItemData extends PretDataclass {
+  final BlockItemType type;
+
+  final Uri? siteUrl;
+  final String? appName;
+  final Map<String, String>? sourcePaths;
+
   final bool isEnabled;
   final bool isRestrictedAccess;
   final String? customPopupId;
 
-  BlockedWebsiteData({
+  BlockedItemData.newBlockedSite({
     required this.siteUrl,
-    this.isEnabled = true,
     this.isRestrictedAccess = false,
     this.customPopupId,
-  });
+  })  : type = BlockItemType.website,
+        isEnabled = true,
+        appName = null,
+        sourcePaths = null;
 
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'siteUrl': siteUrl.toString(),
-      'isEnabled': isEnabled,
-      'isRestrictedAccess': isRestrictedAccess,
-      'customPopupId': customPopupId,
-    };
-  }
-}
-
-class BlockedAppData extends PretDataclass {
-  final String appName;
-  final Map<String, String>? sourcePaths;
-  final bool isEnabled;
-  final bool isRestrictedAccess;
-  final String? customPopupId;
-
-  BlockedAppData({
+  BlockedItemData.newBlockedApp({
     required this.appName,
     required this.sourcePaths,
-    this.isEnabled = true,
     this.isRestrictedAccess = false,
     this.customPopupId,
-  });
+  })  : type = BlockItemType.app,
+        siteUrl = null,
+        isEnabled = true;
 
-  String? get currentSourcePath => sourcePaths![Platform.operatingSystem];
+  BlockedItemData.fromSite({
+    required this.siteUrl,
+    required this.isEnabled,
+    required this.isRestrictedAccess,
+    required this.customPopupId,
+  })  : type = BlockItemType.website,
+        appName = null,
+        sourcePaths = null;
+
+  BlockedItemData.fromApp({
+    required this.appName,
+    required this.sourcePaths,
+    required this.isEnabled,
+    required this.isRestrictedAccess,
+    required this.customPopupId,
+  })  : type = BlockItemType.app,
+        siteUrl = null;
+
+  String? get currentSourcePath => type != BlockItemType.app
+      ? throw ArgumentError('Cannot get source path for non-app blockitem!')
+      : sourcePaths![Platform.operatingSystem];
 
   @override
   Map<String, dynamic> toJson() {
-    return {
-      'appName': appName,
-      'sourcePaths': sourcePaths,
+    final res = {
+      'type': type.toString(),
       'isEnabled': isEnabled,
       'isRestrictedAccess': isRestrictedAccess,
       'customPopupId': customPopupId,
     };
+    switch (type) {
+      case BlockItemType.app:
+        res['appName'] = appName;
+        res['sourcePaths'] = sourcePaths;
+        break;
+      case BlockItemType.website:
+        res['siteUrl'] = siteUrl.toString();
+    }
+    return res;
   }
 }
 
 class LentoTodo extends PretDataclass {
   final String title;
   final bool completed;
+  final int timeAllocation;
 
   LentoTodo({
     required this.title,
     required this.completed,
+    required this.timeAllocation,
   });
 
   @override
   Map<String, dynamic> toJson() => {
         'title': title,
         'completed': completed,
+        'timeAllocation': timeAllocation,
       };
 }
 
-class ScheduledEvent extends PretDataclass {
-  final ScheduledEventType type;
+class ReminderData extends PretDataclass {
   final String title;
   final String message;
   final List<String> triggerTimes;
 
-  ScheduledEvent({
-    required this.type,
+  ReminderData({
     required this.title,
     required this.message,
     required this.triggerTimes,
@@ -554,7 +517,6 @@ class ScheduledEvent extends PretDataclass {
 
   @override
   Map<String, dynamic> toJson() => {
-        'type': type.toString(),
         'title': title,
         'message': message,
         'triggerTimes': triggerTimes,
