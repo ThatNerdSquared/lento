@@ -10,7 +10,11 @@ class JsonBackend extends PretJsonManager {
   @override
   File get dataFile => File(Config.dataFilePath);
   @override
-  String schemaVersion = '1.2.0';
+  String schemaVersion = '1.3.0';
+  @override
+  Map<String, List<String>> dropFields = {
+    '1.2.0': ['goals', 'scheduledEvents']
+  };
   @override
   Map get freshJson => {
         'schema': schemaVersion,
@@ -38,6 +42,7 @@ class JsonBackend extends PretJsonManager {
       '1.0.0' => _parseV1(contentsMap),
       '1.1.0' => _parseV1_1(contentsMap),
       '1.2.0' => _parseV1_2(contentsMap),
+      '1.3.0' => _parseV1_3(contentsMap),
       _ => throw UnsupportedError(
           'Invalid schema version "${contentsMap['schema']}"',
         ),
@@ -50,6 +55,7 @@ class JsonBackend extends PretJsonManager {
       '1.0.0' => Map<String, String>.from(contentsMap['popupMsgs']),
       '1.1.0' => Map<String, String>.from(contentsMap['popupMsgs']),
       '1.2.0' => Map<String, String>.from(contentsMap['popupMsgs']),
+      '1.3.0' => Map<String, String>.from(contentsMap['popupMsgs']),
       _ => throw UnsupportedError(
           'Invalid schema version "${contentsMap['schema']}"',
         )
@@ -65,10 +71,12 @@ class JsonBackend extends PretJsonManager {
               cardName: value['name'],
               isActivated: value['isActivated'],
               blockDuration: CardTime.fromPresetTime(value['blockDuration']),
-              blockedSites: _parseV1Sites(value['blockedSites']),
-              blockedApps: _parseV1Apps(value['blockedApps']),
               todos: const {},
-              scheduledEvents: const {},
+              blockedItems: {
+                ..._parseV1Sites(value['blockedSites']),
+                ..._parseV1Apps(value['blockedApps']),
+              },
+              reminders: const {},
             ))));
   }
 
@@ -81,19 +89,16 @@ class JsonBackend extends PretJsonManager {
               cardName: value['name'],
               isActivated: value['isActivated'],
               blockDuration: CardTime.fromPresetTime(value['blockDuration']),
-              blockedSites: _parseV1Sites(value['blockedSites']),
-              blockedApps: _parseV1Apps(value['blockedApps']),
               todos: _parseV1Todos(value['todos']),
-              scheduledEvents: const {},
+              blockedItems: {
+                ..._parseV1Sites(value['blockedSites']),
+                ..._parseV1Apps(value['blockedApps']),
+              },
+              reminders: const {},
             ))));
   }
 
   Map<String, LentoCardData> _parseV1_2(contentsMap) {
-    jsonWriteWrapper((initialData) {
-      initialData.removeWhere((key, value) => key == 'goals');
-      initialData.removeWhere((key, value) => key == 'scheduledEvents');
-      return initialData;
-    });
     final cardsMap = contentsMap['cards'];
     return Map<String, LentoCardData>.from(
         cardsMap.map((key, value) => MapEntry(
@@ -102,21 +107,39 @@ class JsonBackend extends PretJsonManager {
               cardName: value['name'],
               isActivated: value['isActivated'],
               blockDuration: CardTime.fromPresetTime(value['blockDuration']),
-              blockedSites: _parseV1Sites(value['blockedSites']),
-              blockedApps: _parseV1Apps(value['blockedApps']),
               todos: _parseV1Todos(value['todos']),
-              scheduledEvents: _parseV1ScheduledEvents(
+              blockedItems: {
+                ..._parseV1Sites(value['blockedSites']),
+                ..._parseV1Apps(value['blockedApps']),
+              },
+              reminders: _parseV1Reminders(
                 value['scheduledEvents'],
               ),
             ))));
   }
 
-  Map<String, ScheduledEvent> _parseV1ScheduledEvents(seMap) {
-    return Map<String, ScheduledEvent>.from(seMap.map(
+  Map<String, LentoCardData> _parseV1_3(contentsMap) {
+    final cardsMap = contentsMap['cards'];
+    return Map<String, LentoCardData>.from(
+        cardsMap.map((key, value) => MapEntry(
+            key,
+            LentoCardData(
+              cardName: value['name'],
+              isActivated: value['isActivated'],
+              blockDuration: CardTime.fromPresetTime(value['blockDuration']),
+              todos: _parseV1_3Todos(value['todos']),
+              blockedItems: _parseV1BlockedItems(value['blockedItems']),
+              reminders: _parseV1Reminders(
+                value['reminders'],
+              ),
+            ))));
+  }
+
+  Map<String, ReminderData> _parseV1Reminders(seMap) {
+    return Map<String, ReminderData>.from(seMap.map(
       (key, value) => MapEntry(
         key,
-        ScheduledEvent(
-          type: value['type'],
+        ReminderData(
           title: value['title'],
           message: value['message'],
           triggerTimes: value['triggerTimes'],
@@ -132,16 +155,30 @@ class JsonBackend extends PretJsonManager {
         LentoTodo(
           title: value['title'],
           completed: value['completed'],
+          timeAllocation: 1800,
         ),
       ),
     ));
   }
 
-  Map<String, BlockedWebsiteData> _parseV1Sites(blockedSitesMap) {
-    return Map<String, BlockedWebsiteData>.from(
+  Map<String, LentoTodo> _parseV1_3Todos(todosMap) {
+    return Map<String, LentoTodo>.from(todosMap.map(
+      (key, value) => MapEntry(
+        key,
+        LentoTodo(
+          title: value['title'],
+          completed: value['completed'],
+          timeAllocation: value['timeAllocation'],
+        ),
+      ),
+    ));
+  }
+
+  Map<String, BlockedItemData> _parseV1Sites(blockedSitesMap) {
+    return Map<String, BlockedItemData>.from(
         blockedSitesMap.map((key, value) => MapEntry(
               key,
-              BlockedWebsiteData(
+              BlockedItemData.fromSite(
                 siteUrl: Uri.parse(value['siteUrl']),
                 isEnabled: value['isEnabled'],
                 isRestrictedAccess: value['isRestrictedAccess'],
@@ -150,16 +187,37 @@ class JsonBackend extends PretJsonManager {
             )));
   }
 
-  Map<String, BlockedAppData> _parseV1Apps(blockedAppsMap) {
-    return Map<String, BlockedAppData>.from(
+  Map<String, BlockedItemData> _parseV1Apps(blockedAppsMap) {
+    return Map<String, BlockedItemData>.from(
         blockedAppsMap.map((key, value) => MapEntry(
             key,
-            BlockedAppData(
+            BlockedItemData.fromApp(
               appName: value['appName'],
               sourcePaths: Map<String, String>.from(value['sourcePaths']),
               isEnabled: value['isEnabled'],
               isRestrictedAccess: value['isRestrictedAccess'],
               customPopupId: value['customPopupId'],
             ))));
+  }
+
+  Map<String, BlockedItemData> _parseV1BlockedItems(blockedItemsMap) {
+    return Map<String, BlockedItemData>.from(
+        blockedItemsMap.map((key, value) => MapEntry(
+            key,
+            switch (convertToBlockItemType(value['type'])) {
+              BlockItemType.app => BlockedItemData.fromApp(
+                  appName: value['appName'],
+                  sourcePaths: Map<String, String>.from(value['sourcePaths']),
+                  isEnabled: value['isEnabled'],
+                  isRestrictedAccess: value['isRestrictedAccess'],
+                  customPopupId: value['customPopupId'],
+                ),
+              BlockItemType.website => BlockedItemData.fromSite(
+                  siteUrl: Uri.parse(value['siteUrl']),
+                  isEnabled: value['isEnabled'],
+                  isRestrictedAccess: value['isRestrictedAccess'],
+                  customPopupId: value['customPopupId'],
+                ),
+            })));
   }
 }
