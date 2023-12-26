@@ -74,41 +74,33 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
 
   void onSubmitItem(WidgetRef ref) {
     if (!_formKey.currentState!.validate()) return;
-    switch (blockItemTypeSelection) {
-      case BlockItemType.website:
-        final data = BlockedWebsiteData(
-          siteUrl: Uri.parse(_urlTextFieldController.text),
-          isRestrictedAccess: isAccessRestricted,
-          customPopupId: selectedPopupId,
-        );
-        widget.editingEnv.blockItemId != null
-            ? ref.read(lentoDeckProvider.notifier).updateBlockedWebsite(
-                cardId: widget.editingEnv.cardId,
-                blockItemId: widget.editingEnv.blockItemId!,
-                newData: data)
-            : ref.read(lentoDeckProvider.notifier).addBlockedWebsite(
-                  cardId: widget.editingEnv.cardId,
-                  websiteData: data,
-                );
-        break;
-      case BlockItemType.app:
-        final data = BlockedAppData(
-          appName: basenameWithoutExtension(selectedApp!.path),
+    final data = switch (blockItemTypeSelection) {
+      BlockItemType.app => BlockedItemData(
+          type: BlockItemType.app,
+          itemName: basenameWithoutExtension(selectedApp!.path),
           sourcePaths: {Platform.operatingSystem: selectedApp!.path},
+          isEnabled: true,
           isRestrictedAccess: isAccessRestricted,
           customPopupId: selectedPopupId,
-        );
-        widget.editingEnv.blockItemId != null
-            ? ref.read(lentoDeckProvider.notifier).updateBlockedApp(
-                cardId: widget.editingEnv.cardId,
-                blockItemId: widget.editingEnv.blockItemId!,
-                newData: data)
-            : ref.read(lentoDeckProvider.notifier).addBlockedApp(
-                  cardId: widget.editingEnv.cardId,
-                  appData: data,
-                );
-        break;
-    }
+        ),
+      BlockItemType.website => BlockedItemData(
+          type: BlockItemType.website,
+          itemName: Uri.parse(_urlTextFieldController.text).host,
+          sourcePaths: {'_website': _urlTextFieldController.text},
+          isEnabled: true,
+          isRestrictedAccess: isAccessRestricted,
+          customPopupId: selectedPopupId,
+        ),
+    };
+    widget.editingEnv.blockItemId != null
+        ? ref.read(lentoDeckProvider.notifier).updateBlockedItem(
+            cardId: widget.editingEnv.cardId,
+            blockItemId: widget.editingEnv.blockItemId!,
+            newData: data)
+        : ref.read(lentoDeckProvider.notifier).addBlockedItem(
+              cardId: widget.editingEnv.cardId,
+              blockedItem: data,
+            );
     widget.endEditing();
   }
 
@@ -117,26 +109,21 @@ class BlockedItemEditorState extends ConsumerState<BlockedItemEditor> {
     final popups = ref.watch(popupMsgsProvider);
     if (widget.editingEnv.blockItemType != null && !processedData) {
       toggleBlockItemType(widget.editingEnv.blockItemType);
-      switch (widget.editingEnv.blockItemType!) {
-        case BlockItemType.app:
-          final item = ref
-              .read(lentoDeckProvider)[widget.editingEnv.cardId]!
-              .blockedApps[widget.editingEnv.blockItemId];
-          setState(() {
+      final item = ref
+          .read(lentoDeckProvider)[widget.editingEnv.cardId]!
+          .blockedItems[widget.editingEnv.blockItemId];
+      setState(switch (widget.editingEnv.blockItemType!) {
+        BlockItemType.app => () {
             selectedApp = File(item!.currentSourcePath!);
             isAccessRestricted = item.isRestrictedAccess;
             selectedPopupId = item.customPopupId;
-          });
-        case BlockItemType.website:
-          final item = ref
-              .read(lentoDeckProvider)[widget.editingEnv.cardId]!
-              .blockedSites[widget.editingEnv.blockItemId];
-          setState(() {
-            _urlTextFieldController.text = item!.siteUrl.toString();
+          },
+        BlockItemType.website => () {
+            _urlTextFieldController.text = item!.currentSourcePath!;
             isAccessRestricted = item.isRestrictedAccess;
             selectedPopupId = item.customPopupId;
-          });
-      }
+          }
+      });
     }
     setState(() {
       processedData = true;

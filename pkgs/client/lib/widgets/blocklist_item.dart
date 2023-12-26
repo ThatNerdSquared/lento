@@ -19,29 +19,17 @@ class BlockListItem extends ConsumerStatefulWidget {
   }) startEditing;
   final BlockItemType _blockItemType;
 
-  BlockListItem.fromBlockedWebsite({
+  BlockListItem({
     super.key,
     required this.cardId,
     required this.itemID,
     required this.startEditing,
-    required BlockedWebsiteData data,
-  })  : itemTitle = data.siteUrl.host,
+    required BlockedItemData data,
+  })  : _blockItemType = data.type,
+        itemTitle = data.itemName,
         isAccessRestricted = data.isRestrictedAccess,
         isEnabled = data.isEnabled,
-        sourcePath = data.siteUrl.toString(),
-        _blockItemType = BlockItemType.website;
-
-  BlockListItem.fromBlockedApp({
-    super.key,
-    required this.cardId,
-    required this.itemID,
-    required this.startEditing,
-    required BlockedAppData data,
-  })  : itemTitle = data.appName,
-        isAccessRestricted = data.isRestrictedAccess,
-        isEnabled = data.isEnabled,
-        sourcePath = data.currentSourcePath!,
-        _blockItemType = BlockItemType.app;
+        sourcePath = data.currentSourcePath!;
 
   @override
   BlockListItemState createState() => BlockListItemState();

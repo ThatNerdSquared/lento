@@ -41,13 +41,13 @@ class LentoCard extends ConsumerWidget {
                   ),
                   ToggleList(
                       cardId: cardId,
-                      toggleTitle: 'Blocked Websites',
-                      emptyLabel: 'No blocked websites',
+                      toggleTitle: 'Blocked Distractions',
+                      emptyLabel: 'No blocked distractions',
                       children: ref
                           .watch(lentoDeckProvider)[cardId]!
-                          .blockedSites
+                          .blockedItems
                           .entries
-                          .map((item) => BlockListItem.fromBlockedWebsite(
+                          .map((item) => BlockListItem(
                                 cardId: cardId,
                                 itemID: item.key,
                                 data: item.value,
@@ -56,29 +56,14 @@ class LentoCard extends ConsumerWidget {
                           .toList()),
                   ToggleList(
                     cardId: cardId,
-                    toggleTitle: 'Blocked Apps',
-                    emptyLabel: 'No blocked apps',
-                    children: ref
-                        .watch(lentoDeckProvider)[cardId]!
-                        .blockedApps
-                        .entries
-                        .map((item) => BlockListItem.fromBlockedApp(
-                              cardId: cardId,
-                              itemID: item.key,
-                              data: item.value,
-                              startEditing: startEditing,
-                            ))
-                        .toList(),
-                  ),
-                  ToggleList(
-                    cardId: cardId,
                     toggleTitle: 'To-do',
                     emptyLabel: 'No to-dos',
                     additionalWidgets: [
                       OnelineTextAddForm(
                         handleSubmit: (text) => ref
                             .read(lentoDeckProvider.notifier)
-                            .addTodo(cardId: cardId, title: text),
+                            // TODO: this is fake
+                            .addTodo(cardId: cardId, title: text, timeAllocation: 0),
                         hintText: 'What\'s on your plate?',
                         validatorErrorMsg: 'Please enter a todo!',
                       ),

@@ -22,7 +22,7 @@
 - [x] [NATHAN] incorrect mock path for common?
 - [x] [NATHAN] update lentosettings format for scheduled events per card, drop goals
 - [ ] [NATHAN] Windows IconManager support
-- [ ] [NATHAN] lentosettings format update for todo time allocations, reminders, combined blockitem type
+- [x] [NATHAN] lentosettings format update for todo time allocations, reminders, combined blockitem type
 - [ ] [NATHAN] add blank deck UI
 - [ ] [NATHAN] refactor frontend to combined blocked distraction togglelist, move Block Something button inside togglelist
 - [ ] [NATHAN] implement typed input for timer, move Start Block button into grey timer field

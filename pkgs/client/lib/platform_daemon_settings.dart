@@ -44,12 +44,12 @@ abstract class PlatformDaemonSettings {
   Map createDaemonInput(LentoCardData card) {
     return {
       'blockDuration': card.blockDuration,
-      'apps': card.blockedApps.map((key, value) => MapEntry(value.appName, {
+      'apps': card.onlyApps.map((key, value) => MapEntry(value.itemName, {
             'isRestrictedAccess': value.isRestrictedAccess,
             'popupMessage': value.customPopupId
           })),
-      'websites': card.blockedSites
-          .map((key, value) => MapEntry(value.siteUrl.toString(), {
+      'websites': card.onlyWebsites
+          .map((key, value) => MapEntry(value.itemName, {
                 'isRestrictedAccess': value.isRestrictedAccess,
                 'popupMessage': value.customPopupId
               }))

@@ -192,29 +192,17 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
               todos: oldCard.todos,
-              blockedItems: Map.fromEntries(
-                  oldCard.blockedItems.entries.map((e) => e.key == blockItemId
+              blockedItems: Map.fromEntries(oldCard.blockedItems.entries.map(
+                  (e) => e.key == blockItemId
                       ? MapEntry(
                           blockItemId,
-                          switch (e.value.type) {
-                            BlockItemType.app => BlockedItemData.fromApp(
-                                appName: e.value.appName,
-                                sourcePaths: e.value.sourcePaths,
-                                isEnabled: e.value.isEnabled,
-                                isRestrictedAccess: e.key == blockItemId
-                                    ? !e.value.isRestrictedAccess
-                                    : e.value.isRestrictedAccess,
-                                customPopupId: e.value.customPopupId,
-                              ),
-                            BlockItemType.website => BlockedItemData.fromSite(
-                                siteUrl: e.value.siteUrl,
-                                isEnabled: e.value.isEnabled,
-                                isRestrictedAccess: e.key == blockItemId
-                                    ? !e.value.isRestrictedAccess
-                                    : e.value.isRestrictedAccess,
-                                customPopupId: e.value.customPopupId,
-                              )
-                          })
+                          BlockedItemData(
+                              type: e.value.type,
+                              itemName: e.value.itemName,
+                              sourcePaths: e.value.sourcePaths,
+                              isEnabled: e.value.isEnabled,
+                              isRestrictedAccess: !e.value.isRestrictedAccess,
+                              customPopupId: e.value.customPopupId))
                       : e)),
               reminders: oldCard.reminders,
             ));
@@ -232,29 +220,17 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
               blockDuration: oldCard.blockDuration,
               isActivated: oldCard.isActivated,
               todos: oldCard.todos,
-              blockedItems: Map.fromEntries(
-                  oldCard.blockedItems.entries.map((e) => e.key == blockItemId
+              blockedItems: Map.fromEntries(oldCard.blockedItems.entries.map(
+                  (e) => e.key == blockItemId
                       ? MapEntry(
                           blockItemId,
-                          switch (e.value.type) {
-                            BlockItemType.app => BlockedItemData.fromApp(
-                                appName: e.value.appName,
-                                sourcePaths: e.value.sourcePaths,
-                                isEnabled: e.key == blockItemId
-                                    ? !e.value.isEnabled
-                                    : e.value.isEnabled,
-                                isRestrictedAccess: e.value.isRestrictedAccess,
-                                customPopupId: e.value.customPopupId,
-                              ),
-                            BlockItemType.website => BlockedItemData.fromSite(
-                                siteUrl: e.value.siteUrl,
-                                isEnabled: e.key == blockItemId
-                                    ? !e.value.isEnabled
-                                    : e.value.isEnabled,
-                                isRestrictedAccess: e.value.isRestrictedAccess,
-                                customPopupId: e.value.customPopupId,
-                              )
-                          })
+                          BlockedItemData(
+                              type: e.value.type,
+                              itemName: e.value.itemName,
+                              sourcePaths: e.value.sourcePaths,
+                              isEnabled: !e.value.isEnabled,
+                              isRestrictedAccess: e.value.isRestrictedAccess,
+                              customPopupId: e.value.customPopupId))
                       : e)),
               reminders: oldCard.reminders,
             ));
@@ -289,7 +265,6 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
   void toggleTodoCompletion({
     required String cardId,
     required String todoId,
-    required int timeAllocation,
   }) {
     _findAndModifyCardAttribute(
         cardId,
@@ -304,7 +279,7 @@ class LentoDeck extends StateNotifier<Map<String, LentoCardData>> {
                       LentoTodo(
                         title: value.title,
                         completed: !value.completed,
-                        timeAllocation: timeAllocation,
+                        timeAllocation: value.timeAllocation,
                       ))
                   : MapEntry(key, value)),
               reminders: oldCard.reminders,
@@ -357,6 +332,14 @@ class LentoCardData extends PretDataclass {
         blockedItems = const {},
         todos = const {},
         reminders = const {};
+
+  Map<String, BlockedItemData> get onlyApps => Map.fromIterable(
+        blockedItems.entries.where((e) => e.value.type == BlockItemType.app),
+      );
+  Map<String, BlockedItemData> get onlyWebsites => Map.fromIterable(
+        blockedItems.entries
+            .where((e) => e.value.type == BlockItemType.website),
+      );
 
   @override
   Map<String, dynamic> toJson() {
@@ -416,72 +399,36 @@ class CardTime {
 
 class BlockedItemData extends PretDataclass {
   final BlockItemType type;
-
-  final Uri? siteUrl;
-  final String? appName;
-  final Map<String, String>? sourcePaths;
+  final String itemName;
+  final Map<String, String> sourcePaths;
 
   final bool isEnabled;
   final bool isRestrictedAccess;
   final String? customPopupId;
 
-  BlockedItemData.newBlockedSite({
-    required this.siteUrl,
-    this.isRestrictedAccess = false,
-    this.customPopupId,
-  })  : type = BlockItemType.website,
-        isEnabled = true,
-        appName = null,
-        sourcePaths = null;
+  BlockedItemData(
+      {required this.type,
+      required this.itemName,
+      required this.sourcePaths,
+      this.isEnabled = true,
+      this.isRestrictedAccess = false,
+      required this.customPopupId});
 
-  BlockedItemData.newBlockedApp({
-    required this.appName,
-    required this.sourcePaths,
-    this.isRestrictedAccess = false,
-    this.customPopupId,
-  })  : type = BlockItemType.app,
-        siteUrl = null,
-        isEnabled = true;
-
-  BlockedItemData.fromSite({
-    required this.siteUrl,
-    required this.isEnabled,
-    required this.isRestrictedAccess,
-    required this.customPopupId,
-  })  : type = BlockItemType.website,
-        appName = null,
-        sourcePaths = null;
-
-  BlockedItemData.fromApp({
-    required this.appName,
-    required this.sourcePaths,
-    required this.isEnabled,
-    required this.isRestrictedAccess,
-    required this.customPopupId,
-  })  : type = BlockItemType.app,
-        siteUrl = null;
-
-  String? get currentSourcePath => type != BlockItemType.app
-      ? throw ArgumentError('Cannot get source path for non-app blockitem!')
-      : sourcePaths![Platform.operatingSystem];
+  String? get currentSourcePath => switch (type) {
+        BlockItemType.app => sourcePaths[Platform.operatingSystem],
+        BlockItemType.website => sourcePaths['_website'],
+      };
 
   @override
   Map<String, dynamic> toJson() {
-    final res = {
+    return {
       'type': type.toString(),
+      'itemName': itemName,
+      'sourcePaths': sourcePaths,
       'isEnabled': isEnabled,
       'isRestrictedAccess': isRestrictedAccess,
       'customPopupId': customPopupId,
     };
-    switch (type) {
-      case BlockItemType.app:
-        res['appName'] = appName;
-        res['sourcePaths'] = sourcePaths;
-        break;
-      case BlockItemType.website:
-        res['siteUrl'] = siteUrl.toString();
-    }
-    return res;
   }
 }
 

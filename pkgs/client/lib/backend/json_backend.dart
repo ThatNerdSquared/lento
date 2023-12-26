@@ -178,8 +178,10 @@ class JsonBackend extends PretJsonManager {
     return Map<String, BlockedItemData>.from(
         blockedSitesMap.map((key, value) => MapEntry(
               key,
-              BlockedItemData.fromSite(
-                siteUrl: Uri.parse(value['siteUrl']),
+              BlockedItemData(
+                type: BlockItemType.website,
+                itemName: Uri.parse(value['siteUrl']).path,
+                sourcePaths: {'_website': value['siteUrl']},
                 isEnabled: value['isEnabled'],
                 isRestrictedAccess: value['isRestrictedAccess'],
                 customPopupId: value['customPopupId'],
@@ -191,8 +193,9 @@ class JsonBackend extends PretJsonManager {
     return Map<String, BlockedItemData>.from(
         blockedAppsMap.map((key, value) => MapEntry(
             key,
-            BlockedItemData.fromApp(
-              appName: value['appName'],
+            BlockedItemData(
+              type: BlockItemType.app,
+              itemName: value['appName'],
               sourcePaths: Map<String, String>.from(value['sourcePaths']),
               isEnabled: value['isEnabled'],
               isRestrictedAccess: value['isRestrictedAccess'],
@@ -203,21 +206,15 @@ class JsonBackend extends PretJsonManager {
   Map<String, BlockedItemData> _parseV1BlockedItems(blockedItemsMap) {
     return Map<String, BlockedItemData>.from(
         blockedItemsMap.map((key, value) => MapEntry(
-            key,
-            switch (convertToBlockItemType(value['type'])) {
-              BlockItemType.app => BlockedItemData.fromApp(
-                  appName: value['appName'],
-                  sourcePaths: Map<String, String>.from(value['sourcePaths']),
-                  isEnabled: value['isEnabled'],
-                  isRestrictedAccess: value['isRestrictedAccess'],
-                  customPopupId: value['customPopupId'],
-                ),
-              BlockItemType.website => BlockedItemData.fromSite(
-                  siteUrl: Uri.parse(value['siteUrl']),
-                  isEnabled: value['isEnabled'],
-                  isRestrictedAccess: value['isRestrictedAccess'],
-                  customPopupId: value['customPopupId'],
-                ),
-            })));
+              key,
+              BlockedItemData(
+                type: convertToBlockItemType(value['type']),
+                itemName: value['itemName'],
+                sourcePaths: Map<String, String>.from(value['sourcePaths']),
+                isEnabled: value['isEnabled'],
+                isRestrictedAccess: value['isRestrictedAccess'],
+                customPopupId: value['customPopupId'],
+              ),
+            )));
   }
 }

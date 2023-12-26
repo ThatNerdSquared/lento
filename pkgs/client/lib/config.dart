@@ -12,8 +12,8 @@ enum BlockItemType { website, app }
 
 BlockItemType convertToBlockItemType(String bString) =>
     switch (bString) {
-      'website' => BlockItemType.website,
-      'app' => BlockItemType.app,
+      'BlockItemType.website' => BlockItemType.website,
+      'BlockItemType.app' => BlockItemType.app,
       _ => throw UnimplementedError('Invalid blockitem type: "$bString"!'),
     };
 
