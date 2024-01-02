@@ -40,21 +40,6 @@ class LentoCard extends ConsumerWidget {
                     startingColour: Theme.of(context).colorScheme.surface,
                   ),
                   ToggleList(
-                      cardId: cardId,
-                      toggleTitle: 'Blocked Distractions',
-                      emptyLabel: 'No blocked distractions',
-                      children: ref
-                          .watch(lentoDeckProvider)[cardId]!
-                          .blockedItems
-                          .entries
-                          .map((item) => BlockListItem(
-                                cardId: cardId,
-                                itemID: item.key,
-                                data: item.value,
-                                startEditing: startEditing,
-                              ))
-                          .toList()),
-                  ToggleList(
                     cardId: cardId,
                     toggleTitle: 'To-do',
                     emptyLabel: 'No to-dos',
@@ -63,7 +48,8 @@ class LentoCard extends ConsumerWidget {
                         handleSubmit: (text) => ref
                             .read(lentoDeckProvider.notifier)
                             // TODO: this is fake
-                            .addTodo(cardId: cardId, title: text, timeAllocation: 0),
+                            .addTodo(
+                                cardId: cardId, title: text, timeAllocation: 0),
                         hintText: 'What\'s on your plate?',
                         validatorErrorMsg: 'Please enter a todo!',
                       ),
@@ -84,19 +70,37 @@ class LentoCard extends ConsumerWidget {
                             ))
                         .toList(),
                   ),
+                  ToggleList(
+                      cardId: cardId,
+                      toggleTitle: 'Blocked Distractions',
+                      emptyLabel: 'No blocked distractions',
+                      additionalWidgets: [
+                        TextButton(
+                          onPressed: startEditing,
+                          child: Text(
+                            '+ Block something...',
+                            style: TextStyle(
+                              fontSize: 16, // TODO: magic number?
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        )
+                      ],
+                      children: ref
+                          .watch(lentoDeckProvider)[cardId]!
+                          .blockedItems
+                          .entries
+                          .map((item) => BlockListItem(
+                                cardId: cardId,
+                                itemID: item.key,
+                                data: item.value,
+                                startEditing: startEditing,
+                              ))
+                          .toList()),
                   const Padding(
                     padding: EdgeInsets.all(PretConfig.defaultElementSpacing),
                   ),
                 ].map((widget) => SliverToBoxAdapter(child: widget)).toList())),
-            TextButton(
-              onPressed: startEditing,
-              child: Text(
-                '+ Block something...',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-            )
           ],
         ),
       );

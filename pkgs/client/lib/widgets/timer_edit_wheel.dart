@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:numberpicker/numberpicker.dart';
 
 import '../config.dart';
 import '../main.dart';
@@ -8,11 +7,13 @@ import '../main.dart';
 class TimerEditWheel extends ConsumerWidget {
   final String cardId;
   final TimeSection timeSection;
+  final Function(String, TimeSection) handleChange;
 
   const TimerEditWheel({
     super.key,
     required this.cardId,
     required this.timeSection,
+    required this.handleChange,
   });
 
   @override
@@ -25,22 +26,25 @@ class TimerEditWheel extends ConsumerWidget {
         TimeSection.minutes => 'Minutes',
         TimeSection.seconds => 'Seconds'
       }),
-      NumberPicker(
-        value: switch (timeSection) {
-          TimeSection.hours => blockDuration.hours,
-          TimeSection.minutes => blockDuration.minutes,
-          TimeSection.seconds => blockDuration.seconds,
-        },
-        minValue: 0,
-        maxValue: timeSection == TimeSection.hours ? 23 : 60,
-        onChanged: (value) {
-          ref.read(lentoDeckProvider.notifier).updateCardTime(
-                cardId: cardId,
-                newValue: value,
-                timeSection: timeSection,
-              );
-        },
-      )
+      TextFormField(
+          initialValue: switch (timeSection) {
+            TimeSection.hours => blockDuration.hours,
+            TimeSection.minutes => blockDuration.minutes,
+            TimeSection.seconds => blockDuration.seconds,
+          }
+              .toString(),
+          validator: (val) {
+            if (val == null || val.isEmpty || int.tryParse(val) == null) {
+              return 'Please enter a valid number!';
+            }
+            if (0 > int.parse(val) ||
+                int.parse(val) > (timeSection == TimeSection.hours ? 23 : 59)) {
+              return 'Number is out of range! Please pick a number between 0 and 59, or 0 and 23 for hours.';
+            }
+            return null;
+          },
+          keyboardType: TextInputType.number,
+          onChanged: (value) => handleChange(value, timeSection))
     ]);
   }
 }

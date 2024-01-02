@@ -51,11 +51,13 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Montserrat',
         scaffoldBackgroundColor: lentoLightColorScheme.background,
         textSelectionTheme: TextSelectionThemeData(
-            selectionColor: lentoLightColorScheme.tertiary),
+          selectionColor: lentoLightColorScheme.tertiary,
+        ),
         shadowColor: lentoLightColorScheme.shadow,
         splashFactory: NoSplash.splashFactory,
         highlightColor: Colors.transparent,
         textTheme: lentoTextTheme,
+        useMaterial3: false,
       ),
       home: const LentoHome(title: 'Lento Home'),
     );

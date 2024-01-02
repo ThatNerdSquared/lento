@@ -25,6 +25,7 @@ class CardTimer extends ConsumerStatefulWidget {
 
 class CardTimerState extends ConsumerState<CardTimer> {
   bool _isEditingTimer = false;
+  final _formKey = GlobalKey<FormState>();
   late Color _timerColor = widget.startingColour;
 
   double _calculateTimerMargin(maxWidth, isEditingTimer) {
@@ -34,6 +35,15 @@ class CardTimerState extends ConsumerState<CardTimer> {
     } else {
       return Config.defaultMarginPercentage * maxWidth;
     }
+  }
+
+  void _onTimerValChanged(String value, TimeSection timeSection) {
+    if (!_formKey.currentState!.validate()) return;
+    ref.read(lentoDeckProvider.notifier).updateCardTime(
+          cardId: widget.cardId,
+          newValue: int.parse(value),
+          timeSection: timeSection,
+        );
   }
 
   @override
@@ -82,62 +92,75 @@ class CardTimerState extends ConsumerState<CardTimer> {
                 color: _timerColor,
                 borderRadius: PretConfig.defaultBorderRadius,
               ),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: !_isEditingTimer
-                      ? [
-                          for (final item in [
-                            blockDuration.fmtHours,
-                            ':',
-                            blockDuration.fmtMinutes,
-                            ':',
-                            blockDuration.fmtSeconds
-                          ])
-                            Text(
-                              item,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .displayLarge!
-                                  .copyWith(fontWeight: FontWeight.w700),
-                            )
-                        ]
-                      : [
-                          for (final timeSection in TimeSection.values)
-                            TimerEditWheel(
-                              cardId: widget.cardId,
-                              timeSection: timeSection,
-                            )
-                        ]),
+              child: Column(
+                children: [
+                  Form(
+                    key: _formKey,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: !_isEditingTimer
+                            ? [
+                                for (final item in [
+                                  blockDuration.fmtHours,
+                                  ':',
+                                  blockDuration.fmtMinutes,
+                                  ':',
+                                  blockDuration.fmtSeconds
+                                ])
+                                  Text(
+                                    item,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displayLarge!
+                                        .copyWith(fontWeight: FontWeight.w700),
+                                  )
+                              ]
+                            : [
+                                for (final timeSection in TimeSection.values)
+                                  TimerEditWheel(
+                                    cardId: widget.cardId,
+                                    timeSection: timeSection,
+                                    handleChange: _onTimerValChanged,
+                                  )
+                              ]),
+                  ),
+                  Container(
+                      margin: const EdgeInsets.only(
+                        top: PretConfig.minElementSpacing,
+                      ),
+                      decoration: const BoxDecoration(
+                        borderRadius: PretConfig.defaultBorderRadius,
+                      ),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          boxShadow: [PretConfig.defaultShadow],
+                        ),
+                        child: ElevatedButton(
+                            onPressed: isCardActivated ? null : _startTimer,
+                            style: ButtonStyle(
+                              foregroundColor: MaterialStatePropertyAll(
+                                  Theme.of(context).colorScheme.primary),
+                              backgroundColor: MaterialStatePropertyAll(
+                                  Theme.of(context).colorScheme.tertiary),
+                              textStyle: MaterialStatePropertyAll(
+                                  Theme.of(context).textTheme.displaySmall),
+                              padding: const MaterialStatePropertyAll(
+                                  EdgeInsets.all(
+                                      PretConfig.defaultElementSpacing)),
+                              shape: const MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                      borderRadius:
+                                          PretConfig.thinBorderRadius)),
+                            ),
+                            child: Text(isCardActivated
+                                ? 'Session Started'
+                                : 'Start Block')),
+                      ))
+                ],
+              ),
             ),
           ),
         ),
-        const Padding(
-            padding: EdgeInsets.all(PretConfig.defaultElementSpacing * 1 / 2)),
-        Container(
-            margin: const EdgeInsets.only(bottom: PretConfig.minElementSpacing),
-            decoration: const BoxDecoration(
-                borderRadius: PretConfig.defaultBorderRadius,
-                boxShadow: [PretConfig.defaultShadow]),
-            child: Container(
-                decoration:
-                    const BoxDecoration(boxShadow: [PretConfig.defaultShadow]),
-                child: ElevatedButton(
-                    onPressed: isCardActivated ? null : _startTimer,
-                    style: ButtonStyle(
-                      foregroundColor: MaterialStatePropertyAll(
-                          Theme.of(context).colorScheme.primary),
-                      backgroundColor: MaterialStatePropertyAll(
-                          Theme.of(context).colorScheme.tertiary),
-                      textStyle: MaterialStatePropertyAll(
-                          Theme.of(context).textTheme.displaySmall),
-                      padding: const MaterialStatePropertyAll(
-                          EdgeInsets.all(PretConfig.defaultElementSpacing)),
-                      shape: const MaterialStatePropertyAll(
-                          RoundedRectangleBorder(
-                              borderRadius: PretConfig.thinBorderRadius)),
-                    ),
-                    child: Text(
-                        isCardActivated ? 'Session Started' : 'Start Block'))))
       ]),
     );
   }
