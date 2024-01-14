@@ -125,6 +125,7 @@ class LentoHomeState extends ConsumerState<LentoHome> {
                   ),
                   child: PageView.builder(
                       controller: controller,
+                      physics: editingEnv != null ? const NeverScrollableScrollPhysics() : null,
                       onPageChanged: (value) => setState(() {
                             pageViewIndex = value % limitIndex;
                           }),

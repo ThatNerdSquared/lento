@@ -1,0 +1,4 @@
+pkgs/client/linux/* linguist-generated
+pkgs/client/windows/* linguist-generated
+pkgs/client/android/* linguist-generated
+

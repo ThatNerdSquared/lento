@@ -33,10 +33,11 @@
       grey timer field
 - [ ] [NATHAN] restyle todos (is inset rectangle possible?), add time
       allocation support to todo input
-- [ ] [NATHAN] prevent scroll when editing/block running
+- [x] [NATHAN] prevent scroll when editing/block running
 - [ ] [NATHAN] add state + conditional rendering to display card components
       differently when block is running
 - [ ] [NATHAN] radial timer when block is running
+- [ ] [CHARLIE] consistent text box focus highlight
 - [ ] [NATHAN] implement vertical todos carousel for running block
 - [ ] [NATHAN] fix pageview flickering
 - [ ] [NATHAN] investigate flutter freezing when app backgrounded
