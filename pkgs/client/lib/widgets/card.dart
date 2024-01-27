@@ -115,20 +115,13 @@ class StyledCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) => Center(
-        child: Container(
-          decoration: const BoxDecoration(
-              borderRadius: PretConfig.defaultBorderRadius,
-              boxShadow: [PretConfig.defaultShadow]),
-          margin: const EdgeInsets.all(PretConfig.defaultElementSpacing),
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                top: PretConfig.defaultElementSpacing * 2,
-                bottom: PretConfig.defaultElementSpacing * 2,
-              ),
-              child: child,
-            ),
+        child: PretCard(
+          shadowMargin: const EdgeInsets.all(PretConfig.defaultElementSpacing),
+          padding: const EdgeInsets.only(
+            top: PretConfig.defaultElementSpacing * 2,
+            bottom: PretConfig.defaultElementSpacing * 2,
           ),
+          child: child,
         ),
       ),
     );

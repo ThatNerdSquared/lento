@@ -48,8 +48,8 @@ abstract class PlatformDaemonSettings {
             'isRestrictedAccess': value.isRestrictedAccess,
             'popupMessage': value.customPopupId
           })),
-      'websites': card.onlyWebsites
-          .map((key, value) => MapEntry(value.itemName, {
+      'websites':
+          card.onlyWebsites.map((key, value) => MapEntry(value.itemName, {
                 'isRestrictedAccess': value.isRestrictedAccess,
                 'popupMessage': value.customPopupId
               }))

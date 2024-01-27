@@ -5,6 +5,7 @@ import 'package:pret_a_porter/pret_a_porter.dart';
 import '../config.dart';
 import '../main.dart';
 import 'card_data.dart';
+import 'legacy_migrator.dart';
 
 class JsonBackend extends PretJsonManager {
   @override
@@ -39,9 +40,9 @@ class JsonBackend extends PretJsonManager {
   Map<String, LentoCardData> readDeckFromJson() {
     final contentsMap = pretLoadJson();
     return switch (contentsMap['schema']) {
-      '1.0.0' => _parseV1(contentsMap),
-      '1.1.0' => _parseV1_1(contentsMap),
-      '1.2.0' => _parseV1_2(contentsMap),
+      '1.0.0' => LegacyMigrator().parseV1(contentsMap),
+      '1.1.0' => LegacyMigrator().parseV1_1(contentsMap),
+      '1.2.0' => LegacyMigrator().parseV1_2(contentsMap),
       '1.3.0' => _parseV1_3(contentsMap),
       _ => throw UnsupportedError(
           'Invalid schema version "${contentsMap['schema']}"',
@@ -62,62 +63,6 @@ class JsonBackend extends PretJsonManager {
     };
   }
 
-  Map<String, LentoCardData> _parseV1(contentsMap) {
-    final cardsMap = contentsMap['cards'];
-    return Map<String, LentoCardData>.from(
-        cardsMap.map((key, value) => MapEntry(
-            key,
-            LentoCardData(
-              cardName: value['name'],
-              isActivated: value['isActivated'],
-              blockDuration: CardTime.fromPresetTime(value['blockDuration']),
-              todos: const {},
-              blockedItems: {
-                ..._parseV1Sites(value['blockedSites']),
-                ..._parseV1Apps(value['blockedApps']),
-              },
-              reminders: const {},
-            ))));
-  }
-
-  Map<String, LentoCardData> _parseV1_1(contentsMap) {
-    final cardsMap = contentsMap['cards'];
-    return Map<String, LentoCardData>.from(
-        cardsMap.map((key, value) => MapEntry(
-            key,
-            LentoCardData(
-              cardName: value['name'],
-              isActivated: value['isActivated'],
-              blockDuration: CardTime.fromPresetTime(value['blockDuration']),
-              todos: _parseV1Todos(value['todos']),
-              blockedItems: {
-                ..._parseV1Sites(value['blockedSites']),
-                ..._parseV1Apps(value['blockedApps']),
-              },
-              reminders: const {},
-            ))));
-  }
-
-  Map<String, LentoCardData> _parseV1_2(contentsMap) {
-    final cardsMap = contentsMap['cards'];
-    return Map<String, LentoCardData>.from(
-        cardsMap.map((key, value) => MapEntry(
-            key,
-            LentoCardData(
-              cardName: value['name'],
-              isActivated: value['isActivated'],
-              blockDuration: CardTime.fromPresetTime(value['blockDuration']),
-              todos: _parseV1Todos(value['todos']),
-              blockedItems: {
-                ..._parseV1Sites(value['blockedSites']),
-                ..._parseV1Apps(value['blockedApps']),
-              },
-              reminders: _parseV1Reminders(
-                value['scheduledEvents'],
-              ),
-            ))));
-  }
-
   Map<String, LentoCardData> _parseV1_3(contentsMap) {
     final cardsMap = contentsMap['cards'];
     return Map<String, LentoCardData>.from(
@@ -129,13 +74,13 @@ class JsonBackend extends PretJsonManager {
               blockDuration: CardTime.fromPresetTime(value['blockDuration']),
               todos: _parseV1_3Todos(value['todos']),
               blockedItems: _parseV1BlockedItems(value['blockedItems']),
-              reminders: _parseV1Reminders(
+              reminders: parseV1Reminders(
                 value['reminders'],
               ),
             ))));
   }
 
-  Map<String, ReminderData> _parseV1Reminders(seMap) {
+  Map<String, ReminderData> parseV1Reminders(Map seMap) {
     return Map<String, ReminderData>.from(seMap.map(
       (key, value) => MapEntry(
         key,
@@ -143,19 +88,6 @@ class JsonBackend extends PretJsonManager {
           title: value['title'],
           message: value['message'],
           triggerTimes: value['triggerTimes'],
-        ),
-      ),
-    ));
-  }
-
-  Map<String, LentoTodo> _parseV1Todos(todosMap) {
-    return Map<String, LentoTodo>.from(todosMap.map(
-      (key, value) => MapEntry(
-        key,
-        LentoTodo(
-          title: value['title'],
-          completed: value['completed'],
-          timeAllocation: 1800,
         ),
       ),
     ));
@@ -172,35 +104,6 @@ class JsonBackend extends PretJsonManager {
         ),
       ),
     ));
-  }
-
-  Map<String, BlockedItemData> _parseV1Sites(blockedSitesMap) {
-    return Map<String, BlockedItemData>.from(
-        blockedSitesMap.map((key, value) => MapEntry(
-              key,
-              BlockedItemData(
-                type: BlockItemType.website,
-                itemName: Uri.parse(value['siteUrl']).path,
-                sourcePaths: {'_website': value['siteUrl']},
-                isEnabled: value['isEnabled'],
-                isRestrictedAccess: value['isRestrictedAccess'],
-                customPopupId: value['customPopupId'],
-              ),
-            )));
-  }
-
-  Map<String, BlockedItemData> _parseV1Apps(blockedAppsMap) {
-    return Map<String, BlockedItemData>.from(
-        blockedAppsMap.map((key, value) => MapEntry(
-            key,
-            BlockedItemData(
-              type: BlockItemType.app,
-              itemName: value['appName'],
-              sourcePaths: Map<String, String>.from(value['sourcePaths']),
-              isEnabled: value['isEnabled'],
-              isRestrictedAccess: value['isRestrictedAccess'],
-              customPopupId: value['customPopupId'],
-            ))));
   }
 
   Map<String, BlockedItemData> _parseV1BlockedItems(blockedItemsMap) {

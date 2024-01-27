@@ -10,8 +10,7 @@ enum TimeSection { hours, minutes, seconds }
 
 enum BlockItemType { website, app }
 
-BlockItemType convertToBlockItemType(String bString) =>
-    switch (bString) {
+BlockItemType convertToBlockItemType(String bString) => switch (bString) {
       'BlockItemType.website' => BlockItemType.website,
       'BlockItemType.app' => BlockItemType.app,
       _ => throw UnimplementedError('Invalid blockitem type: "$bString"!'),
